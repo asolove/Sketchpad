@@ -12,6 +12,10 @@
   "Objects that can be drawn on the sketchpad canvas"
   (draw [item ctx universe] "Draw the object on the context given the universe"))
 
+(defprotocol Moveable
+  "Objects that can be moved by direct interaction"
+  (move! [item name dx dy universe] "Returns a state patch for the universe with item moved"))
+
 (defrecord Point [x y]
   Drawable
   (draw [point ctx universe]
@@ -23,14 +27,32 @@
                             2))}))
   
   Selectable
-  (cursor-distance [point cx cy universe] (distance [x y] [cx cy])))
+  (cursor-distance [point cx cy universe] (distance [x y] [cx cy]))
+
+  Moveable
+  (move! [point name dx dy universe] {name {:x (+ x dx) :y (+ y dy)}}))
 
 (defrecord Line [p1 p2]
   Drawable
   (draw [line ctx universe]
     (let [{x1 :x y1 :y} (universe p1)
-          {x2 :x y2 :y} (universe p2)]
-      (drawLine ctx {:x1 x1 :x2 x2 :y1 y1 :y2 y2})))
+          {x2 :x y2 :y} (universe p2)
+          width (if (= line (get universe (:highlighted universe))) 2 1)]
+      (drawLine ctx {:x1 x1 :x2 x2 :y1 y1 :y2 y2 :w width})))
   
   Selectable
-  (cursor-distance [line cx cy universe] 1000))
+  (cursor-distance [line cx cy universe]
+    (let [{x1 :x y1 :y} (universe p1)
+          {x2 :x y2 :y} (universe p2)
+          a (- y1 y2)
+          b (- x2 x1)
+          c (- (* x1 y2)
+               (* x2 y1))
+          d (/ (Math.abs (+ (* a cx) (* b cy) c)) (Math.sqrt (+ (Math.pow a 2) (Math.pow b 2))))]
+      (+ d 5)))
+
+  Moveable
+  (move! [line name dx dy universe]
+    (merge (move! (p1 universe) p1 dx dy universe)
+           (move! (p2 universe) p2 dx dy universe))))
+         

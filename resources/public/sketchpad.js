@@ -20188,28 +20188,36 @@ cljs.core.UUID.prototype.toString = function() {
 cljs.core.UUID;
 goog.provide("sketchpad.canvas");
 goog.require("cljs.core");
-sketchpad.canvas.drawLine = function drawLine(context, p__76475) {
-  var map__76483__76484 = p__76475;
-  var map__76483__76485 = cljs.core.seq_QMARK_.call(null, map__76483__76484) ? cljs.core.apply.call(null, cljs.core.hash_map, map__76483__76484) : map__76483__76484;
-  var y2__76486 = cljs.core._lookup.call(null, map__76483__76485, "\ufdd0'y2", null);
-  var x2__76487 = cljs.core._lookup.call(null, map__76483__76485, "\ufdd0'x2", null);
-  var y1__76488 = cljs.core._lookup.call(null, map__76483__76485, "\ufdd0'y1", null);
-  var x1__76489 = cljs.core._lookup.call(null, map__76483__76485, "\ufdd0'x1", null);
+sketchpad.canvas.drawLine = function drawLine(context, p__27961) {
+  var map__27971__27972 = p__27961;
+  var map__27971__27973 = cljs.core.seq_QMARK_.call(null, map__27971__27972) ? cljs.core.apply.call(null, cljs.core.hash_map, map__27971__27972) : map__27971__27972;
+  var w__27974 = cljs.core._lookup.call(null, map__27971__27973, "\ufdd0'w", null);
+  var y2__27975 = cljs.core._lookup.call(null, map__27971__27973, "\ufdd0'y2", null);
+  var x2__27976 = cljs.core._lookup.call(null, map__27971__27973, "\ufdd0'x2", null);
+  var y1__27977 = cljs.core._lookup.call(null, map__27971__27973, "\ufdd0'y1", null);
+  var x1__27978 = cljs.core._lookup.call(null, map__27971__27973, "\ufdd0'x1", null);
   context.beginPath();
-  context.lineWidth = 2;
+  context.lineWidth = function() {
+    var or__3824__auto____27979 = w__27974;
+    if(cljs.core.truth_(or__3824__auto____27979)) {
+      return or__3824__auto____27979
+    }else {
+      return 1
+    }
+  }();
   context.strokeStyle = "#999";
-  context.moveTo(x1__76489, y1__76488);
-  context.lineTo(x2__76487, y2__76486);
+  context.moveTo(x1__27978, y1__27977);
+  context.lineTo(x2__27976, y2__27975);
   return context.stroke()
 };
-sketchpad.canvas.drawCircle = function drawCircle(context, p__76490) {
-  var map__76497__76498 = p__76490;
-  var map__76497__76499 = cljs.core.seq_QMARK_.call(null, map__76497__76498) ? cljs.core.apply.call(null, cljs.core.hash_map, map__76497__76498) : map__76497__76498;
-  var r__76500 = cljs.core._lookup.call(null, map__76497__76499, "\ufdd0'r", null);
-  var y__76501 = cljs.core._lookup.call(null, map__76497__76499, "\ufdd0'y", null);
-  var x__76502 = cljs.core._lookup.call(null, map__76497__76499, "\ufdd0'x", null);
+sketchpad.canvas.drawCircle = function drawCircle(context, p__27980) {
+  var map__27987__27988 = p__27980;
+  var map__27987__27989 = cljs.core.seq_QMARK_.call(null, map__27987__27988) ? cljs.core.apply.call(null, cljs.core.hash_map, map__27987__27988) : map__27987__27988;
+  var r__27990 = cljs.core._lookup.call(null, map__27987__27989, "\ufdd0'r", null);
+  var y__27991 = cljs.core._lookup.call(null, map__27987__27989, "\ufdd0'y", null);
+  var x__27992 = cljs.core._lookup.call(null, map__27987__27989, "\ufdd0'x", null);
   context.beginPath();
-  context.arc(x__76502, y__76501, r__76500, 0, 2 * Math.PI, false);
+  context.arc(x__27992, y__27991, r__27990, 0, 2 * Math.PI, false);
   context.fillStyle = "green";
   context.fill();
   context.lineWidth = 1;
@@ -20221,31 +20229,31 @@ goog.require("cljs.core");
 goog.require("sketchpad.canvas");
 goog.require("sketchpad.canvas");
 sketchpad.shapes.distance = function distance(a, b) {
-  return Math.sqrt.call(null, cljs.core.reduce.call(null, cljs.core._PLUS_, cljs.core.map.call(null, function(p1__302843_SHARP_) {
-    return Math.pow.call(null, p1__302843_SHARP_, 2)
+  return Math.sqrt.call(null, cljs.core.reduce.call(null, cljs.core._PLUS_, cljs.core.map.call(null, function(p1__75944_SHARP_) {
+    return Math.pow.call(null, p1__75944_SHARP_, 2)
   }, cljs.core.map.call(null, cljs.core._, a, b))))
 };
 sketchpad.shapes.Selectable = {};
 sketchpad.shapes.cursor_distance = function cursor_distance(item, x, y, universe) {
   if(function() {
-    var and__3822__auto____302876 = item;
-    if(and__3822__auto____302876) {
+    var and__3822__auto____75981 = item;
+    if(and__3822__auto____75981) {
       return item.sketchpad$shapes$Selectable$cursor_distance$arity$4
     }else {
-      return and__3822__auto____302876
+      return and__3822__auto____75981
     }
   }()) {
     return item.sketchpad$shapes$Selectable$cursor_distance$arity$4(item, x, y, universe)
   }else {
-    var x__2418__auto____302877 = item == null ? null : item;
+    var x__2418__auto____75982 = item == null ? null : item;
     return function() {
-      var or__3824__auto____302878 = sketchpad.shapes.cursor_distance[goog.typeOf(x__2418__auto____302877)];
-      if(or__3824__auto____302878) {
-        return or__3824__auto____302878
+      var or__3824__auto____75983 = sketchpad.shapes.cursor_distance[goog.typeOf(x__2418__auto____75982)];
+      if(or__3824__auto____75983) {
+        return or__3824__auto____75983
       }else {
-        var or__3824__auto____302879 = sketchpad.shapes.cursor_distance["_"];
-        if(or__3824__auto____302879) {
-          return or__3824__auto____302879
+        var or__3824__auto____75984 = sketchpad.shapes.cursor_distance["_"];
+        if(or__3824__auto____75984) {
+          return or__3824__auto____75984
         }else {
           throw cljs.core.missing_protocol.call(null, "Selectable.cursor-distance", item);
         }
@@ -20256,29 +20264,57 @@ sketchpad.shapes.cursor_distance = function cursor_distance(item, x, y, universe
 sketchpad.shapes.Drawable = {};
 sketchpad.shapes.draw = function draw(item, ctx, universe) {
   if(function() {
-    var and__3822__auto____302884 = item;
-    if(and__3822__auto____302884) {
+    var and__3822__auto____75989 = item;
+    if(and__3822__auto____75989) {
       return item.sketchpad$shapes$Drawable$draw$arity$3
     }else {
-      return and__3822__auto____302884
+      return and__3822__auto____75989
     }
   }()) {
     return item.sketchpad$shapes$Drawable$draw$arity$3(item, ctx, universe)
   }else {
-    var x__2418__auto____302885 = item == null ? null : item;
+    var x__2418__auto____75990 = item == null ? null : item;
     return function() {
-      var or__3824__auto____302886 = sketchpad.shapes.draw[goog.typeOf(x__2418__auto____302885)];
-      if(or__3824__auto____302886) {
-        return or__3824__auto____302886
+      var or__3824__auto____75991 = sketchpad.shapes.draw[goog.typeOf(x__2418__auto____75990)];
+      if(or__3824__auto____75991) {
+        return or__3824__auto____75991
       }else {
-        var or__3824__auto____302887 = sketchpad.shapes.draw["_"];
-        if(or__3824__auto____302887) {
-          return or__3824__auto____302887
+        var or__3824__auto____75992 = sketchpad.shapes.draw["_"];
+        if(or__3824__auto____75992) {
+          return or__3824__auto____75992
         }else {
           throw cljs.core.missing_protocol.call(null, "Drawable.draw", item);
         }
       }
     }().call(null, item, ctx, universe)
+  }
+};
+sketchpad.shapes.Moveable = {};
+sketchpad.shapes.move_BANG_ = function move_BANG_(item, name, dx, dy, universe) {
+  if(function() {
+    var and__3822__auto____75997 = item;
+    if(and__3822__auto____75997) {
+      return item.sketchpad$shapes$Moveable$move_BANG_$arity$5
+    }else {
+      return and__3822__auto____75997
+    }
+  }()) {
+    return item.sketchpad$shapes$Moveable$move_BANG_$arity$5(item, name, dx, dy, universe)
+  }else {
+    var x__2418__auto____75998 = item == null ? null : item;
+    return function() {
+      var or__3824__auto____75999 = sketchpad.shapes.move_BANG_[goog.typeOf(x__2418__auto____75998)];
+      if(or__3824__auto____75999) {
+        return or__3824__auto____75999
+      }else {
+        var or__3824__auto____76000 = sketchpad.shapes.move_BANG_["_"];
+        if(or__3824__auto____76000) {
+          return or__3824__auto____76000
+        }else {
+          throw cljs.core.missing_protocol.call(null, "Moveable.move!", item);
+        }
+      }
+    }().call(null, item, name, dx, dy, universe)
   }
 };
 sketchpad.shapes.Point = function(x, y, __meta, __extmap) {
@@ -20298,56 +20334,61 @@ sketchpad.shapes.Point = function(x, y, __meta, __extmap) {
 };
 sketchpad.shapes.Point.prototype.sketchpad$shapes$Selectable$ = true;
 sketchpad.shapes.Point.prototype.sketchpad$shapes$Selectable$cursor_distance$arity$4 = function(point, cx, cy, universe) {
-  var this__302891 = this;
-  return sketchpad.shapes.distance.call(null, cljs.core.PersistentVector.fromArray([this__302891.x, this__302891.y], true), cljs.core.PersistentVector.fromArray([cx, cy], true))
+  var this__76004 = this;
+  return sketchpad.shapes.distance.call(null, cljs.core.PersistentVector.fromArray([this__76004.x, this__76004.y], true), cljs.core.PersistentVector.fromArray([cx, cy], true))
+};
+sketchpad.shapes.Point.prototype.sketchpad$shapes$Moveable$ = true;
+sketchpad.shapes.Point.prototype.sketchpad$shapes$Moveable$move_BANG_$arity$5 = function(point, name, dx, dy, universe) {
+  var this__76005 = this;
+  return cljs.core.PersistentArrayMap.fromArrays([name], [cljs.core.ObjMap.fromObject(["\ufdd0'x", "\ufdd0'y"], {"\ufdd0'x":this__76005.x + dx, "\ufdd0'y":this__76005.y + dy})])
 };
 sketchpad.shapes.Point.prototype.cljs$core$IHash$_hash$arity$1 = function(this__2373__auto__) {
-  var this__302892 = this;
-  var h__2247__auto____302893 = this__302892.__hash;
-  if(!(h__2247__auto____302893 == null)) {
-    return h__2247__auto____302893
+  var this__76006 = this;
+  var h__2247__auto____76007 = this__76006.__hash;
+  if(!(h__2247__auto____76007 == null)) {
+    return h__2247__auto____76007
   }else {
-    var h__2247__auto____302894 = cljs.core.hash_imap.call(null, this__2373__auto__);
-    this__302892.__hash = h__2247__auto____302894;
-    return h__2247__auto____302894
+    var h__2247__auto____76008 = cljs.core.hash_imap.call(null, this__2373__auto__);
+    this__76006.__hash = h__2247__auto____76008;
+    return h__2247__auto____76008
   }
 };
 sketchpad.shapes.Point.prototype.cljs$core$ILookup$_lookup$arity$2 = function(this__2378__auto__, k__2379__auto__) {
-  var this__302895 = this;
+  var this__76009 = this;
   return this__2378__auto__.cljs$core$ILookup$_lookup$arity$3(this__2378__auto__, k__2379__auto__, null)
 };
-sketchpad.shapes.Point.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2380__auto__, k302889, else__2381__auto__) {
-  var this__302896 = this;
-  if(k302889 === "\ufdd0'x") {
-    return this__302896.x
+sketchpad.shapes.Point.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2380__auto__, k76002, else__2381__auto__) {
+  var this__76010 = this;
+  if(k76002 === "\ufdd0'x") {
+    return this__76010.x
   }else {
-    if(k302889 === "\ufdd0'y") {
-      return this__302896.y
+    if(k76002 === "\ufdd0'y") {
+      return this__76010.y
     }else {
       if("\ufdd0'else") {
-        return cljs.core._lookup.call(null, this__302896.__extmap, k302889, else__2381__auto__)
+        return cljs.core._lookup.call(null, this__76010.__extmap, k76002, else__2381__auto__)
       }else {
         return null
       }
     }
   }
 };
-sketchpad.shapes.Point.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2385__auto__, k__2386__auto__, G__302888) {
-  var this__302897 = this;
-  var pred__302898__302901 = cljs.core.identical_QMARK_;
-  var expr__302899__302902 = k__2386__auto__;
-  if(pred__302898__302901.call(null, "\ufdd0'x", expr__302899__302902)) {
-    return new sketchpad.shapes.Point(G__302888, this__302897.y, this__302897.__meta, this__302897.__extmap, null)
+sketchpad.shapes.Point.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2385__auto__, k__2386__auto__, G__76001) {
+  var this__76011 = this;
+  var pred__76012__76015 = cljs.core.identical_QMARK_;
+  var expr__76013__76016 = k__2386__auto__;
+  if(pred__76012__76015.call(null, "\ufdd0'x", expr__76013__76016)) {
+    return new sketchpad.shapes.Point(G__76001, this__76011.y, this__76011.__meta, this__76011.__extmap, null)
   }else {
-    if(pred__302898__302901.call(null, "\ufdd0'y", expr__302899__302902)) {
-      return new sketchpad.shapes.Point(this__302897.x, G__302888, this__302897.__meta, this__302897.__extmap, null)
+    if(pred__76012__76015.call(null, "\ufdd0'y", expr__76013__76016)) {
+      return new sketchpad.shapes.Point(this__76011.x, G__76001, this__76011.__meta, this__76011.__extmap, null)
     }else {
-      return new sketchpad.shapes.Point(this__302897.x, this__302897.y, this__302897.__meta, cljs.core.assoc.call(null, this__302897.__extmap, k__2386__auto__, G__302888), null)
+      return new sketchpad.shapes.Point(this__76011.x, this__76011.y, this__76011.__meta, cljs.core.assoc.call(null, this__76011.__extmap, k__2386__auto__, G__76001), null)
     }
   }
 };
 sketchpad.shapes.Point.prototype.cljs$core$ICollection$_conj$arity$2 = function(this__2383__auto__, entry__2384__auto__) {
-  var this__302903 = this;
+  var this__76017 = this;
   if(cljs.core.vector_QMARK_.call(null, entry__2384__auto__)) {
     return this__2383__auto__.cljs$core$IAssociative$_assoc$arity$3(this__2383__auto__, cljs.core._nth.call(null, entry__2384__auto__, 0), cljs.core._nth.call(null, entry__2384__auto__, 1))
   }else {
@@ -20355,38 +20396,38 @@ sketchpad.shapes.Point.prototype.cljs$core$ICollection$_conj$arity$2 = function(
   }
 };
 sketchpad.shapes.Point.prototype.cljs$core$ISeqable$_seq$arity$1 = function(this__2390__auto__) {
-  var this__302904 = this;
-  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'x", this__302904.x), cljs.core.vector.call(null, "\ufdd0'y", this__302904.y)], true), this__302904.__extmap))
+  var this__76018 = this;
+  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'x", this__76018.x), cljs.core.vector.call(null, "\ufdd0'y", this__76018.y)], true), this__76018.__extmap))
 };
 sketchpad.shapes.Point.prototype.sketchpad$shapes$Drawable$ = true;
 sketchpad.shapes.Point.prototype.sketchpad$shapes$Drawable$draw$arity$3 = function(point, ctx, universe) {
-  var this__302905 = this;
-  return sketchpad.canvas.drawCircle.call(null, ctx, cljs.core.ObjMap.fromObject(["\ufdd0'x", "\ufdd0'y", "\ufdd0'r"], {"\ufdd0'x":this__302905.x, "\ufdd0'y":this__302905.y, "\ufdd0'r":cljs.core._EQ_.call(null, point, cljs.core._lookup.call(null, universe, (new cljs.core.Keyword("\ufdd0'selected")).call(null, universe), null)) ? 6 : cljs.core._EQ_.call(null, point, cljs.core._lookup.call(null, universe, (new cljs.core.Keyword("\ufdd0'highlighted")).call(null, universe), null)) ? 4 : 2}))
+  var this__76019 = this;
+  return sketchpad.canvas.drawCircle.call(null, ctx, cljs.core.ObjMap.fromObject(["\ufdd0'x", "\ufdd0'y", "\ufdd0'r"], {"\ufdd0'x":this__76019.x, "\ufdd0'y":this__76019.y, "\ufdd0'r":cljs.core._EQ_.call(null, point, cljs.core._lookup.call(null, universe, (new cljs.core.Keyword("\ufdd0'selected")).call(null, universe), null)) ? 6 : cljs.core._EQ_.call(null, point, cljs.core._lookup.call(null, universe, (new cljs.core.Keyword("\ufdd0'highlighted")).call(null, universe), null)) ? 4 : 2}))
 };
 sketchpad.shapes.Point.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(this__2392__auto__, opts__2393__auto__) {
-  var this__302906 = this;
-  var pr_pair__2394__auto____302907 = function(keyval__2395__auto__) {
+  var this__76020 = this;
+  var pr_pair__2394__auto____76021 = function(keyval__2395__auto__) {
     return cljs.core.pr_sequential.call(null, cljs.core.pr_seq, "", " ", "", opts__2393__auto__, keyval__2395__auto__)
   };
-  return cljs.core.pr_sequential.call(null, pr_pair__2394__auto____302907, [cljs.core.str("#"), cljs.core.str("Point"), cljs.core.str("{")].join(""), ", ", "}", opts__2393__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'x", this__302906.x), cljs.core.vector.call(null, "\ufdd0'y", this__302906.y)], true), this__302906.__extmap))
+  return cljs.core.pr_sequential.call(null, pr_pair__2394__auto____76021, [cljs.core.str("#"), cljs.core.str("Point"), cljs.core.str("{")].join(""), ", ", "}", opts__2393__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'x", this__76020.x), cljs.core.vector.call(null, "\ufdd0'y", this__76020.y)], true), this__76020.__extmap))
 };
 sketchpad.shapes.Point.prototype.cljs$core$ICounted$_count$arity$1 = function(this__2382__auto__) {
-  var this__302908 = this;
-  return 2 + cljs.core.count.call(null, this__302908.__extmap)
+  var this__76022 = this;
+  return 2 + cljs.core.count.call(null, this__76022.__extmap)
 };
 sketchpad.shapes.Point.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this__2374__auto__, other__2375__auto__) {
-  var this__302909 = this;
+  var this__76023 = this;
   if(cljs.core.truth_(function() {
-    var and__3822__auto____302910 = other__2375__auto__;
-    if(cljs.core.truth_(and__3822__auto____302910)) {
-      var and__3822__auto____302911 = this__2374__auto__.constructor === other__2375__auto__.constructor;
-      if(and__3822__auto____302911) {
+    var and__3822__auto____76024 = other__2375__auto__;
+    if(cljs.core.truth_(and__3822__auto____76024)) {
+      var and__3822__auto____76025 = this__2374__auto__.constructor === other__2375__auto__.constructor;
+      if(and__3822__auto____76025) {
         return cljs.core.equiv_map.call(null, this__2374__auto__, other__2375__auto__)
       }else {
-        return and__3822__auto____302911
+        return and__3822__auto____76025
       }
     }else {
-      return and__3822__auto____302910
+      return and__3822__auto____76024
     }
   }())) {
     return true
@@ -20394,20 +20435,20 @@ sketchpad.shapes.Point.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this
     return false
   }
 };
-sketchpad.shapes.Point.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2377__auto__, G__302888) {
-  var this__302912 = this;
-  return new sketchpad.shapes.Point(this__302912.x, this__302912.y, G__302888, this__302912.__extmap, this__302912.__hash)
+sketchpad.shapes.Point.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2377__auto__, G__76001) {
+  var this__76026 = this;
+  return new sketchpad.shapes.Point(this__76026.x, this__76026.y, G__76001, this__76026.__extmap, this__76026.__hash)
 };
 sketchpad.shapes.Point.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2376__auto__) {
-  var this__302913 = this;
-  return this__302913.__meta
+  var this__76027 = this;
+  return this__76027.__meta
 };
 sketchpad.shapes.Point.prototype.cljs$core$IMap$_dissoc$arity$2 = function(this__2387__auto__, k__2388__auto__) {
-  var this__302914 = this;
+  var this__76028 = this;
   if(cljs.core.contains_QMARK_.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'y", "\ufdd0'x"]), k__2388__auto__)) {
-    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2387__auto__), this__302914.__meta), k__2388__auto__)
+    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2387__auto__), this__76028.__meta), k__2388__auto__)
   }else {
-    return new sketchpad.shapes.Point(this__302914.x, this__302914.y, this__302914.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__302914.__extmap, k__2388__auto__)), null)
+    return new sketchpad.shapes.Point(this__76028.x, this__76028.y, this__76028.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__76028.__extmap, k__2388__auto__)), null)
   }
 };
 sketchpad.shapes.Point.cljs$lang$type = true;
@@ -20417,8 +20458,8 @@ sketchpad.shapes.Point.cljs$lang$ctorPrSeq = function(this__2412__auto__) {
 sketchpad.shapes.__GT_Point = function __GT_Point(x, y) {
   return new sketchpad.shapes.Point(x, y)
 };
-sketchpad.shapes.map__GT_Point = function map__GT_Point(G__302890) {
-  return new sketchpad.shapes.Point((new cljs.core.Keyword("\ufdd0'x")).call(null, G__302890), (new cljs.core.Keyword("\ufdd0'y")).call(null, G__302890), null, cljs.core.dissoc.call(null, G__302890, "\ufdd0'x", "\ufdd0'y"))
+sketchpad.shapes.map__GT_Point = function map__GT_Point(G__76003) {
+  return new sketchpad.shapes.Point((new cljs.core.Keyword("\ufdd0'x")).call(null, G__76003), (new cljs.core.Keyword("\ufdd0'y")).call(null, G__76003), null, cljs.core.dissoc.call(null, G__76003, "\ufdd0'x", "\ufdd0'y"))
 };
 sketchpad.shapes.Point;
 sketchpad.shapes.Line = function(p1, p2, __meta, __extmap) {
@@ -20438,56 +20479,73 @@ sketchpad.shapes.Line = function(p1, p2, __meta, __extmap) {
 };
 sketchpad.shapes.Line.prototype.sketchpad$shapes$Selectable$ = true;
 sketchpad.shapes.Line.prototype.sketchpad$shapes$Selectable$cursor_distance$arity$4 = function(line, cx, cy, universe) {
-  var this__302918 = this;
-  return 1E3
+  var this__76032 = this;
+  var map__76033__76035 = universe.call(null, this__76032.p1);
+  var map__76033__76036 = cljs.core.seq_QMARK_.call(null, map__76033__76035) ? cljs.core.apply.call(null, cljs.core.hash_map, map__76033__76035) : map__76033__76035;
+  var x1__76037 = cljs.core._lookup.call(null, map__76033__76036, "\ufdd0'x", null);
+  var y1__76038 = cljs.core._lookup.call(null, map__76033__76036, "\ufdd0'y", null);
+  var map__76034__76039 = universe.call(null, this__76032.p2);
+  var map__76034__76040 = cljs.core.seq_QMARK_.call(null, map__76034__76039) ? cljs.core.apply.call(null, cljs.core.hash_map, map__76034__76039) : map__76034__76039;
+  var x2__76041 = cljs.core._lookup.call(null, map__76034__76040, "\ufdd0'x", null);
+  var y2__76042 = cljs.core._lookup.call(null, map__76034__76040, "\ufdd0'y", null);
+  var a__76043 = y1__76038 - y2__76042;
+  var b__76044 = x2__76041 - x1__76037;
+  var c__76045 = x1__76037 * y2__76042 - x2__76041 * y1__76038;
+  var d__76046 = Math.abs.call(null, a__76043 * cx + b__76044 * cy + c__76045) / Math.sqrt.call(null, Math.pow.call(null, a__76043, 2) + Math.pow.call(null, b__76044, 2));
+  return d__76046 + 5
+};
+sketchpad.shapes.Line.prototype.sketchpad$shapes$Moveable$ = true;
+sketchpad.shapes.Line.prototype.sketchpad$shapes$Moveable$move_BANG_$arity$5 = function(line, name, dx, dy, universe) {
+  var this__76047 = this;
+  return cljs.core.merge.call(null, sketchpad.shapes.move_BANG_.call(null, this__76047.p1.call(null, universe), this__76047.p1, dx, dy, universe), sketchpad.shapes.move_BANG_.call(null, this__76047.p2.call(null, universe), this__76047.p2, dx, dy, universe))
 };
 sketchpad.shapes.Line.prototype.cljs$core$IHash$_hash$arity$1 = function(this__2373__auto__) {
-  var this__302919 = this;
-  var h__2247__auto____302920 = this__302919.__hash;
-  if(!(h__2247__auto____302920 == null)) {
-    return h__2247__auto____302920
+  var this__76048 = this;
+  var h__2247__auto____76049 = this__76048.__hash;
+  if(!(h__2247__auto____76049 == null)) {
+    return h__2247__auto____76049
   }else {
-    var h__2247__auto____302921 = cljs.core.hash_imap.call(null, this__2373__auto__);
-    this__302919.__hash = h__2247__auto____302921;
-    return h__2247__auto____302921
+    var h__2247__auto____76050 = cljs.core.hash_imap.call(null, this__2373__auto__);
+    this__76048.__hash = h__2247__auto____76050;
+    return h__2247__auto____76050
   }
 };
 sketchpad.shapes.Line.prototype.cljs$core$ILookup$_lookup$arity$2 = function(this__2378__auto__, k__2379__auto__) {
-  var this__302922 = this;
+  var this__76051 = this;
   return this__2378__auto__.cljs$core$ILookup$_lookup$arity$3(this__2378__auto__, k__2379__auto__, null)
 };
-sketchpad.shapes.Line.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2380__auto__, k302916, else__2381__auto__) {
-  var this__302923 = this;
-  if(k302916 === "\ufdd0'p1") {
-    return this__302923.p1
+sketchpad.shapes.Line.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2380__auto__, k76030, else__2381__auto__) {
+  var this__76052 = this;
+  if(k76030 === "\ufdd0'p1") {
+    return this__76052.p1
   }else {
-    if(k302916 === "\ufdd0'p2") {
-      return this__302923.p2
+    if(k76030 === "\ufdd0'p2") {
+      return this__76052.p2
     }else {
       if("\ufdd0'else") {
-        return cljs.core._lookup.call(null, this__302923.__extmap, k302916, else__2381__auto__)
+        return cljs.core._lookup.call(null, this__76052.__extmap, k76030, else__2381__auto__)
       }else {
         return null
       }
     }
   }
 };
-sketchpad.shapes.Line.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2385__auto__, k__2386__auto__, G__302915) {
-  var this__302924 = this;
-  var pred__302925__302928 = cljs.core.identical_QMARK_;
-  var expr__302926__302929 = k__2386__auto__;
-  if(pred__302925__302928.call(null, "\ufdd0'p1", expr__302926__302929)) {
-    return new sketchpad.shapes.Line(G__302915, this__302924.p2, this__302924.__meta, this__302924.__extmap, null)
+sketchpad.shapes.Line.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2385__auto__, k__2386__auto__, G__76029) {
+  var this__76053 = this;
+  var pred__76054__76057 = cljs.core.identical_QMARK_;
+  var expr__76055__76058 = k__2386__auto__;
+  if(pred__76054__76057.call(null, "\ufdd0'p1", expr__76055__76058)) {
+    return new sketchpad.shapes.Line(G__76029, this__76053.p2, this__76053.__meta, this__76053.__extmap, null)
   }else {
-    if(pred__302925__302928.call(null, "\ufdd0'p2", expr__302926__302929)) {
-      return new sketchpad.shapes.Line(this__302924.p1, G__302915, this__302924.__meta, this__302924.__extmap, null)
+    if(pred__76054__76057.call(null, "\ufdd0'p2", expr__76055__76058)) {
+      return new sketchpad.shapes.Line(this__76053.p1, G__76029, this__76053.__meta, this__76053.__extmap, null)
     }else {
-      return new sketchpad.shapes.Line(this__302924.p1, this__302924.p2, this__302924.__meta, cljs.core.assoc.call(null, this__302924.__extmap, k__2386__auto__, G__302915), null)
+      return new sketchpad.shapes.Line(this__76053.p1, this__76053.p2, this__76053.__meta, cljs.core.assoc.call(null, this__76053.__extmap, k__2386__auto__, G__76029), null)
     }
   }
 };
 sketchpad.shapes.Line.prototype.cljs$core$ICollection$_conj$arity$2 = function(this__2383__auto__, entry__2384__auto__) {
-  var this__302930 = this;
+  var this__76059 = this;
   if(cljs.core.vector_QMARK_.call(null, entry__2384__auto__)) {
     return this__2383__auto__.cljs$core$IAssociative$_assoc$arity$3(this__2383__auto__, cljs.core._nth.call(null, entry__2384__auto__, 0), cljs.core._nth.call(null, entry__2384__auto__, 1))
   }else {
@@ -20495,46 +20553,47 @@ sketchpad.shapes.Line.prototype.cljs$core$ICollection$_conj$arity$2 = function(t
   }
 };
 sketchpad.shapes.Line.prototype.cljs$core$ISeqable$_seq$arity$1 = function(this__2390__auto__) {
-  var this__302931 = this;
-  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'p1", this__302931.p1), cljs.core.vector.call(null, "\ufdd0'p2", this__302931.p2)], true), this__302931.__extmap))
+  var this__76060 = this;
+  return cljs.core.seq.call(null, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'p1", this__76060.p1), cljs.core.vector.call(null, "\ufdd0'p2", this__76060.p2)], true), this__76060.__extmap))
 };
 sketchpad.shapes.Line.prototype.sketchpad$shapes$Drawable$ = true;
 sketchpad.shapes.Line.prototype.sketchpad$shapes$Drawable$draw$arity$3 = function(line, ctx, universe) {
-  var this__302932 = this;
-  var map__302933__302935 = universe.call(null, this__302932.p1);
-  var map__302933__302936 = cljs.core.seq_QMARK_.call(null, map__302933__302935) ? cljs.core.apply.call(null, cljs.core.hash_map, map__302933__302935) : map__302933__302935;
-  var x1__302937 = cljs.core._lookup.call(null, map__302933__302936, "\ufdd0'x", null);
-  var y1__302938 = cljs.core._lookup.call(null, map__302933__302936, "\ufdd0'y", null);
-  var map__302934__302939 = universe.call(null, this__302932.p2);
-  var map__302934__302940 = cljs.core.seq_QMARK_.call(null, map__302934__302939) ? cljs.core.apply.call(null, cljs.core.hash_map, map__302934__302939) : map__302934__302939;
-  var x2__302941 = cljs.core._lookup.call(null, map__302934__302940, "\ufdd0'x", null);
-  var y2__302942 = cljs.core._lookup.call(null, map__302934__302940, "\ufdd0'y", null);
-  return sketchpad.canvas.drawLine.call(null, ctx, cljs.core.ObjMap.fromObject(["\ufdd0'x1", "\ufdd0'x2", "\ufdd0'y1", "\ufdd0'y2"], {"\ufdd0'x1":x1__302937, "\ufdd0'x2":x2__302941, "\ufdd0'y1":y1__302938, "\ufdd0'y2":y2__302942}))
+  var this__76061 = this;
+  var map__76062__76064 = universe.call(null, this__76061.p1);
+  var map__76062__76065 = cljs.core.seq_QMARK_.call(null, map__76062__76064) ? cljs.core.apply.call(null, cljs.core.hash_map, map__76062__76064) : map__76062__76064;
+  var x1__76066 = cljs.core._lookup.call(null, map__76062__76065, "\ufdd0'x", null);
+  var y1__76067 = cljs.core._lookup.call(null, map__76062__76065, "\ufdd0'y", null);
+  var map__76063__76068 = universe.call(null, this__76061.p2);
+  var map__76063__76069 = cljs.core.seq_QMARK_.call(null, map__76063__76068) ? cljs.core.apply.call(null, cljs.core.hash_map, map__76063__76068) : map__76063__76068;
+  var x2__76070 = cljs.core._lookup.call(null, map__76063__76069, "\ufdd0'x", null);
+  var y2__76071 = cljs.core._lookup.call(null, map__76063__76069, "\ufdd0'y", null);
+  var width__76072 = cljs.core._EQ_.call(null, line, cljs.core._lookup.call(null, universe, (new cljs.core.Keyword("\ufdd0'highlighted")).call(null, universe), null)) ? 2 : 1;
+  return sketchpad.canvas.drawLine.call(null, ctx, cljs.core.ObjMap.fromObject(["\ufdd0'x1", "\ufdd0'x2", "\ufdd0'y1", "\ufdd0'y2", "\ufdd0'w"], {"\ufdd0'x1":x1__76066, "\ufdd0'x2":x2__76070, "\ufdd0'y1":y1__76067, "\ufdd0'y2":y2__76071, "\ufdd0'w":width__76072}))
 };
 sketchpad.shapes.Line.prototype.cljs$core$IPrintable$_pr_seq$arity$2 = function(this__2392__auto__, opts__2393__auto__) {
-  var this__302943 = this;
-  var pr_pair__2394__auto____302944 = function(keyval__2395__auto__) {
+  var this__76073 = this;
+  var pr_pair__2394__auto____76074 = function(keyval__2395__auto__) {
     return cljs.core.pr_sequential.call(null, cljs.core.pr_seq, "", " ", "", opts__2393__auto__, keyval__2395__auto__)
   };
-  return cljs.core.pr_sequential.call(null, pr_pair__2394__auto____302944, [cljs.core.str("#"), cljs.core.str("Line"), cljs.core.str("{")].join(""), ", ", "}", opts__2393__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'p1", this__302943.p1), cljs.core.vector.call(null, "\ufdd0'p2", this__302943.p2)], true), this__302943.__extmap))
+  return cljs.core.pr_sequential.call(null, pr_pair__2394__auto____76074, [cljs.core.str("#"), cljs.core.str("Line"), cljs.core.str("{")].join(""), ", ", "}", opts__2393__auto__, cljs.core.concat.call(null, cljs.core.PersistentVector.fromArray([cljs.core.vector.call(null, "\ufdd0'p1", this__76073.p1), cljs.core.vector.call(null, "\ufdd0'p2", this__76073.p2)], true), this__76073.__extmap))
 };
 sketchpad.shapes.Line.prototype.cljs$core$ICounted$_count$arity$1 = function(this__2382__auto__) {
-  var this__302945 = this;
-  return 2 + cljs.core.count.call(null, this__302945.__extmap)
+  var this__76075 = this;
+  return 2 + cljs.core.count.call(null, this__76075.__extmap)
 };
 sketchpad.shapes.Line.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this__2374__auto__, other__2375__auto__) {
-  var this__302946 = this;
+  var this__76076 = this;
   if(cljs.core.truth_(function() {
-    var and__3822__auto____302947 = other__2375__auto__;
-    if(cljs.core.truth_(and__3822__auto____302947)) {
-      var and__3822__auto____302948 = this__2374__auto__.constructor === other__2375__auto__.constructor;
-      if(and__3822__auto____302948) {
+    var and__3822__auto____76077 = other__2375__auto__;
+    if(cljs.core.truth_(and__3822__auto____76077)) {
+      var and__3822__auto____76078 = this__2374__auto__.constructor === other__2375__auto__.constructor;
+      if(and__3822__auto____76078) {
         return cljs.core.equiv_map.call(null, this__2374__auto__, other__2375__auto__)
       }else {
-        return and__3822__auto____302948
+        return and__3822__auto____76078
       }
     }else {
-      return and__3822__auto____302947
+      return and__3822__auto____76077
     }
   }())) {
     return true
@@ -20542,20 +20601,20 @@ sketchpad.shapes.Line.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(this_
     return false
   }
 };
-sketchpad.shapes.Line.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2377__auto__, G__302915) {
-  var this__302949 = this;
-  return new sketchpad.shapes.Line(this__302949.p1, this__302949.p2, G__302915, this__302949.__extmap, this__302949.__hash)
+sketchpad.shapes.Line.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2377__auto__, G__76029) {
+  var this__76079 = this;
+  return new sketchpad.shapes.Line(this__76079.p1, this__76079.p2, G__76029, this__76079.__extmap, this__76079.__hash)
 };
 sketchpad.shapes.Line.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2376__auto__) {
-  var this__302950 = this;
-  return this__302950.__meta
+  var this__76080 = this;
+  return this__76080.__meta
 };
 sketchpad.shapes.Line.prototype.cljs$core$IMap$_dissoc$arity$2 = function(this__2387__auto__, k__2388__auto__) {
-  var this__302951 = this;
+  var this__76081 = this;
   if(cljs.core.contains_QMARK_.call(null, cljs.core.PersistentHashSet.fromArray(["\ufdd0'p1", "\ufdd0'p2"]), k__2388__auto__)) {
-    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2387__auto__), this__302951.__meta), k__2388__auto__)
+    return cljs.core.dissoc.call(null, cljs.core.with_meta.call(null, cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, this__2387__auto__), this__76081.__meta), k__2388__auto__)
   }else {
-    return new sketchpad.shapes.Line(this__302951.p1, this__302951.p2, this__302951.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__302951.__extmap, k__2388__auto__)), null)
+    return new sketchpad.shapes.Line(this__76081.p1, this__76081.p2, this__76081.__meta, cljs.core.not_empty.call(null, cljs.core.dissoc.call(null, this__76081.__extmap, k__2388__auto__)), null)
   }
 };
 sketchpad.shapes.Line.cljs$lang$type = true;
@@ -20565,99 +20624,477 @@ sketchpad.shapes.Line.cljs$lang$ctorPrSeq = function(this__2412__auto__) {
 sketchpad.shapes.__GT_Line = function __GT_Line(p1, p2) {
   return new sketchpad.shapes.Line(p1, p2)
 };
-sketchpad.shapes.map__GT_Line = function map__GT_Line(G__302917) {
-  return new sketchpad.shapes.Line((new cljs.core.Keyword("\ufdd0'p1")).call(null, G__302917), (new cljs.core.Keyword("\ufdd0'p2")).call(null, G__302917), null, cljs.core.dissoc.call(null, G__302917, "\ufdd0'p1", "\ufdd0'p2"))
+sketchpad.shapes.map__GT_Line = function map__GT_Line(G__76031) {
+  return new sketchpad.shapes.Line((new cljs.core.Keyword("\ufdd0'p1")).call(null, G__76031), (new cljs.core.Keyword("\ufdd0'p2")).call(null, G__76031), null, cljs.core.dissoc.call(null, G__76031, "\ufdd0'p1", "\ufdd0'p2"))
 };
 sketchpad.shapes.Line;
+goog.provide("clojure.set");
+goog.require("cljs.core");
+clojure.set.bubble_max_key = function bubble_max_key(k, coll) {
+  var max__6573 = cljs.core.apply.call(null, cljs.core.max_key, k, coll);
+  return cljs.core.cons.call(null, max__6573, cljs.core.remove.call(null, function(p1__6571_SHARP_) {
+    return max__6573 === p1__6571_SHARP_
+  }, coll))
+};
+clojure.set.union = function() {
+  var union = null;
+  var union__0 = function() {
+    return cljs.core.PersistentHashSet.EMPTY
+  };
+  var union__1 = function(s1) {
+    return s1
+  };
+  var union__2 = function(s1, s2) {
+    if(cljs.core.count.call(null, s1) < cljs.core.count.call(null, s2)) {
+      return cljs.core.reduce.call(null, cljs.core.conj, s2, s1)
+    }else {
+      return cljs.core.reduce.call(null, cljs.core.conj, s1, s2)
+    }
+  };
+  var union__3 = function() {
+    var G__6577__delegate = function(s1, s2, sets) {
+      var bubbled_sets__6576 = clojure.set.bubble_max_key.call(null, cljs.core.count, cljs.core.conj.call(null, sets, s2, s1));
+      return cljs.core.reduce.call(null, cljs.core.into, cljs.core.first.call(null, bubbled_sets__6576), cljs.core.rest.call(null, bubbled_sets__6576))
+    };
+    var G__6577 = function(s1, s2, var_args) {
+      var sets = null;
+      if(goog.isDef(var_args)) {
+        sets = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      }
+      return G__6577__delegate.call(this, s1, s2, sets)
+    };
+    G__6577.cljs$lang$maxFixedArity = 2;
+    G__6577.cljs$lang$applyTo = function(arglist__6578) {
+      var s1 = cljs.core.first(arglist__6578);
+      var s2 = cljs.core.first(cljs.core.next(arglist__6578));
+      var sets = cljs.core.rest(cljs.core.next(arglist__6578));
+      return G__6577__delegate(s1, s2, sets)
+    };
+    G__6577.cljs$lang$arity$variadic = G__6577__delegate;
+    return G__6577
+  }();
+  union = function(s1, s2, var_args) {
+    var sets = var_args;
+    switch(arguments.length) {
+      case 0:
+        return union__0.call(this);
+      case 1:
+        return union__1.call(this, s1);
+      case 2:
+        return union__2.call(this, s1, s2);
+      default:
+        return union__3.cljs$lang$arity$variadic(s1, s2, cljs.core.array_seq(arguments, 2))
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  union.cljs$lang$maxFixedArity = 2;
+  union.cljs$lang$applyTo = union__3.cljs$lang$applyTo;
+  union.cljs$lang$arity$0 = union__0;
+  union.cljs$lang$arity$1 = union__1;
+  union.cljs$lang$arity$2 = union__2;
+  union.cljs$lang$arity$variadic = union__3.cljs$lang$arity$variadic;
+  return union
+}();
+clojure.set.intersection = function() {
+  var intersection = null;
+  var intersection__1 = function(s1) {
+    return s1
+  };
+  var intersection__2 = function(s1, s2) {
+    while(true) {
+      if(cljs.core.count.call(null, s2) < cljs.core.count.call(null, s1)) {
+        var G__6581 = s2;
+        var G__6582 = s1;
+        s1 = G__6581;
+        s2 = G__6582;
+        continue
+      }else {
+        return cljs.core.reduce.call(null, function(s1, s2) {
+          return function(result, item) {
+            if(cljs.core.contains_QMARK_.call(null, s2, item)) {
+              return result
+            }else {
+              return cljs.core.disj.call(null, result, item)
+            }
+          }
+        }(s1, s2), s1, s1)
+      }
+      break
+    }
+  };
+  var intersection__3 = function() {
+    var G__6583__delegate = function(s1, s2, sets) {
+      var bubbled_sets__6580 = clojure.set.bubble_max_key.call(null, function(p1__6574_SHARP_) {
+        return-cljs.core.count.call(null, p1__6574_SHARP_)
+      }, cljs.core.conj.call(null, sets, s2, s1));
+      return cljs.core.reduce.call(null, intersection, cljs.core.first.call(null, bubbled_sets__6580), cljs.core.rest.call(null, bubbled_sets__6580))
+    };
+    var G__6583 = function(s1, s2, var_args) {
+      var sets = null;
+      if(goog.isDef(var_args)) {
+        sets = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      }
+      return G__6583__delegate.call(this, s1, s2, sets)
+    };
+    G__6583.cljs$lang$maxFixedArity = 2;
+    G__6583.cljs$lang$applyTo = function(arglist__6584) {
+      var s1 = cljs.core.first(arglist__6584);
+      var s2 = cljs.core.first(cljs.core.next(arglist__6584));
+      var sets = cljs.core.rest(cljs.core.next(arglist__6584));
+      return G__6583__delegate(s1, s2, sets)
+    };
+    G__6583.cljs$lang$arity$variadic = G__6583__delegate;
+    return G__6583
+  }();
+  intersection = function(s1, s2, var_args) {
+    var sets = var_args;
+    switch(arguments.length) {
+      case 1:
+        return intersection__1.call(this, s1);
+      case 2:
+        return intersection__2.call(this, s1, s2);
+      default:
+        return intersection__3.cljs$lang$arity$variadic(s1, s2, cljs.core.array_seq(arguments, 2))
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  intersection.cljs$lang$maxFixedArity = 2;
+  intersection.cljs$lang$applyTo = intersection__3.cljs$lang$applyTo;
+  intersection.cljs$lang$arity$1 = intersection__1;
+  intersection.cljs$lang$arity$2 = intersection__2;
+  intersection.cljs$lang$arity$variadic = intersection__3.cljs$lang$arity$variadic;
+  return intersection
+}();
+clojure.set.difference = function() {
+  var difference = null;
+  var difference__1 = function(s1) {
+    return s1
+  };
+  var difference__2 = function(s1, s2) {
+    if(cljs.core.count.call(null, s1) < cljs.core.count.call(null, s2)) {
+      return cljs.core.reduce.call(null, function(result, item) {
+        if(cljs.core.contains_QMARK_.call(null, s2, item)) {
+          return cljs.core.disj.call(null, result, item)
+        }else {
+          return result
+        }
+      }, s1, s1)
+    }else {
+      return cljs.core.reduce.call(null, cljs.core.disj, s1, s2)
+    }
+  };
+  var difference__3 = function() {
+    var G__6585__delegate = function(s1, s2, sets) {
+      return cljs.core.reduce.call(null, difference, s1, cljs.core.conj.call(null, sets, s2))
+    };
+    var G__6585 = function(s1, s2, var_args) {
+      var sets = null;
+      if(goog.isDef(var_args)) {
+        sets = cljs.core.array_seq(Array.prototype.slice.call(arguments, 2), 0)
+      }
+      return G__6585__delegate.call(this, s1, s2, sets)
+    };
+    G__6585.cljs$lang$maxFixedArity = 2;
+    G__6585.cljs$lang$applyTo = function(arglist__6586) {
+      var s1 = cljs.core.first(arglist__6586);
+      var s2 = cljs.core.first(cljs.core.next(arglist__6586));
+      var sets = cljs.core.rest(cljs.core.next(arglist__6586));
+      return G__6585__delegate(s1, s2, sets)
+    };
+    G__6585.cljs$lang$arity$variadic = G__6585__delegate;
+    return G__6585
+  }();
+  difference = function(s1, s2, var_args) {
+    var sets = var_args;
+    switch(arguments.length) {
+      case 1:
+        return difference__1.call(this, s1);
+      case 2:
+        return difference__2.call(this, s1, s2);
+      default:
+        return difference__3.cljs$lang$arity$variadic(s1, s2, cljs.core.array_seq(arguments, 2))
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  difference.cljs$lang$maxFixedArity = 2;
+  difference.cljs$lang$applyTo = difference__3.cljs$lang$applyTo;
+  difference.cljs$lang$arity$1 = difference__1;
+  difference.cljs$lang$arity$2 = difference__2;
+  difference.cljs$lang$arity$variadic = difference__3.cljs$lang$arity$variadic;
+  return difference
+}();
+clojure.set.select = function select(pred, xset) {
+  return cljs.core.reduce.call(null, function(s, k) {
+    if(cljs.core.truth_(pred.call(null, k))) {
+      return s
+    }else {
+      return cljs.core.disj.call(null, s, k)
+    }
+  }, xset, xset)
+};
+clojure.set.project = function project(xrel, ks) {
+  return cljs.core.set.call(null, cljs.core.map.call(null, function(p1__6587_SHARP_) {
+    return cljs.core.select_keys.call(null, p1__6587_SHARP_, ks)
+  }, xrel))
+};
+clojure.set.rename_keys = function rename_keys(map, kmap) {
+  return cljs.core.reduce.call(null, function(m, p__6595) {
+    var vec__6596__6597 = p__6595;
+    var old__6598 = cljs.core.nth.call(null, vec__6596__6597, 0, null);
+    var new__6599 = cljs.core.nth.call(null, vec__6596__6597, 1, null);
+    if(function() {
+      var and__3822__auto____6600 = cljs.core.not_EQ_.call(null, old__6598, new__6599);
+      if(and__3822__auto____6600) {
+        return cljs.core.contains_QMARK_.call(null, m, old__6598)
+      }else {
+        return and__3822__auto____6600
+      }
+    }()) {
+      return cljs.core.dissoc.call(null, cljs.core.assoc.call(null, m, new__6599, cljs.core._lookup.call(null, m, old__6598, null)), old__6598)
+    }else {
+      return m
+    }
+  }, map, kmap)
+};
+clojure.set.rename = function rename(xrel, kmap) {
+  return cljs.core.set.call(null, cljs.core.map.call(null, function(p1__6588_SHARP_) {
+    return clojure.set.rename_keys.call(null, p1__6588_SHARP_, kmap)
+  }, xrel))
+};
+clojure.set.index = function index(xrel, ks) {
+  return cljs.core.reduce.call(null, function(m, x) {
+    var ik__6602 = cljs.core.select_keys.call(null, x, ks);
+    return cljs.core.assoc.call(null, m, ik__6602, cljs.core.conj.call(null, cljs.core._lookup.call(null, m, ik__6602, cljs.core.PersistentHashSet.EMPTY), x))
+  }, cljs.core.ObjMap.EMPTY, xrel)
+};
+clojure.set.map_invert = function map_invert(m) {
+  return cljs.core.reduce.call(null, function(m, p__6612) {
+    var vec__6613__6614 = p__6612;
+    var k__6615 = cljs.core.nth.call(null, vec__6613__6614, 0, null);
+    var v__6616 = cljs.core.nth.call(null, vec__6613__6614, 1, null);
+    return cljs.core.assoc.call(null, m, v__6616, k__6615)
+  }, cljs.core.ObjMap.EMPTY, m)
+};
+clojure.set.join = function() {
+  var join = null;
+  var join__2 = function(xrel, yrel) {
+    if(function() {
+      var and__3822__auto____6633 = cljs.core.seq.call(null, xrel);
+      if(and__3822__auto____6633) {
+        return cljs.core.seq.call(null, yrel)
+      }else {
+        return and__3822__auto____6633
+      }
+    }()) {
+      var ks__6635 = clojure.set.intersection.call(null, cljs.core.set.call(null, cljs.core.keys.call(null, cljs.core.first.call(null, xrel))), cljs.core.set.call(null, cljs.core.keys.call(null, cljs.core.first.call(null, yrel))));
+      var vec__6634__6636 = cljs.core.count.call(null, xrel) <= cljs.core.count.call(null, yrel) ? cljs.core.PersistentVector.fromArray([xrel, yrel], true) : cljs.core.PersistentVector.fromArray([yrel, xrel], true);
+      var r__6637 = cljs.core.nth.call(null, vec__6634__6636, 0, null);
+      var s__6638 = cljs.core.nth.call(null, vec__6634__6636, 1, null);
+      var idx__6639 = clojure.set.index.call(null, r__6637, ks__6635);
+      return cljs.core.reduce.call(null, function(ret, x) {
+        var found__6640 = idx__6639.call(null, cljs.core.select_keys.call(null, x, ks__6635));
+        if(cljs.core.truth_(found__6640)) {
+          return cljs.core.reduce.call(null, function(p1__6603_SHARP_, p2__6604_SHARP_) {
+            return cljs.core.conj.call(null, p1__6603_SHARP_, cljs.core.merge.call(null, p2__6604_SHARP_, x))
+          }, ret, found__6640)
+        }else {
+          return ret
+        }
+      }, cljs.core.PersistentHashSet.EMPTY, s__6638)
+    }else {
+      return cljs.core.PersistentHashSet.EMPTY
+    }
+  };
+  var join__3 = function(xrel, yrel, km) {
+    var vec__6641__6642 = cljs.core.count.call(null, xrel) <= cljs.core.count.call(null, yrel) ? cljs.core.PersistentVector.fromArray([xrel, yrel, clojure.set.map_invert.call(null, km)], true) : cljs.core.PersistentVector.fromArray([yrel, xrel, km], true);
+    var r__6643 = cljs.core.nth.call(null, vec__6641__6642, 0, null);
+    var s__6644 = cljs.core.nth.call(null, vec__6641__6642, 1, null);
+    var k__6645 = cljs.core.nth.call(null, vec__6641__6642, 2, null);
+    var idx__6646 = clojure.set.index.call(null, r__6643, cljs.core.vals.call(null, k__6645));
+    return cljs.core.reduce.call(null, function(ret, x) {
+      var found__6647 = idx__6646.call(null, clojure.set.rename_keys.call(null, cljs.core.select_keys.call(null, x, cljs.core.keys.call(null, k__6645)), k__6645));
+      if(cljs.core.truth_(found__6647)) {
+        return cljs.core.reduce.call(null, function(p1__6605_SHARP_, p2__6606_SHARP_) {
+          return cljs.core.conj.call(null, p1__6605_SHARP_, cljs.core.merge.call(null, p2__6606_SHARP_, x))
+        }, ret, found__6647)
+      }else {
+        return ret
+      }
+    }, cljs.core.PersistentHashSet.EMPTY, s__6644)
+  };
+  join = function(xrel, yrel, km) {
+    switch(arguments.length) {
+      case 2:
+        return join__2.call(this, xrel, yrel);
+      case 3:
+        return join__3.call(this, xrel, yrel, km)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  join.cljs$lang$arity$2 = join__2;
+  join.cljs$lang$arity$3 = join__3;
+  return join
+}();
+clojure.set.subset_QMARK_ = function subset_QMARK_(set1, set2) {
+  var and__3822__auto____6650 = cljs.core.count.call(null, set1) <= cljs.core.count.call(null, set2);
+  if(and__3822__auto____6650) {
+    return cljs.core.every_QMARK_.call(null, function(p1__6617_SHARP_) {
+      return cljs.core.contains_QMARK_.call(null, set2, p1__6617_SHARP_)
+    }, set1)
+  }else {
+    return and__3822__auto____6650
+  }
+};
+clojure.set.superset_QMARK_ = function superset_QMARK_(set1, set2) {
+  var and__3822__auto____6652 = cljs.core.count.call(null, set1) >= cljs.core.count.call(null, set2);
+  if(and__3822__auto____6652) {
+    return cljs.core.every_QMARK_.call(null, function(p1__6648_SHARP_) {
+      return cljs.core.contains_QMARK_.call(null, set1, p1__6648_SHARP_)
+    }, set2)
+  }else {
+    return and__3822__auto____6652
+  }
+};
+goog.provide("sketchpad.state_patches");
+goog.require("cljs.core");
+goog.require("clojure.set");
+goog.require("clojure.set");
+sketchpad.state_patches.patch = function patch(state, diff) {
+  if(cljs.core.truth_(diff)) {
+    return cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, function() {
+      var iter__2517__auto____186791 = function iter__186777(s__186778) {
+        return new cljs.core.LazySeq(null, false, function() {
+          var s__186778__186785 = s__186778;
+          while(true) {
+            if(cljs.core.seq.call(null, s__186778__186785)) {
+              var key__186786 = cljs.core.first.call(null, s__186778__186785);
+              return cljs.core.cons.call(null, cljs.core.PersistentVector.fromArray([key__186786, function() {
+                var val1__186787 = key__186786.call(null, state);
+                var val2__186788 = key__186786.call(null, diff);
+                if(cljs.core.truth_(function() {
+                  var and__3822__auto____186789 = val1__186787;
+                  if(cljs.core.truth_(and__3822__auto____186789)) {
+                    return val2__186788
+                  }else {
+                    return and__3822__auto____186789
+                  }
+                }())) {
+                  return cljs.core.merge.call(null, val1__186787, val2__186788)
+                }else {
+                  var or__3824__auto____186790 = val2__186788;
+                  if(cljs.core.truth_(or__3824__auto____186790)) {
+                    return or__3824__auto____186790
+                  }else {
+                    return val1__186787
+                  }
+                }
+              }()], true), iter__186777.call(null, cljs.core.rest.call(null, s__186778__186785)))
+            }else {
+              return null
+            }
+            break
+          }
+        }, null)
+      };
+      return iter__2517__auto____186791.call(null, clojure.set.union.call(null, cljs.core.set.call(null, cljs.core.keys.call(null, state)), cljs.core.set.call(null, cljs.core.keys.call(null, diff))))
+    }())
+  }else {
+    return state
+  }
+};
 goog.provide("sketchpad.core");
 goog.require("cljs.core");
+goog.require("sketchpad.state_patches");
 goog.require("sketchpad.shapes");
+goog.require("sketchpad.state_patches");
 goog.require("sketchpad.shapes");
 sketchpad.core.current_universe = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+sketchpad.core.start_x = cljs.core.atom.call(null, null);
+sketchpad.core.start_y = cljs.core.atom.call(null, null);
 sketchpad.core.inspect_universe = function inspect_universe(universe) {
   return null
 };
 sketchpad.core.drawables = function drawables(universe) {
-  return cljs.core.filter.call(null, function(p__299115) {
-    var vec__299116__299117 = p__299115;
-    var name__299118 = cljs.core.nth.call(null, vec__299116__299117, 0, null);
-    var item__299119 = cljs.core.nth.call(null, vec__299116__299117, 1, null);
-    var G__299120__299121 = item__299119;
-    if(G__299120__299121) {
+  return cljs.core.filter.call(null, function(p__183025) {
+    var vec__183026__183027 = p__183025;
+    var name__183028 = cljs.core.nth.call(null, vec__183026__183027, 0, null);
+    var item__183029 = cljs.core.nth.call(null, vec__183026__183027, 1, null);
+    var G__183030__183031 = item__183029;
+    if(G__183030__183031) {
       if(cljs.core.truth_(function() {
-        var or__3824__auto____299122 = null;
-        if(cljs.core.truth_(or__3824__auto____299122)) {
-          return or__3824__auto____299122
+        var or__3824__auto____183032 = null;
+        if(cljs.core.truth_(or__3824__auto____183032)) {
+          return or__3824__auto____183032
         }else {
-          return G__299120__299121.sketchpad$shapes$Drawable$
+          return G__183030__183031.sketchpad$shapes$Drawable$
         }
       }())) {
         return true
       }else {
-        if(!G__299120__299121.cljs$lang$protocol_mask$partition$) {
-          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__299120__299121)
+        if(!G__183030__183031.cljs$lang$protocol_mask$partition$) {
+          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__183030__183031)
         }else {
           return false
         }
       }
     }else {
-      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__299120__299121)
+      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__183030__183031)
     }
   }, universe)
 };
 sketchpad.core.selectables = function selectables(universe) {
-  return cljs.core.filter.call(null, function(p__299131) {
-    var vec__299132__299133 = p__299131;
-    var name__299134 = cljs.core.nth.call(null, vec__299132__299133, 0, null);
-    var item__299135 = cljs.core.nth.call(null, vec__299132__299133, 1, null);
-    var G__299136__299137 = item__299135;
-    if(G__299136__299137) {
+  return cljs.core.filter.call(null, function(p__183041) {
+    var vec__183042__183043 = p__183041;
+    var name__183044 = cljs.core.nth.call(null, vec__183042__183043, 0, null);
+    var item__183045 = cljs.core.nth.call(null, vec__183042__183043, 1, null);
+    var G__183046__183047 = item__183045;
+    if(G__183046__183047) {
       if(cljs.core.truth_(function() {
-        var or__3824__auto____299138 = null;
-        if(cljs.core.truth_(or__3824__auto____299138)) {
-          return or__3824__auto____299138
+        var or__3824__auto____183048 = null;
+        if(cljs.core.truth_(or__3824__auto____183048)) {
+          return or__3824__auto____183048
         }else {
-          return G__299136__299137.sketchpad$shapes$Selectable$
+          return G__183046__183047.sketchpad$shapes$Selectable$
         }
       }())) {
         return true
       }else {
-        if(!G__299136__299137.cljs$lang$protocol_mask$partition$) {
-          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__299136__299137)
+        if(!G__183046__183047.cljs$lang$protocol_mask$partition$) {
+          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__183046__183047)
         }else {
           return false
         }
       }
     }else {
-      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__299136__299137)
+      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__183046__183047)
     }
   }, universe)
 };
 sketchpad.core.draw_universe = function draw_universe(universe, ctx) {
   sketchpad.core.inspect_universe.call(null, universe);
-  ctx.clearRect(0, 0, 600, 1E3);
-  var G__299158__299159 = cljs.core.seq.call(null, sketchpad.core.drawables.call(null, universe));
-  if(G__299158__299159) {
-    var G__299161__299163 = cljs.core.first.call(null, G__299158__299159);
-    var vec__299162__299164 = G__299161__299163;
-    var name__299165 = cljs.core.nth.call(null, vec__299162__299164, 0, null);
-    var item__299166 = cljs.core.nth.call(null, vec__299162__299164, 1, null);
-    var G__299158__299167 = G__299158__299159;
-    var G__299161__299168 = G__299161__299163;
-    var G__299158__299169 = G__299158__299167;
+  ctx.clearRect(0, 0, 800, 600);
+  var G__183068__183069 = cljs.core.seq.call(null, sketchpad.core.drawables.call(null, universe));
+  if(G__183068__183069) {
+    var G__183071__183073 = cljs.core.first.call(null, G__183068__183069);
+    var vec__183072__183074 = G__183071__183073;
+    var name__183075 = cljs.core.nth.call(null, vec__183072__183074, 0, null);
+    var item__183076 = cljs.core.nth.call(null, vec__183072__183074, 1, null);
+    var G__183068__183077 = G__183068__183069;
+    var G__183071__183078 = G__183071__183073;
+    var G__183068__183079 = G__183068__183077;
     while(true) {
-      var vec__299170__299171 = G__299161__299168;
-      var name__299172 = cljs.core.nth.call(null, vec__299170__299171, 0, null);
-      var item__299173 = cljs.core.nth.call(null, vec__299170__299171, 1, null);
-      var G__299158__299174 = G__299158__299169;
-      sketchpad.shapes.draw.call(null, item__299173, ctx, universe);
-      var temp__3974__auto____299175 = cljs.core.next.call(null, G__299158__299174);
-      if(temp__3974__auto____299175) {
-        var G__299158__299176 = temp__3974__auto____299175;
-        var G__299177 = cljs.core.first.call(null, G__299158__299176);
-        var G__299178 = G__299158__299176;
-        G__299161__299168 = G__299177;
-        G__299158__299169 = G__299178;
+      var vec__183080__183081 = G__183071__183078;
+      var name__183082 = cljs.core.nth.call(null, vec__183080__183081, 0, null);
+      var item__183083 = cljs.core.nth.call(null, vec__183080__183081, 1, null);
+      var G__183068__183084 = G__183068__183079;
+      sketchpad.shapes.draw.call(null, item__183083, ctx, universe);
+      var temp__3974__auto____183085 = cljs.core.next.call(null, G__183068__183084);
+      if(temp__3974__auto____183085) {
+        var G__183068__183086 = temp__3974__auto____183085;
+        var G__183087 = cljs.core.first.call(null, G__183068__183086);
+        var G__183088 = G__183068__183086;
+        G__183071__183078 = G__183087;
+        G__183068__183079 = G__183088;
         continue
       }else {
         return null
@@ -20669,46 +21106,64 @@ sketchpad.core.draw_universe = function draw_universe(universe, ctx) {
   }
 };
 sketchpad.core.closest = function closest(u, cx, cy) {
-  var selectable__299194 = sketchpad.core.selectables.call(null, u);
-  var distances__299200 = cljs.core.into.call(null, cljs.core.ObjMap.EMPTY, cljs.core.map.call(null, function(p__299195) {
-    var vec__299196__299197 = p__299195;
-    var name__299198 = cljs.core.nth.call(null, vec__299196__299197, 0, null);
-    var item__299199 = cljs.core.nth.call(null, vec__299196__299197, 1, null);
-    return cljs.core.PersistentVector.fromArray([name__299198, sketchpad.shapes.cursor_distance.call(null, item__299199, cx, cy, u)], true)
-  }, selectable__299194));
-  var vec__299192__299201 = cljs.core.into.call(null, cljs.core.sorted_map.call(null), cljs.core.zipmap.call(null, cljs.core.vals.call(null, distances__299200), cljs.core.keys.call(null, distances__299200)));
-  var vec__299193__299202 = cljs.core.nth.call(null, vec__299192__299201, 0, null);
-  var distance__299203 = cljs.core.nth.call(null, vec__299193__299202, 0, null);
-  var closest__299204 = cljs.core.nth.call(null, vec__299193__299202, 1, null);
-  return closest__299204
+  var selectable__183101 = sketchpad.core.selectables.call(null, u);
+  var distances__183107 = cljs.core.map.call(null, function(p__183102) {
+    var vec__183103__183104 = p__183102;
+    var name__183105 = cljs.core.nth.call(null, vec__183103__183104, 0, null);
+    var item__183106 = cljs.core.nth.call(null, vec__183103__183104, 1, null);
+    return cljs.core.PersistentVector.fromArray([name__183105, sketchpad.shapes.cursor_distance.call(null, item__183106, cx, cy, u)], true)
+  }, selectable__183101);
+  var vec__183100__183108 = cljs.core.apply.call(null, cljs.core.min_key, cljs.core.second, distances__183107);
+  var item__183109 = cljs.core.nth.call(null, vec__183100__183108, 0, null);
+  var distance__183110 = cljs.core.nth.call(null, vec__183100__183108, 1, null);
+  if(distance__183110 < 10) {
+    return item__183109
+  }else {
+    return null
+  }
+};
+sketchpad.core.event_location = function event_location(e) {
+  return cljs.core.PersistentVector.fromArray([e.layerX, e.layerY], true)
 };
 sketchpad.core.highlight_closest = function highlight_closest(e) {
-  var u__299216 = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var not_selected__299222 = cljs.core.filter.call(null, function(p__299217) {
-    var vec__299218__299219 = p__299217;
-    var name__299220 = cljs.core.nth.call(null, vec__299218__299219, 0, null);
-    var item__299221 = cljs.core.nth.call(null, vec__299218__299219, 1, null);
-    return!cljs.core._EQ_.call(null, name__299220, (new cljs.core.Keyword("\ufdd0'selected")).call(null, u__299216))
-  }, u__299216);
-  var cx__299223 = e.layerX;
-  var cy__299224 = e.layerY;
-  var closest__299225 = sketchpad.core.closest.call(null, u__299216, cx__299223, cy__299224);
-  return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'highlighted", closest__299225)
+  var u__183119 = cljs.core.deref.call(null, sketchpad.core.current_universe);
+  var vec__183118__183120 = sketchpad.core.event_location.call(null, e);
+  var cx__183121 = cljs.core.nth.call(null, vec__183118__183120, 0, null);
+  var cy__183122 = cljs.core.nth.call(null, vec__183118__183120, 1, null);
+  var item__183123 = sketchpad.core.closest.call(null, u__183119, cx__183121, cy__183122);
+  return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'highlighted", item__183123)
 };
 sketchpad.core.move_selected = function move_selected(e) {
-  var u__299230 = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var selected__299231 = (new cljs.core.Keyword("\ufdd0'selected")).call(null, u__299230);
-  if(cljs.core.truth_(selected__299231)) {
-    var cx__299232 = e.layerX;
-    var cy__299233 = e.layerY;
-    return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.update_in, cljs.core.PersistentVector.fromArray([selected__299231], true), function(p1__299205_SHARP_) {
-      return cljs.core.merge.call(null, p1__299205_SHARP_, cljs.core.ObjMap.fromObject(["\ufdd0'x", "\ufdd0'y"], {"\ufdd0'x":cx__299232, "\ufdd0'y":cy__299233}))
+  var u__183138 = cljs.core.deref.call(null, sketchpad.core.current_universe);
+  var selected__183139 = (new cljs.core.Keyword("\ufdd0'selected")).call(null, u__183138);
+  if(cljs.core.truth_(selected__183139)) {
+    var vec__183140__183142 = cljs.core.PersistentVector.fromArray([cljs.core.deref.call(null, sketchpad.core.start_x), cljs.core.deref.call(null, sketchpad.core.start_y)], true);
+    var x1__183143 = cljs.core.nth.call(null, vec__183140__183142, 0, null);
+    var y1__183144 = cljs.core.nth.call(null, vec__183140__183142, 1, null);
+    var vec__183141__183145 = sketchpad.core.event_location.call(null, e);
+    var x2__183146 = cljs.core.nth.call(null, vec__183141__183145, 0, null);
+    var y2__183147 = cljs.core.nth.call(null, vec__183141__183145, 1, null);
+    var dx__183148 = x2__183146 - x1__183143;
+    var dy__183149 = y1__183144 - y1__183144;
+    var item__183150 = selected__183139.call(null, u__183138);
+    var new_u__183151 = sketchpad.state_patches.patch.call(null, u__183138, sketchpad.shapes.move_BANG_.call(null, item__183150, selected__183139, dx__183148, dy__183149, u__183138));
+    console.log("moving", item__183150);
+    console.log("leads to", new_u__183151.call(null, selected__183139));
+    cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x2__183146));
+    cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y2__183147));
+    return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(p1__183111_SHARP_) {
+      return sketchpad.state_patches.patch.call(null, p1__183111_SHARP_, sketchpad.shapes.move_BANG_.call(null, selected__183139.call(null, u__183138), selected__183139, x2__183146 - x1__183143, y2__183147 - y1__183144, p1__183111_SHARP_))
     })
   }else {
     return null
   }
 };
 sketchpad.core.select_closest = function select_closest(e) {
+  var vec__183156__183157 = sketchpad.core.event_location.call(null, e);
+  var x__183158 = cljs.core.nth.call(null, vec__183156__183157, 0, null);
+  var y__183159 = cljs.core.nth.call(null, vec__183156__183157, 1, null);
+  cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x__183158));
+  cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y__183159));
   return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(u) {
     return cljs.core.assoc.call(null, u, "\ufdd0'selected", (new cljs.core.Keyword("\ufdd0'highlighted")).call(null, u))
   })
@@ -20717,16 +21172,16 @@ sketchpad.core.deselect_selected = function deselect_selected(e) {
   return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'selected", null)
 };
 sketchpad.core.main = function main() {
-  var canvas__299236 = document.getElementById("canvas");
-  var ctx__299237 = canvas__299236.getContext("2d");
+  var canvas__183162 = document.getElementById("canvas");
+  var ctx__183163 = canvas__183162.getContext("2d");
   cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.conj, cljs.core.ObjMap.fromObject(["\ufdd0'p1", "\ufdd0'p3", "\ufdd0'p2", "\ufdd0'l2", "\ufdd0'l3", "\ufdd0'p4", "\ufdd0'l1", "\ufdd0'p5", "\ufdd0'l5", "\ufdd0'l4"], {"\ufdd0'p1":new sketchpad.shapes.Point(50, 20), "\ufdd0'p3":new sketchpad.shapes.Point(90, 20), "\ufdd0'p2":new sketchpad.shapes.Point(30, 30), "\ufdd0'l2":new sketchpad.shapes.Line("\ufdd0'p2", "\ufdd0'p3"), "\ufdd0'l3":new sketchpad.shapes.Line("\ufdd0'p1", 
   "\ufdd0'p4"), "\ufdd0'p4":new sketchpad.shapes.Point(100, 10), "\ufdd0'l1":new sketchpad.shapes.Line("\ufdd0'p1", "\ufdd0'p2"), "\ufdd0'p5":new sketchpad.shapes.Point(10, 100), "\ufdd0'l5":new sketchpad.shapes.Line("\ufdd0'p3", "\ufdd0'p5"), "\ufdd0'l4":new sketchpad.shapes.Line("\ufdd0'p1", "\ufdd0'p5")}));
   setInterval(function() {
-    return sketchpad.core.draw_universe.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), ctx__299237)
+    return sketchpad.core.draw_universe.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), ctx__183163)
   }, 16);
-  canvas__299236.addEventListener("mousemove", sketchpad.core.highlight_closest);
-  canvas__299236.addEventListener("mousemove", sketchpad.core.move_selected);
-  canvas__299236.addEventListener("mousedown", sketchpad.core.select_closest);
-  return canvas__299236.addEventListener("mouseup", sketchpad.core.deselect_selected)
+  canvas__183162.addEventListener("mousemove", sketchpad.core.highlight_closest);
+  canvas__183162.addEventListener("mousemove", sketchpad.core.move_selected);
+  canvas__183162.addEventListener("mousedown", sketchpad.core.select_closest);
+  return canvas__183162.addEventListener("mouseup", sketchpad.core.deselect_selected)
 };
 goog.exportSymbol("sketchpad.core.main", sketchpad.core.main);

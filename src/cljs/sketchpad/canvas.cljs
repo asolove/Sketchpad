@@ -1,8 +1,8 @@
 (ns sketchpad.canvas)
 
-(defn drawLine [context {:keys [x1 y1 x2 y2]}]
+(defn drawLine [context {:keys [x1 y1 x2 y2 w]}]
   (.beginPath context)
-  (set! (.-lineWidth context) 2)
+  (set! (.-lineWidth context) (or w 1))
   (set! (.-strokeStyle context) "#999")
   (.moveTo context x1 y1)
   (.lineTo context x2 y2)
