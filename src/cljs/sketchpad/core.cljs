@@ -7,9 +7,6 @@
 (def start-x (atom nil))
 (def start-y (atom nil))
 
-(defn inspect-universe [universe]
-  (comment (js/console.log universe)))
-
 (defn drawables [universe]
   (filter (fn [[name item]] (satisfies? Drawable item)) universe))
 
@@ -21,7 +18,6 @@
              (satisfies? Selectable item))) universe))
 
 (defn draw-universe [universe ctx]
-  (inspect-universe universe)
   (.clearRect ctx 0 0 800 600)
   (doseq [[name item] (drawables universe)]
     (draw item ctx universe)))
@@ -51,8 +47,6 @@
             dy (- y1 y1)
             item (selected u)
             new-u (patch u (move! item selected dx dy u))]
-        (js/console.log "moving" item)
-        (js/console.log "leads to" (new-u selected))
         (swap! start-x (constantly x2))
         (swap! start-y (constantly y2))
         (swap! current-universe #(patch % (move! (selected u) selected (- x2 x1) (- y2 y1) %)))))))

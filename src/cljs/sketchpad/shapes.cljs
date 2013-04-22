@@ -49,8 +49,7 @@
           b (- x2 x1)
           c (- (* x1 y2)
                (* x2 y1))
-          d (/ (Math.abs (+ (* a cx) (* b cy) c)) (Math.sqrt (+ (Math.pow a 2) (Math.pow b 2))))
-          ix cx + ]
+          d (/ (Math.abs (+ (* a cx) (* b cy) c)) (Math.sqrt (+ (Math.pow a 2) (Math.pow b 2))))]
       (+ d 5)))
 
   Moveable
@@ -74,7 +73,6 @@
           {sx :x sy :y} (universe start)
           r (distance [cx cy] [sx sy])
           d (distance [cx cy] [x y])]
-      (js/console.log (Math.abs (- d r)))
       (+ 5 (Math.abs (- d r)))))
 
   Moveable
