@@ -19,7 +19,8 @@
 (defrecord Point [x y]
   Drawable
   (draw [point ctx universe]
-    (drawCircle ctx {:x x :y y
+    (drawCircle ctx {:stroke "#888" :fill "#999"
+                     :x x :y y
                      :r (if (= point (get universe (:selected universe)))
                           6
                           (if (= point (get universe (:highlighted universe)))
@@ -48,11 +49,39 @@
           b (- x2 x1)
           c (- (* x1 y2)
                (* x2 y1))
-          d (/ (Math.abs (+ (* a cx) (* b cy) c)) (Math.sqrt (+ (Math.pow a 2) (Math.pow b 2))))]
+          d (/ (Math.abs (+ (* a cx) (* b cy) c)) (Math.sqrt (+ (Math.pow a 2) (Math.pow b 2))))
+          ix cx + ]
       (+ d 5)))
 
   Moveable
   (move! [line name dx dy universe]
     (merge (move! (p1 universe) p1 dx dy universe)
            (move! (p2 universe) p2 dx dy universe))))
-         
+
+(defrecord Circle [center start end]
+  Drawable
+  (draw [circle ctx universe]
+    (let [{cx :x cy :y} (universe center)
+          {sx :x sy :y} (universe start)
+          r (distance [cx cy] [sx sy])
+          selected (= circle (universe (universe :highlighted)))]
+      (drawCircle ctx {:fill "transparent" :stroke "#999"
+                       :strokeWidth (if selected 3 1)
+                       :x cx :y cy :r r})))
+  Selectable
+  (cursor-distance [circle x y universe]
+    (let [{cx :x cy :y} (universe center)
+          {sx :x sy :y} (universe start)
+          r (distance [cx cy] [sx sy])
+          d (distance [cx cy] [x y])]
+      (js/console.log (Math.abs (- d r)))
+      (+ 5 (Math.abs (- d r)))))
+
+  Moveable
+  (move! [circle name dx dy universe]
+    (into {} (map (fn [name]
+                    (let [{x :x y :y} (universe name)]
+                      [name {:x (+ x dx) :y (+ y dy)}]))
+                  [center start end]))))
+                                  
+    

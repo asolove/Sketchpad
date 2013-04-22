@@ -1,5 +1,5 @@
 (ns sketchpad.core
-  (:use [sketchpad.shapes :only [draw cursor-distance Selectable Drawable Point Line move!]]
+  (:use [sketchpad.shapes :only [draw cursor-distance Selectable Drawable Point Line Circle move!]]
                                         ; [webfui.state-patches :only [patch]]))
         [sketchpad.state-patches :only [patch]]))
 
@@ -14,7 +14,11 @@
   (filter (fn [[name item]] (satisfies? Drawable item)) universe))
 
 (defn selectables [universe]
-  (filter (fn [[name item]] (satisfies? Selectable item)) universe))
+  ; TODO: also disallow item attached to currently-selected item?
+  (filter (fn [[name item]]
+            (and
+             (not (= name (universe :selected)))
+             (satisfies? Selectable item))) universe))
 
 (defn draw-universe [universe ctx]
   (inspect-universe universe)
@@ -69,15 +73,16 @@
     (swap! current-universe conj
            {
             :p1 (Point. 50 20)
-            :p2 (Point. 30 30)
-            :p3 (Point. 90 20)
-            :p4 (Point. 100 10)
-            :p5 (Point. 10 100)
+            :p2 (Point. 300 300)
+            :p3 (Point. 210 210)
+            :p4 (Point. 340 210)
+            :p5 (Point. 210 340)
             :l1 (Line. :p1 :p2)
             :l2 (Line. :p2 :p3)
             :l3 (Line. :p1 :p4)
             :l4 (Line. :p1 :p5)
             :l5 (Line. :p3 :p5)
+            :c1 (Circle. :p3 :p4 :p5)
            })
 
     (js/setInterval #(draw-universe @current-universe ctx) 16)
