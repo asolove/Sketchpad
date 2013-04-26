@@ -58,7 +58,26 @@
   (swap! current-universe (fn [u] (assoc u :selected (:highlighted u)))))
 
 (defn deselect-selected [e]
-  (swap! current-universe assoc :selected nil))
+  (let [u @current-universe
+        selected (u :selected)
+        highlighted (u :highlighted)
+        both-points (and (instance? Point (u selected)) (instance? Point (u highlighted)))]
+    (when both-points
+      (js/console.log "merging" selected "and" highlighted)
+                                        ; nested updates to state suck
+      (swap! current-universe assoc :highlighted nil)
+      (swap! current-universe dissoc highlighted)
+      (doseq [[name item] u
+              [key val] item]
+        (when (= val highlighted)
+          (js/console.log "setting" name key "from" (get-in @current-universe [name key]) "to" selected)
+          (swap! current-universe assoc-in [name key] selected)
+          (when (< 1 (count (filter (fn [[key val]] (= val selected)) item)))
+            (swap! current-universe dissoc name))
+          (js/console.log (get-in @current-universe [name key]))))))
+
+  (swap! current-universe assoc :selected nil)
+  (js/console.log @current-universe))
   
 
 (defn ^:export main []
