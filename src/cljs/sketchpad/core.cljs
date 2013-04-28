@@ -1,7 +1,8 @@
 (ns sketchpad.core
+  (:refer-clojure :exclude [+ - = *])
   (:use [sketchpad.shapes :only [draw cursor-distance Selectable Drawable Point Line Circle move!]]
-                                        ; [webfui.state-patches :only [patch]]))
-        [sketchpad.state-patches :only [patch]]))
+        [sketchpad.state-patches :only [patch]]
+        [cassowary.core :only [+ - = * cvar value constrain! unconstrain! stay! simplex-solver]]))
 
 (def current-universe (atom {}))
 (def start-x (atom nil))
@@ -78,7 +79,27 @@
 
   (swap! current-universe assoc :selected nil)
   (js/console.log @current-universe))
-  
+
+
+(def ^:dynamic applying-constraints false)
+
+(defn apply-constraints [_ _ _ u]
+  (when (not applying-constraints)
+    (binding [applying-constraints true]
+      (let [p1 (u :p1)
+            solver (simplex-solver)
+            p1x (cvar (:x p1))
+            p1y (cvar (:y p1))]
+        (stay! solver p1x)
+        (stay! solver p1y)
+        (constrain! solver (= p1y (* p1x .4)))
+        (js/console.log "applying constraints" (value p1x) (value p1y))
+        (swap! current-universe assoc-in [:p1 :x] (value p1x))
+        (swap! current-universe assoc-in [:p1 :y] (value p1y))
+        (js/console.log "applied constraints" (get-in @current-universe [:p1 :x]))))))
+
+(add-watch current-universe :constrain apply-constraints)
+
 
 (defn ^:export main []
   (let [canvas (js/document.getElementById "canvas")

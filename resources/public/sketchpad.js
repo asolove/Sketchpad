@@ -21200,100 +21200,2241 @@ sketchpad.state_patches.patch = function patch(state, diff) {
     return state
   }
 };
+goog.provide("Cl");
+goog.scope(function() {
+  Cl = function() {
+  };
+  Cl.version = "0.0.1";
+  Cl.approx = function(a, b) {
+    var epsilon;
+    if(a.value != null) {
+      a = a.value()
+    }
+    if(b.value != null) {
+      b = b.value()
+    }
+    epsilon = 1.0E-8;
+    if(a === 0) {
+      return Math.abs(b) < epsilon
+    }else {
+      if(b === 0) {
+        return Math.abs(a) < epsilon
+      }else {
+        return Math.abs(a - b) < Math.abs(a) * epsilon
+      }
+    }
+  };
+  goog.exportSymbol("Cl", Cl)
+});
+goog.provide("Cl.AbstractVariable");
+goog.provide("Cl.DummyVariable");
+goog.provide("Cl.ObjectiveVariable");
+goog.provide("Cl.SlackVariable");
+goog.provide("Cl.Variable");
+goog.require("Cl");
+goog.scope(function() {
+  Cl.AbstractVariable = function(a1, a2) {
+    var prefix, varnumber;
+    this.hash_code = Cl.AbstractVariable.iVariableNumber++;
+    if(typeof a1 === "string" || !(a1 != null)) {
+      this._name = a1 || "v" + this.hash_code
+    }else {
+      varnumber = a1;
+      prefix = a2;
+      this._name = prefix + varnumber
+    }
+  };
+  Cl.AbstractVariable.prototype.hashCode = function() {
+    return this.hash_code
+  };
+  Cl.AbstractVariable.prototype.name = function() {
+    return this._name
+  };
+  Cl.AbstractVariable.prototype.setName = function(_name) {
+    this._name = _name
+  };
+  Cl.AbstractVariable.prototype.isDummy = function() {
+    return false
+  };
+  Cl.AbstractVariable.prototype.isExternal = function() {
+    throw"abstract isExternal";
+  };
+  Cl.AbstractVariable.prototype.isPivotable = function() {
+    throw"abstract isPivotable";
+  };
+  Cl.AbstractVariable.prototype.isRestricted = function() {
+    throw"abstract isRestricted";
+  };
+  Cl.AbstractVariable.prototype.toString = function() {
+    return"ABSTRACT[" + this._name + "]"
+  };
+  Cl.AbstractVariable.iVariableNumber = 1;
+  Cl.Variable = function(name_or_val, value) {
+    this._name = "";
+    this._value = 0;
+    if(typeof name_or_val === "string") {
+      Cl.AbstractVariable.call(this, name_or_val);
+      this._value = value || 0
+    }else {
+      if(typeof name_or_val === "number") {
+        Cl.AbstractVariable.call(this);
+        this._value = name_or_val
+      }else {
+        Cl.AbstractVariable.call(this)
+      }
+    }
+    if(Cl.Variable._ourVarMap) {
+      Cl.Variable._ourVarMap[this._name] = this
+    }
+  };
+  goog.inherits(Cl.Variable, Cl.AbstractVariable);
+  Cl.Variable.prototype.isDummy = function() {
+    return false
+  };
+  Cl.Variable.prototype.isExternal = function() {
+    return true
+  };
+  Cl.Variable.prototype.isPivotable = function() {
+    return false
+  };
+  Cl.Variable.prototype.isRestricted = function() {
+    return false
+  };
+  Cl.Variable.prototype.toString = function() {
+    return"[" + this.name() + ":" + this._value + "]"
+  };
+  Cl.Variable.prototype.value = function() {
+    return this._value
+  };
+  Cl.Variable.prototype.set_value = function(_value) {
+    this._value = _value
+  };
+  Cl.Variable.prototype.change_value = function(_value) {
+    this._value = _value
+  };
+  Cl.Variable.prototype.setAttachedObject = function(_attachedObject) {
+    this._attachedObject = _attachedObject
+  };
+  Cl.Variable.prototype.getAttachedObject = function() {
+    return this._attachedObject
+  };
+  Cl.DummyVariable = function(name_or_val, prefix) {
+    Cl.AbstractVariable.call(this, name_or_val, prefix)
+  };
+  goog.inherits(Cl.DummyVariable, Cl.AbstractVariable);
+  Cl.DummyVariable.prototype.isDummy = function() {
+    return true
+  };
+  Cl.DummyVariable.prototype.isExternal = function() {
+    return false
+  };
+  Cl.DummyVariable.prototype.isPivotable = function() {
+    return false
+  };
+  Cl.DummyVariable.prototype.isRestricted = function() {
+    return true
+  };
+  Cl.DummyVariable.prototype.toString = function() {
+    return"[" + this.name() + ":dummy]"
+  };
+  Cl.ObjectiveVariable = function(name_or_val, prefix) {
+    Cl.AbstractVariable.call(this, name_or_val, prefix)
+  };
+  goog.inherits(Cl.ObjectiveVariable, Cl.AbstractVariable);
+  Cl.ObjectiveVariable.prototype.isExternal = function() {
+    return false
+  };
+  Cl.ObjectiveVariable.prototype.isPivotable = function() {
+    return false
+  };
+  Cl.ObjectiveVariable.prototype.isRestricted = function() {
+    return false
+  };
+  Cl.ObjectiveVariable.prototype.toString = function() {
+    return"[" + this.name() + ":obj]"
+  };
+  Cl.SlackVariable = function(name_or_val, prefix) {
+    Cl.AbstractVariable.call(this, name_or_val, prefix)
+  };
+  goog.inherits(Cl.SlackVariable, Cl.AbstractVariable);
+  Cl.SlackVariable.prototype.isExternal = function() {
+    return false
+  };
+  Cl.SlackVariable.prototype.isPivotable = function() {
+    return true
+  };
+  Cl.SlackVariable.prototype.isRestricted = function() {
+    return true
+  };
+  Cl.SlackVariable.prototype.toString = function() {
+    return"[" + this.name() + ":slack]"
+  }
+});
+goog.provide("Cl.HashTable");
+goog.require("Cl");
+goog.scope(function() {
+  Cl.HashTable = function() {
+    this._size = 0;
+    this._store = {};
+    this._keyStrMap = {};
+    this._keyList = []
+  };
+  Cl.HashTable.prototype.put = function(key, value) {
+    var hash, old;
+    hash = this._keyCode(key);
+    old = this._store.hasOwnProperty(hash) ? this._store[hash] : this._size++;
+    this._store[hash] = value;
+    this._keyStrMap[hash] = key;
+    if(this._keyList.indexOf(hash) === -1) {
+      this._keyList.push(hash)
+    }
+    return old
+  };
+  Cl.HashTable.prototype.get = function(key) {
+    if(!(this._size > 0)) {
+      return null
+    }
+    key = this._keyCode(key);
+    if(this._store.hasOwnProperty(key)) {
+      return this._store[key]
+    }
+    return null
+  };
+  Cl.HashTable.prototype.clear = function() {
+    this._size = 0;
+    this._store = {};
+    this._keyStrMap = {};
+    return this._keyList = []
+  };
+  Cl.HashTable.prototype.remove = function(key) {
+    var old;
+    key = this._keyCode(key);
+    if(!this._store.hasOwnProperty(key)) {
+      return null
+    }
+    old = this._store[key];
+    delete this._store[key];
+    if(this._size > 0) {
+      this._size--
+    }
+    return old
+  };
+  Cl.HashTable.prototype.size = function() {
+    return this._size
+  };
+  Cl.HashTable.prototype.keys = function() {
+    return this._keyList.map(goog.bind(function(x) {
+      return this._keyStrMap[x]
+    }, this))
+  };
+  Cl.HashTable.prototype.each = function(callback, scope) {
+    if(!this._size) {
+      return
+    }
+    return this._keyList.forEach(function(k) {
+      if(this._store.hasOwnProperty(k)) {
+        return callback.call(scope || null, this._keyStrMap[k], this._store[k])
+      }
+    }, this)
+  };
+  Cl.HashTable.prototype._escapingEachCallback = function(callback, scope, key, value) {
+    var hash;
+    hash = this._keyCode(key);
+    if(this._store.hasOwnProperty(hash)) {
+      return callback.call(scope || null, hash, value)
+    }
+  };
+  Cl.HashTable.prototype.escapingEach = function(callback, scope) {
+    var context, kl, x, _results;
+    if(!(this._size > 0)) {
+      return
+    }
+    context = {};
+    kl = this._keyList.slice();
+    x = 0;
+    _results = [];
+    while(x < kl.length) {
+      goog.bind(function(v) {
+        if(this._store.hasOwnProperty(v)) {
+          return context = callback.call(scope || null, this._keyStrMap[v], this._store[v])
+        }
+      }, this)(kl[x]);
+      if(context) {
+        if(context.retval !== undefined) {
+          return context
+        }
+        if(context.brk) {
+          break
+        }
+      }
+      _results.push(x++)
+    }
+    return _results
+  };
+  Cl.HashTable.prototype.clone = function() {
+    var n;
+    n = new Cl.HashTable;
+    if(this._size > 0) {
+      n._size = this._size;
+      n._keyList = this._keyList.slice();
+      this._copyOwn(this._store, n._store);
+      this._copyOwn(this._keyStrMap, n._keyStrMap)
+    }
+    return n
+  };
+  Cl.HashTable.prototype._keyCode = function(key) {
+    if(typeof key.hashCode === "function") {
+      return key.hashCode()
+    }else {
+      return key.toString()
+    }
+  };
+  Cl.HashTable.prototype._copyOwn = function(src, dest) {
+    var x, _results;
+    _results = [];
+    for(x in src) {
+      _results.push(src.hasOwnProperty(x) ? dest[x] = src[x] : void 0)
+    }
+    return _results
+  }
+});
+goog.provide("Cl.LinearExpression");
+goog.require("Cl");
+goog.require("Cl.AbstractVariable");
+goog.require("Cl.HashTable");
+goog.scope(function() {
+  var AbstractVariable = Cl.AbstractVariable;
+  var HashTable = Cl.HashTable;
+  Cl.LinearExpression = function(clv, value, constant) {
+    this._constant = constant || 0;
+    this._terms = new HashTable;
+    if(clv instanceof AbstractVariable) {
+      this._terms.put(clv, value || 1)
+    }else {
+      if(typeof clv === "number") {
+        this._constant = clv
+      }
+    }
+  };
+  Cl.LinearExpression.prototype.initializeFromHash = function(_constant, terms) {
+    this._constant = _constant;
+    this._terms = terms.clone();
+    return this
+  };
+  Cl.LinearExpression.prototype.clone = function() {
+    return(new Cl.LinearExpression).initializeFromHash(this._constant, this._terms)
+  };
+  Cl.LinearExpression.prototype.multiplyMe = function(x) {
+    this._constant *= x;
+    this._terms.each(goog.bind(function(clv, coeff) {
+      return this._terms.put(clv, coeff * x)
+    }, this));
+    return this
+  };
+  Cl.LinearExpression.prototype.times = function(x) {
+    var expr;
+    if(typeof x === "number") {
+      return this.clone().multiplyMe(x)
+    }else {
+      expr = x;
+      if(this.isConstant()) {
+        return expr.times(this._constant)
+      }else {
+        if(expr.isConstant()) {
+          return this.times(expr._constant)
+        }else {
+          throw new Cl.errors.NonlinearExpression;
+        }
+      }
+    }
+  };
+  Cl.LinearExpression.prototype.plus = function(expr) {
+    if(expr instanceof Cl.LinearExpression) {
+      return this.clone().addExpression(expr, 1)
+    }else {
+      if(expr instanceof Cl.Variable) {
+        return this.clone().addVariable(expr, 1)
+      }
+    }
+  };
+  Cl.LinearExpression.prototype.minus = function(expr) {
+    if(expr instanceof Cl.LinearExpression) {
+      return this.clone().addExpression(expr, -1)
+    }else {
+      if(expr instanceof Cl.Variable) {
+        return this.clone().addVariable(expr, -1)
+      }
+    }
+  };
+  Cl.LinearExpression.prototype.divide = function(x) {
+    if(typeof x === "number") {
+      if(Cl.approx(x, 0)) {
+        throw new Cl.errors.NonlinearExpression;
+      }
+      return this.times(1 / x)
+    }else {
+      if(x instanceof Cl.LinearExpression) {
+        if(!x.isConstant()) {
+          throw new Cl.errors.NonlinearExpression;
+        }
+        return this.times(1 / x._constant)
+      }
+    }
+  };
+  Cl.LinearExpression.prototype.divFrom = function(expr) {
+    if(!this.isConstant() || Cl.approx(this._constant, 0)) {
+      throw new Cl.errors.NonlinearExpression;
+    }
+    return expr.divide(this._constant)
+  };
+  Cl.LinearExpression.prototype.subtractFrom = function(expr) {
+    return expr.minus(this)
+  };
+  Cl.LinearExpression.prototype.addExpression = function(expr, n, subject, solver) {
+    if(expr instanceof AbstractVariable) {
+      expr = new Cl.LinearExpression(expr)
+    }
+    this.incrementConstant(n * expr.constant());
+    n = n || 1;
+    expr.terms().each(goog.bind(function(clv, coeff) {
+      return this.addVariable(clv, coeff * n, subject, solver)
+    }, this));
+    return this
+  };
+  Cl.LinearExpression.prototype.addVariable = function(v, c, subject, solver) {
+    var coeff, new_coefficient;
+    c = c || 1;
+    coeff = this._terms.get(v);
+    if(coeff) {
+      new_coefficient = coeff + c;
+      if(Cl.approx(new_coefficient, 0)) {
+        if(solver) {
+          solver.noteRemovedVariable(v, subject)
+        }
+        this._terms.remove(v)
+      }else {
+        this._terms.put(v, new_coefficient)
+      }
+    }else {
+      if(!Cl.approx(c, 0)) {
+        this._terms.put(v, c);
+        if(solver) {
+          solver.noteAddedVariable(v, subject)
+        }
+      }
+    }
+    return this
+  };
+  Cl.LinearExpression.prototype.setVariable = function(v, c) {
+    this._terms.put(v, c);
+    return this
+  };
+  Cl.LinearExpression.prototype.anyPivotableVariable = function() {
+    if(this.isConstant()) {
+      throw new Cl.errors.InternalError("anyPivotableVariable called on a constant");
+    }
+    this._terms.each(function(clv, c) {
+      if(clv.isPivotable()) {
+        return clv
+      }
+    });
+    return null
+  };
+  Cl.LinearExpression.prototype.substituteOut = function(outvar, expr, subject, solver) {
+    var multiplier;
+    multiplier = this._terms.remove(outvar);
+    this.incrementConstant(multiplier * expr.constant());
+    return expr.terms().each(goog.bind(function(clv, coeff) {
+      var new_coeff, old_coeff;
+      old_coeff = this._terms.get(clv);
+      if(old_coeff) {
+        new_coeff = old_coeff + multiplier * coeff;
+        if(Cl.approx(new_coeff, 0)) {
+          solver.noteRemovedVariable(clv, subject);
+          return this._terms.remove(clv)
+        }else {
+          return this._terms.put(clv, new_coeff)
+        }
+      }else {
+        this._terms.put(clv, multiplier * coeff);
+        return solver.noteAddedVariable(clv, subject)
+      }
+    }, this))
+  };
+  Cl.LinearExpression.prototype.changeSubject = function(old_subject, new_subject) {
+    return this._terms.put(old_subject, this.newSubject(new_subject))
+  };
+  Cl.LinearExpression.prototype.newSubject = function(subject) {
+    var reciprocal;
+    reciprocal = 1 / this._terms.remove(subject);
+    this.multiplyMe(-reciprocal);
+    return reciprocal
+  };
+  Cl.LinearExpression.prototype.coefficientFor = function(clv) {
+    return this._terms.get(clv) || 0
+  };
+  Cl.LinearExpression.prototype.constant = function() {
+    return this._constant
+  };
+  Cl.LinearExpression.prototype.set_constant = function(_constant) {
+    this._constant = _constant
+  };
+  Cl.LinearExpression.prototype.terms = function() {
+    return this._terms
+  };
+  Cl.LinearExpression.prototype.incrementConstant = function(c) {
+    return this._constant += c
+  };
+  Cl.LinearExpression.prototype.isConstant = function() {
+    return this._terms.size() === 0
+  };
+  Cl.LinearExpression.prototype.toString = function() {
+    var bstr, needsplus;
+    bstr = "";
+    needsplus = false;
+    if(!Cl.approx(this._constant, 0) || this.isConstant()) {
+      bstr += this._constant;
+      if(this.isConstant()) {
+        return bstr
+      }else {
+        needsplus = true
+      }
+    }
+    this._terms.each(function(clv, coeff) {
+      if(needsplus) {
+        bstr += " + "
+      }
+      bstr += coeff + "*" + clv;
+      return needsplus = true
+    });
+    return bstr
+  }
+});
+goog.provide("Cl.SymbolicWeight");
+goog.require("Cl");
+goog.scope(function() {
+  Cl.SymbolicWeight = function(w1, w2, w3) {
+    this._values = new Array(w1, w2, w3)
+  };
+  Cl.SymbolicWeight.prototype.times = function(n) {
+    return new Cl.SymbolicWeight(this._values[0] * n, this._values[1] * n, this._values[2] * n)
+  };
+  Cl.SymbolicWeight.prototype.divideBy = function(n) {
+    return new Cl.SymbolicWeight(this._values[0] / n, this._values[1] / n, this._values[2] / n)
+  };
+  Cl.SymbolicWeight.prototype.add = function(c) {
+    return new Cl.SymbolicWeight(this._values[0] + c._values[0], this._values[1] + c._values[1], this._values[2] + c._values[2])
+  };
+  Cl.SymbolicWeight.prototype.subtract = function(c) {
+    return new Cl.SymbolicWeight(this._values[0] - c._values[0], this._values[1] - c._values[1], this._values[2] - c._values[2])
+  };
+  Cl.SymbolicWeight.prototype.lessThan = function(c) {
+    var i;
+    i = 0;
+    while(i < this._values.length) {
+      if(this._values[i] < c._values[i]) {
+        return true
+      }else {
+        if(this._values[i] > c._values[i]) {
+          return false
+        }
+      }
+      ++i
+    }
+    return false
+  };
+  Cl.SymbolicWeight.prototype.lessThanOrEqual = function(c) {
+    var i;
+    i = 0;
+    while(i < this._values.length) {
+      if(this._values[i] < c._values[i]) {
+        return true
+      }else {
+        if(this._values[i] > c._values[i]) {
+          return false
+        }
+      }
+      ++i
+    }
+    return true
+  };
+  Cl.SymbolicWeight.prototype.equal = function(c) {
+    var i;
+    i = 0;
+    while(i < this._values.length) {
+      if(this._values[i] !== c._values[i]) {
+        return false
+      }
+      ++i
+    }
+    return true
+  };
+  Cl.SymbolicWeight.prototype.greaterThan = function(c) {
+    return!this.lessThanOrEqual(c)
+  };
+  Cl.SymbolicWeight.prototype.greaterThanOrEqual = function(c) {
+    return!this.lessThan(c)
+  };
+  Cl.SymbolicWeight.prototype.isNegative = function() {
+    return this.lessThan(Cl.SymbolicWeight.clsZero)
+  };
+  Cl.SymbolicWeight.prototype.toDouble = function() {
+    var factor, i, multiplier, sum;
+    sum = 0;
+    factor = 1;
+    multiplier = 1E3;
+    i = this._values.length - 1;
+    while(i >= 0) {
+      sum += this._values[i] * factor;
+      factor *= multiplier;
+      --i
+    }
+    return sum
+  };
+  Cl.SymbolicWeight.prototype.toString = function() {
+    return"[" + this._values[0] + "," + this._values[1] + "," + this._values[2] + "]"
+  };
+  Cl.SymbolicWeight.prototype.cLevels = function() {
+    return 3
+  };
+  Cl.SymbolicWeight.clsZero = new Cl.SymbolicWeight(0, 0, 0)
+});
+goog.provide("Cl.Strength");
+goog.require("Cl");
+goog.require("Cl.SymbolicWeight");
+goog.scope(function() {
+  Cl.Strength = function(_name, symbolicWeight, w2, w3) {
+    this._name = _name;
+    if(symbolicWeight instanceof Cl.SymbolicWeight) {
+      this._symbolicWeight = symbolicWeight
+    }else {
+      this._symbolicWeight = new Cl.SymbolicWeight(symbolicWeight, w2, w3)
+    }
+  };
+  Cl.Strength.prototype.isRequired = function() {
+    return this === Cl.Strength.required
+  };
+  Cl.Strength.prototype.toString = function() {
+    return this._name + (!this.isRequired() ? ":" + this.symbolicWeight() : "")
+  };
+  Cl.Strength.prototype.symbolicWeight = function() {
+    return this._symbolicWeight
+  };
+  Cl.Strength.prototype.name = function() {
+    return this._name
+  };
+  Cl.Strength.prototype.set_name = function(_name) {
+    this._name = _name
+  };
+  Cl.Strength.prototype.set_symbolicWeight = function(_symbolicWeight) {
+    this._symbolicWeight = _symbolicWeight
+  };
+  Cl.Strength.required = new Cl.Strength("<Required>", 1E3, 1E3, 1E3);
+  Cl.Strength.strong = new Cl.Strength("strong", 1, 0, 0);
+  Cl.Strength.medium = new Cl.Strength("medium", 0, 1, 0);
+  Cl.Strength.weak = new Cl.Strength("weak", 0, 0, 1)
+});
+goog.provide("Cl.Constraint");
+goog.provide("Cl.EditConstraint");
+goog.provide("Cl.EditOrStayConstraint");
+goog.provide("Cl.StayConstraint");
+goog.require("Cl");
+goog.require("Cl.LinearExpression");
+goog.require("Cl.Strength");
+goog.scope(function() {
+  Cl.Constraint = function(strength, weight) {
+    this.hash_code = Cl.Constraint.iConstraintNumber++;
+    this._strength = strength || Cl.Strength.required;
+    this._weight = weight || 1;
+    this._times_added = 0
+  };
+  Cl.Constraint.prototype.hashCode = function() {
+    return this.hash_code
+  };
+  Cl.Constraint.prototype.isEditConstraint = function() {
+    return false
+  };
+  Cl.Constraint.prototype.isInequality = function() {
+    return false
+  };
+  Cl.Constraint.prototype.isRequired = function() {
+    return this._strength.isRequired()
+  };
+  Cl.Constraint.prototype.isStayConstraint = function() {
+    return false
+  };
+  Cl.Constraint.prototype.strength = function() {
+    return this._strength
+  };
+  Cl.Constraint.prototype.weight = function() {
+    return this._weight
+  };
+  Cl.Constraint.prototype.toString = function() {
+    return this._strength + " {" + this._weight + "} (" + this.expression() + ")"
+  };
+  Cl.Constraint.prototype.setAttachedObject = function(_attachedObject) {
+    this._attachedObject = _attachedObject
+  };
+  Cl.Constraint.prototype.getAttachedObject = function() {
+    return this._attachedObject
+  };
+  Cl.Constraint.prototype.changeStrength = function(strength) {
+    if(this._times_added === 0) {
+      return this.setStrength(strength)
+    }else {
+      throw new Cl.errors.TooDifficult;
+    }
+  };
+  Cl.Constraint.prototype.addedTo = function(solver) {
+    return++this._times_added
+  };
+  Cl.Constraint.prototype.removedFrom = function(solver) {
+    return--this._times_added
+  };
+  Cl.Constraint.prototype.setStrength = function(_strength) {
+    this._strength = _strength
+  };
+  Cl.Constraint.prototype.setWeight = function(_weight) {
+    this._weight = _weight
+  };
+  Cl.EditOrStayConstraint = function(clv, strength, weight) {
+    Cl.Constraint.call(this, strength, weight);
+    this._variable = clv;
+    this._expression = new Cl.LinearExpression(this._variable, -1, this._variable.value())
+  };
+  goog.inherits(Cl.EditOrStayConstraint, Cl.Constraint);
+  Cl.EditOrStayConstraint.prototype.variable = function() {
+    return this._variable
+  };
+  Cl.EditOrStayConstraint.prototype.expression = function() {
+    return this._expression
+  };
+  Cl.EditOrStayConstraint.prototype.setVariable = function(_variable) {
+    this._variable = _variable
+  };
+  Cl.EditConstraint = function() {
+  };
+  goog.inherits(Cl.EditConstraint, Cl.EditOrStayConstraint);
+  Cl.EditConstraint.prototype.isEditConstraint = function() {
+    return true
+  };
+  Cl.EditConstraint.prototype.toString = function() {
+    return"edit" + Cl.EditConstraint.superClass_.toString.call(this)
+  };
+  Cl.StayConstraint = function(clv, strength, weight) {
+    Cl.EditOrStayConstraint.call(this, clv, strength || Cl.Strength.weak, weight)
+  };
+  goog.inherits(Cl.StayConstraint, Cl.EditOrStayConstraint);
+  Cl.StayConstraint.prototype.isStayConstraint = function() {
+    return true
+  };
+  Cl.StayConstraint.prototype.toString = function() {
+    return"stay " + Cl.StayConstraint.superClass_.toString.call(this)
+  };
+  Cl.Constraint.iConstraintNumber = 1
+});
+goog.provide("Cl.HashSet");
+goog.require("Cl");
+goog.scope(function() {
+  Cl.HashSet = function() {
+    this.storage = []
+  };
+  Cl.HashSet.prototype.add = function(item) {
+    var io, s;
+    s = this.storage;
+    io = s.indexOf(item);
+    if(s.indexOf(item) === -1) {
+      return s.push(item)
+    }
+  };
+  Cl.HashSet.prototype.remove = function(item) {
+    var io;
+    io = this.storage.indexOf(item);
+    if(io === -1) {
+      return null
+    }
+    return this.storage.splice(io, 1)[0]
+  };
+  Cl.HashSet.prototype.values = function() {
+    return this.storage
+  };
+  Cl.HashSet.prototype.clear = function() {
+    return this.storage.length = 0
+  };
+  Cl.HashSet.prototype.size = function() {
+    return this.storage.length
+  };
+  Cl.HashSet.prototype.each = function(func) {
+    return this.storage.forEach(func)
+  }
+});
+goog.provide("Cl.CL");
+goog.require("Cl");
+goog.require("Cl.HashSet");
+goog.require("Cl.HashTable");
+goog.require("Cl.LinearExpression");
+goog.require("Cl.Variable");
+goog.scope(function() {
+  var HashSet = Cl.HashSet;
+  var HashTable = Cl.HashTable;
+  var LinearExpression = Cl.LinearExpression;
+  var Variable = Cl.Variable;
+  Cl.CL = function() {
+  };
+  Cl.CL.GEQ = 1;
+  Cl.CL.LEQ = 2;
+  Cl.CL.Assert = function(bool) {
+    if(!bool) {
+      throw"Nope.";
+    }
+  };
+  Cl.CL.hashToString = function(h) {
+    var answer;
+    answer = "";
+    h.each(function(k, v) {
+      answer += k + " => ";
+      return answer += v instanceof HashTable ? Cl.CL.hashToString(v) : v instanceof HashSet ? Cl.CL.setToString(v) : v + "\n"
+    });
+    return answer
+  };
+  Cl.CL.setToString = function(s) {
+    var answer, first;
+    answer = s.size() + " {";
+    first = true;
+    s.each(function(e) {
+      if(!first) {
+        answer += ", "
+      }else {
+        first = false
+      }
+      return answer += e
+    });
+    answer += "}\n";
+    return answer
+  };
+  Cl.CL.Times = function(e1, e2) {
+    if(e1 instanceof LinearExpression && e2 instanceof LinearExpression) {
+      return e1.times(e2)
+    }else {
+      if(e1 instanceof LinearExpression && e2 instanceof Variable) {
+        return e1.times(new LinearExpression(e2))
+      }else {
+        if(e1 instanceof Variable && e2 instanceof LinearExpression) {
+          return(new LinearExpression(e1)).times(e2)
+        }else {
+          if(e1 instanceof LinearExpression && typeof e2 === "number") {
+            return e1.times(new LinearExpression(e2))
+          }else {
+            if(typeof e1 === "number" && e2 instanceof LinearExpression) {
+              return(new LinearExpression(e1)).times(e2)
+            }else {
+              if(typeof e1 === "number" && e2 instanceof Variable) {
+                return new LinearExpression(e2, e1)
+              }else {
+                if(e1 instanceof Variable && typeof e2 === "number") {
+                  return new LinearExpression(e1, e2)
+                }else {
+                  if(e1 instanceof Variable && e2 instanceof LinearExpression) {
+                    return new LinearExpression(e2, n)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+  Cl.CL.Linify = function(x) {
+    if(x instanceof LinearExpression) {
+      return x
+    }else {
+      return new LinearExpression(x)
+    }
+  };
+  Cl.CL.Plus = function() {
+    if(arguments.length === 0) {
+      return new LinearExpression(0)
+    }else {
+      return[].slice.apply(arguments).map(Cl.CL.Linify).reduce(function(sum, v) {
+        return sum.plus(v)
+      })
+    }
+  };
+  Cl.CL.Minus = function() {
+    switch(arguments.length) {
+      case 0:
+        return new LinearExpression(0);
+      case 1:
+        return Cl.CL.Linify(arguments[0]).times(-1);
+      default:
+        return Cl.CL.Linify(arguments[0]).minus(Cl.CL.Plus.apply(null, [].slice.call(arguments, 1)))
+    }
+  }
+});
+goog.provide("Cl.LinearConstraint");
+goog.provide("Cl.LinearEquation");
+goog.provide("Cl.LinearInequality");
+goog.require("Cl");
+goog.require("Cl.CL");
+goog.require("Cl.Constraint");
+goog.require("Cl.Constraint");
+goog.require("Cl.Strength");
+goog.scope(function() {
+  var CL = Cl.CL;
+  Cl.LinearConstraint = function(cle, strength, weight) {
+    Cl.Constraint.call(this, strength, weight);
+    this._expression = cle
+  };
+  goog.inherits(Cl.LinearConstraint, Cl.Constraint);
+  Cl.LinearConstraint.prototype.expression = function() {
+    return this._expression
+  };
+  Cl.LinearConstraint.prototype.setExpression = function(_expression) {
+    this._expression = _expression
+  };
+  Cl.LinearInequality = function(a1, a2, a3, a4, a5) {
+    var cle, clv, op, strength, weight;
+    if(a1 instanceof Cl.LinearExpression && a3 instanceof Cl.AbstractVariable) {
+      cle = a1;
+      op = a2;
+      clv = a3;
+      strength = a4;
+      weight = a5;
+      Cl.LinearConstraint.call(this, cle.clone(), strength, weight);
+      if(op === CL.LEQ) {
+        this._expression.multiplyMe(-1);
+        this._expression.addVariable(clv)
+      }else {
+        if(op === CL.GEQ) {
+          this._expression.addVariable(clv, -1)
+        }else {
+          throw new Cl.errors.InternalError("Invalid operator in ClLinearInequality constructor");
+        }
+      }
+    }else {
+      if(a1 instanceof Cl.LinearExpression) {
+        Cl.LinearConstraint.call(this, a1, a2, a3)
+      }else {
+        if(a2 === CL.GEQ) {
+          Cl.LinearConstraint.call(this, new Cl.LinearExpression(a3), a4, a5);
+          this._expression.multiplyMe(-1);
+          this._expression.addVariable(a1)
+        }else {
+          if(a2 === CL.LEQ) {
+            Cl.LinearConstraint.call(this, new Cl.LinearExpression(a3), a4, a5);
+            this._expression.addVariable(a1, -1)
+          }else {
+            throw new Cl.errors.InternalError("Invalid operator in ClLinearInequality constructor");
+          }
+        }
+      }
+    }
+  };
+  goog.inherits(Cl.LinearInequality, Cl.LinearConstraint);
+  Cl.LinearInequality.prototype.isInequality = function() {
+    return true
+  };
+  Cl.LinearInequality.prototype.toString = function() {
+    return Cl.LinearInequality.superClass_.toString.call(this) + " >= 0 )"
+  };
+  Cl.LinearEquation = function(a1, a2, a3, a4) {
+    var cle, clv, strength, val, weight;
+    if(a1 instanceof Cl.LinearExpression && !a2 || a2 instanceof Cl.Strength) {
+      Cl.LinearConstraint.call(this, a1, a2, a3)
+    }else {
+      if(a1 instanceof Cl.AbstractVariable && a2 instanceof Cl.LinearExpression) {
+        clv = a1;
+        cle = a2;
+        strength = a3;
+        weight = a4;
+        Cl.LinearConstraint.call(this, cle, strength, weight);
+        this._expression.addVariable(clv, -1)
+      }else {
+        if(a1 instanceof Cl.AbstractVariable && typeof a2 === "number") {
+          clv = a1;
+          val = a2;
+          strength = a3;
+          weight = a4;
+          Cl.LinearConstraint.call(this, new Cl.LinearExpression(val), strength, weight);
+          this._expression.addVariable(clv, -1)
+        }else {
+          if(a1 instanceof Cl.LinearExpression && a2 instanceof Cl.AbstractVariable) {
+            cle = a1;
+            clv = a2;
+            strength = a3;
+            weight = a4;
+            Cl.LinearConstraint.call(this, cle.clone(), strength, weight);
+            this._expression.addVariable(clv, -1)
+          }else {
+            if(a1 instanceof Cl.LinearExpression || a1 instanceof Cl.AbstractVariable || typeof a1 === "number" && a2 instanceof Cl.LinearExpression || a2 instanceof Cl.AbstractVariable || typeof a2 === "number") {
+              if(a1 instanceof Cl.LinearExpression) {
+                a1 = a1.clone()
+              }else {
+                a1 = new Cl.LinearExpression(a1)
+              }
+              if(a2 instanceof Cl.LinearExpression) {
+                a2 = a2.clone()
+              }else {
+                a2 = new Cl.LinearExpression(a2)
+              }
+              Cl.LinearConstraint.call(this, a1, a3, a4);
+              this._expression.addExpression(a2, -1)
+            }else {
+              throw"Bad initializer to ClLinearEquation";
+            }
+          }
+        }
+      }
+    }
+  };
+  goog.inherits(Cl.LinearEquation, Cl.LinearConstraint);
+  Cl.LinearEquation.prototype.toString = function() {
+    return Cl.LinearEquation.superClass_.toString.call(this) + " = 0 )"
+  }
+});
+goog.provide("Cl.Tableau");
+goog.require("Cl");
+goog.require("Cl.CL");
+goog.require("Cl.HashSet");
+goog.require("Cl.HashTable");
+goog.scope(function() {
+  var CL = Cl.CL;
+  var HashSet = Cl.HashSet;
+  var HashTable = Cl.HashTable;
+  Cl.Tableau = function() {
+    this._columns = new HashTable;
+    this._rows = new HashTable;
+    this._infeasibleRows = new HashSet;
+    this._externalRows = new HashSet;
+    this._externalParametricVars = new HashSet
+  };
+  Cl.Tableau.prototype.columns = function() {
+    return this._columns
+  };
+  Cl.Tableau.prototype.rows = function() {
+    return this._rows
+  };
+  Cl.Tableau.prototype.columnsHasKey = function(subject) {
+    return this._columns.get(subject) != null
+  };
+  Cl.Tableau.prototype.rowExpression = function(v) {
+    return this._rows.get(v)
+  };
+  Cl.Tableau.prototype.noteRemovedVariable = function(v, subject) {
+    if(subject != null) {
+      return this._columns.get(v).remove(subject)
+    }
+  };
+  Cl.Tableau.prototype.noteAddedVariable = function(v, subject) {
+    if(subject) {
+      return this.insertColVar(v, subject)
+    }
+  };
+  Cl.Tableau.prototype.getInternalInfo = function() {
+    var retstr;
+    retstr = "Tableau Information:\n";
+    retstr += "Rows: " + this._rows.size();
+    retstr += " (= " + (this._rows.size() - 1) + " constraints)";
+    retstr += "\nColumns: " + this._columns.size();
+    retstr += "\nInfeasible Rows: " + this._infeasibleRows.size();
+    retstr += "\nExternal basic variables: " + this._externalRows.size();
+    retstr += "\nExternal parametric variables: ";
+    retstr += this._externalParametricVars.size();
+    retstr += "\n";
+    return retstr
+  };
+  Cl.Tableau.prototype.toString = function() {
+    var bstr;
+    bstr = "Tableau:\n";
+    this._rows.each(function(clv, expr) {
+      bstr += clv;
+      bstr += " <==> ";
+      bstr += expr;
+      return bstr += "\n"
+    });
+    bstr += "\nColumns:\n";
+    bstr += CL.hashToString(this._columns);
+    bstr += "\nInfeasible rows: ";
+    bstr += CL.setToString(this._infeasibleRows);
+    bstr += "External basic variables: ";
+    bstr += CL.setToString(this._externalRows);
+    bstr += "External parametric variables: ";
+    bstr += CL.setToString(this._externalParametricVars);
+    return bstr
+  };
+  Cl.Tableau.prototype.insertColVar = function(param_var, rowvar) {
+    var rowset;
+    rowset = this._columns.get(param_var);
+    if(!rowset) {
+      this._columns.put(param_var, rowset = new HashSet)
+    }
+    return rowset.add(rowvar)
+  };
+  Cl.Tableau.prototype.addRow = function(aVar, expr) {
+    this._rows.put(aVar, expr);
+    expr.terms().each(goog.bind(function(clv, coeff) {
+      this.insertColVar(clv, aVar);
+      if(clv.isExternal()) {
+        return this._externalParametricVars.add(clv)
+      }
+    }, this));
+    if(aVar.isExternal()) {
+      return this._externalRows.add(aVar)
+    }
+  };
+  Cl.Tableau.prototype.removeColumn = function(aVar) {
+    var rows;
+    rows = this._columns.remove(aVar);
+    if(rows != null) {
+      rows.each(goog.bind(function(clv) {
+        var expr;
+        expr = this._rows.get(clv);
+        return expr.terms().remove(aVar)
+      }, this))
+    }
+    if(aVar.isExternal()) {
+      this._externalRows.remove(aVar);
+      return this._externalParametricVars.remove(aVar)
+    }
+  };
+  Cl.Tableau.prototype.removeRow = function(aVar) {
+    var expr;
+    expr = this._rows.get(aVar);
+    CL.Assert(expr != null);
+    expr.terms().each(goog.bind(function(clv, coeff) {
+      var varset;
+      varset = this._columns.get(clv);
+      if(varset != null) {
+        return varset.remove(aVar)
+      }
+    }, this));
+    this._infeasibleRows.remove(aVar);
+    if(aVar.isExternal()) {
+      this._externalRows.remove(aVar)
+    }
+    this._rows.remove(aVar);
+    return expr
+  };
+  Cl.Tableau.prototype.substituteOut = function(oldVar, expr) {
+    var varset;
+    varset = this._columns.get(oldVar);
+    varset.each(goog.bind(function(v) {
+      var row;
+      row = this._rows.get(v);
+      row.substituteOut(oldVar, expr, v, this);
+      if(v.isRestricted() && row.constant() < 0) {
+        return this._infeasibleRows.add(v)
+      }
+    }, this));
+    if(oldVar.isExternal()) {
+      this._externalRows.add(oldVar);
+      this._externalParametricVars.remove(oldVar)
+    }
+    return this._columns.remove(oldVar)
+  }
+});
+goog.provide("Cl.errors");
+goog.provide("Cl.errors.ConstraintNotFound");
+goog.provide("Cl.errors.Error");
+goog.provide("Cl.errors.NonlinearExpression");
+goog.provide("Cl.errors.NotEnoughStays");
+goog.provide("Cl.errors.RequiredFailure");
+goog.provide("Cl.errors.TooDifficult");
+goog.require("Cl");
+goog.scope(function() {
+  Cl.errors = function() {
+  };
+  Cl.errors.Error = function() {
+  };
+  Cl.errors.Error.prototype = new Error;
+  Cl.errors.Error.prototype.description = function() {
+    return"An error has occurred in Cassowary Coffee"
+  };
+  Cl.errors.Error.prototype.toString = function() {
+    return this.description
+  };
+  Cl.errors.ConstraintNotFound = function() {
+  };
+  goog.inherits(Cl.errors.ConstraintNotFound, Cl.errors.Error);
+  Cl.errors.ConstraintNotFound.prototype.description = "Tried to remove a constraint never added to the tableau";
+  Cl.errors.NonlinearExpression = function() {
+  };
+  goog.inherits(Cl.errors.NonlinearExpression, Cl.errors.Error);
+  Cl.errors.NonlinearExpression.prototype.description = "The resulting expression would be nonlinear";
+  Cl.errors.NotEnoughStays = function() {
+  };
+  goog.inherits(Cl.errors.NotEnoughStays, Cl.errors.Error);
+  Cl.errors.NotEnoughStays.prototype.description = "There are not enough stays to give specific values to every variable";
+  Cl.errors.RequiredFailure = function() {
+  };
+  goog.inherits(Cl.errors.RequiredFailure, Cl.errors.Error);
+  Cl.errors.RequiredFailure.prototype.description = "A required constraint cannot be satisfied";
+  Cl.errors.TooDifficult = function() {
+  };
+  goog.inherits(Cl.errors.TooDifficult, Cl.errors.Error);
+  Cl.errors.TooDifficult.prototype.description = "The constraints are too difficult to solve"
+});
+goog.provide("Cl.SimplexSolver");
+goog.require("Cl");
+goog.require("Cl.CL");
+goog.require("Cl.DummyVariable");
+goog.require("Cl.HashSet");
+goog.require("Cl.HashTable");
+goog.require("Cl.LinearExpression");
+goog.require("Cl.ObjectiveVariable");
+goog.require("Cl.SlackVariable");
+goog.require("Cl.StayConstraint");
+goog.require("Cl.Tableau");
+goog.require("Cl.Tableau");
+goog.require("Cl.errors");
+goog.scope(function() {
+  var CL = Cl.CL;
+  var HashSet = Cl.HashSet;
+  var HashTable = Cl.HashTable;
+  Cl.SimplexSolver = function() {
+    Cl.Tableau.call(this);
+    this._stayMinusErrorVars = new Array;
+    this._stayPlusErrorVars = new Array;
+    this._errorVars = new HashTable;
+    this._markerVars = new HashTable;
+    this._resolve_pair = new Array(0, 0);
+    this._objective = new Cl.ObjectiveVariable("Z");
+    this._editVarMap = new HashTable;
+    this._slackCounter = 0;
+    this._artificialCounter = 0;
+    this._dummyCounter = 0;
+    this._epsilon = 1.0E-8;
+    this._fOptimizeAutomatically = true;
+    this._fNeedsSolving = false;
+    this._rows = new HashTable;
+    this._rows.put(this._objective, new Cl.LinearExpression);
+    this._stkCedcns = new Array;
+    this._stkCedcns.push(0)
+  };
+  goog.inherits(Cl.SimplexSolver, Cl.Tableau);
+  Cl.SimplexSolver.prototype.addLowerBound = function(v, lower) {
+    var cn;
+    cn = new Cl.LinearInequality(v, CL.GEQ, new Cl.LinearExpression(lower));
+    return this.addConstraint(cn)
+  };
+  Cl.SimplexSolver.prototype.addUpperBound = function(v, upper) {
+    var cn;
+    cn = new Cl.LinearInequality(v, CL.LEQ, new Cl.LinearExpression(upper));
+    return this.addConstraint(cn)
+  };
+  Cl.SimplexSolver.prototype.addBounds = function(v, lower, upper) {
+    this.addLowerBound(v, lower);
+    this.addUpperBound(v, upper);
+    return this
+  };
+  Cl.SimplexSolver.prototype.addConstraint = function(cn) {
+    var clvEminus, clvEplus, eplus_eminus, expr, i, prevEConstant;
+    eplus_eminus = new Array(2);
+    prevEConstant = new Array(1);
+    expr = this.newExpression(cn, eplus_eminus, prevEConstant);
+    prevEConstant = prevEConstant[0];
+    if(!this.tryAddingDirectly(expr)) {
+      this.addWithArtificialVariable(expr)
+    }
+    this._fNeedsSolving = true;
+    if(cn.isEditConstraint()) {
+      i = this._editVarMap.size();
+      clvEplus = eplus_eminus[0], clvEminus = eplus_eminus[1];
+      this._editVarMap.put(cn.variable(), new Cl.EditInfo(cn, clvEplus, clvEminus, prevEConstant, i))
+    }
+    if(this._fOptimizeAutomatically) {
+      this.optimize(this._objective);
+      this.setExternalVariables()
+    }
+    cn.addedTo(this);
+    return this
+  };
+  Cl.SimplexSolver.prototype.addConstraintNoException = function(cn) {
+    try {
+      this.addConstraint(cn);
+      return true
+    }catch(e) {
+      return false
+    }
+  };
+  Cl.SimplexSolver.prototype.addEditVar = function(v, strength) {
+    var cnEdit;
+    strength = strength || Cl.Strength.strong;
+    cnEdit = new Cl.EditConstraint(v, strength);
+    this.addConstraint(cnEdit);
+    return this
+  };
+  Cl.SimplexSolver.prototype.removeEditVar = function(v) {
+    var cei, cn;
+    cei = this._editVarMap.get(v);
+    cn = cei.Constraint();
+    this.removeConstraint(cn);
+    return this
+  };
+  Cl.SimplexSolver.prototype.beginEdit = function() {
+    CL.Assert(this._editVarMap.size() > 0, "_editVarMap.size() > 0");
+    this._infeasibleRows.clear();
+    this.resetStayConstants();
+    this._stkCedcns.push(this._editVarMap.size());
+    return this
+  };
+  Cl.SimplexSolver.prototype.endEdit = function() {
+    var n;
+    CL.Assert(this._editVarMap.size() > 0, "_editVarMap.size() > 0");
+    this.resolve();
+    this._stkCedcns.pop();
+    n = this._stkCedcns[this._stkCedcns.length - 1];
+    this.removeEditVarsTo(n);
+    return this
+  };
+  Cl.SimplexSolver.prototype.removeAllEditVars = function() {
+    return this.removeEditVarsTo(0)
+  };
+  Cl.SimplexSolver.prototype.removeEditVarsTo = function(n) {
+    try {
+      this._editVarMap.each(goog.bind(function(v, cei) {
+        if(cei.Index() >= n) {
+          return this.removeEditVar(v)
+        }
+      }, this));
+      CL.Assert(this._editVarMap.size() === n, "_editVarMap.size() == n");
+      return this
+    }catch(e) {
+      throw new Cl.errors.InternalError("Constraint not found in removeEditVarsTo");
+    }
+  };
+  Cl.SimplexSolver.prototype.addPointStays = function(listOfPoints) {
+    var i, multiplier, weight;
+    weight = 1;
+    multiplier = 2;
+    i = 0;
+    while(i < listOfPoints.length) {
+      this.addPointStay(listOfPoints[i], weight);
+      weight *= multiplier;
+      i++
+    }
+    return this
+  };
+  Cl.SimplexSolver.prototype.addPointStay = function(a1, a2, a3) {
+    var clp, vx, vy, weight;
+    if(a1 instanceof Cl.Point) {
+      clp = a1;
+      weight = a2;
+      this.addStay(clp.X(), Cl.Strength.weak, weight || 1);
+      this.addStay(clp.Y(), Cl.Strength.weak, weight || 1)
+    }else {
+      vx = a1;
+      vy = a2;
+      weight = a3;
+      this.addStay(vx, Cl.Strength.weak, weight || 1);
+      this.addStay(vy, Cl.Strength.weak, weight || 1)
+    }
+    return this
+  };
+  Cl.SimplexSolver.prototype.addStay = function(v, strength, weight) {
+    var cn;
+    cn = new Cl.StayConstraint(v, strength || Cl.Strength.weak, weight || 1);
+    return this.addConstraint(cn)
+  };
+  Cl.SimplexSolver.prototype.removeConstraint = function(cn) {
+    this.removeConstraintInternal(cn);
+    cn.removedFrom(this);
+    return this
+  };
+  Cl.SimplexSolver.prototype.removeConstraintInternal = function(cn) {
+    var cei, clv, clvEditMinus, cnEdit, col, eVars, exitVar, expr, i, marker, minRatio, zRow;
+    this._fNeedsSolving = true;
+    this.resetStayConstants();
+    zRow = this.rowExpression(this._objective);
+    eVars = this._errorVars.get(cn);
+    if(eVars != null) {
+      eVars.each(goog.bind(function(clv) {
+        var expr;
+        expr = this.rowExpression(clv);
+        if(expr == null) {
+          return zRow.addVariable(clv, -cn.weight() * cn.strength().symbolicWeight().toDouble(), this._objective, this)
+        }else {
+          return zRow.addExpression(expr, -cn.weight() * cn.strength().symbolicWeight().toDouble(), this._objective, this)
+        }
+      }, this))
+    }
+    marker = this._markerVars.remove(cn);
+    if(marker == null) {
+      throw new Cl.errors.ConstraintNotFound;
+    }
+    if(this.rowExpression(marker) == null) {
+      col = this._columns.get(marker);
+      exitVar = null;
+      minRatio = 0;
+      col.each(goog.bind(function(v) {
+        var coeff, expr, r;
+        if(v.isRestricted()) {
+          expr = this.rowExpression(v);
+          coeff = expr.coefficientFor(marker);
+          if(this.fTraceOn) {
+            this.traceprint("Marker " + marker + "'s coefficient in " + expr + " is " + coeff)
+          }
+          if(coeff < 0) {
+            r = -expr.constant() / coeff;
+            if(!(exitVar != null) || r < minRatio || Cl.approx(r, minRatio) && v.hashCode() < exitVar.hashCode()) {
+              minRatio = r;
+              return exitVar = v
+            }
+          }
+        }
+      }, this));
+      if(exitVar == null) {
+        if(CL.fTraceOn) {
+          CL.traceprint("exitVar is still null")
+        }
+        col.each(goog.bind(function(v) {
+          var coeff, expr, r;
+          if(v.isRestricted()) {
+            expr = this.rowExpression(v);
+            coeff = expr.coefficientFor(marker);
+            r = expr.constant() / coeff;
+            if(!(exitVar != null) || r < minRatio) {
+              minRatio = r;
+              return exitVar = v
+            }
+          }
+        }, this))
+      }
+      if(exitVar == null) {
+        if(col.size() === 0) {
+          this.removeColumn(marker)
+        }else {
+          col.each(goog.bind(function(v) {
+            if(v !== this._objective) {
+              return exitVar = v
+            }
+          }, this))
+        }
+      }
+      if(exitVar != null) {
+        this.pivot(marker, exitVar)
+      }
+    }
+    if(this.rowExpression(marker) != null) {
+      expr = this.removeRow(marker);
+      expr = null
+    }
+    if(eVars != null) {
+      eVars.each(goog.bind(function(v) {
+        if(v !== marker) {
+          return this.removeColumn(v)
+        }
+      }, this))
+    }
+    if(cn.isStayConstraint()) {
+      if(eVars != null) {
+        i = 0;
+        while(i < this._stayPlusErrorVars.length) {
+          eVars.remove(this._stayPlusErrorVars[i]);
+          eVars.remove(this._stayMinusErrorVars[i]);
+          i++
+        }
+      }
+    }else {
+      if(cn.isEditConstraint()) {
+        CL.Assert(eVars != null, "eVars != null");
+        cnEdit = cn;
+        clv = cnEdit.variable();
+        cei = this._editVarMap.get(clv);
+        clvEditMinus = cei.ClvEditMinus();
+        this.removeColumn(clvEditMinus);
+        this._editVarMap.remove(clv)
+      }
+    }
+    if(eVars != null) {
+      this._errorVars.remove(eVars)
+    }
+    if(this._fOptimizeAutomatically) {
+      this.optimize(this._objective);
+      this.setExternalVariables()
+    }
+    return this
+  };
+  Cl.SimplexSolver.prototype.reset = function() {
+    throw new Cl.errors.InternalError("reset not implemented");
+  };
+  Cl.SimplexSolver.prototype.resolveArray = function(newEditConstants) {
+    this._editVarMap.each(goog.bind(function(v, cei) {
+      var i;
+      i = cei.Index();
+      if(i < newEditConstants.length) {
+        return this.suggestValue(v, newEditConstants[i])
+      }
+    }, this));
+    return this.resolve()
+  };
+  Cl.SimplexSolver.prototype.resolvePair = function(x, y) {
+    this._resolve_pair[0] = x;
+    this._resolve_pair[1] = y;
+    return this.resolveArray(this._resolve_pair)
+  };
+  Cl.SimplexSolver.prototype.resolve = function() {
+    this.dualOptimize();
+    this.setExternalVariables();
+    this._infeasibleRows.clear();
+    this.resetStayConstants();
+    return this
+  };
+  Cl.SimplexSolver.prototype.suggestValue = function(v, x) {
+    var cei, clvEditMinus, clvEditPlus, delta, i;
+    cei = this._editVarMap.get(v);
+    if(cei == null) {
+      throw new Error("suggestValue for variable " + v + ", but var is not an edit variable\n");throw new Cl.errors.Error;
+    }
+    i = cei.Index();
+    clvEditPlus = cei.ClvEditPlus();
+    clvEditMinus = cei.ClvEditMinus();
+    delta = x - cei.PrevEditConstant();
+    cei.SetPrevEditConstant(x);
+    this.deltaEditConstant(delta, clvEditPlus, clvEditMinus);
+    return this
+  };
+  Cl.SimplexSolver.prototype.setAutosolve = function(f) {
+    this._fOptimizeAutomatically = f;
+    return this
+  };
+  Cl.SimplexSolver.prototype.FIsAutosolving = function() {
+    return this._fOptimizeAutomatically
+  };
+  Cl.SimplexSolver.prototype.solve = function() {
+    if(this._fNeedsSolving) {
+      this.optimize(this._objective);
+      this.setExternalVariables()
+    }
+    return this
+  };
+  Cl.SimplexSolver.prototype.setEditedValue = function(v, n) {
+    if(!this.FContainsVariable(v)) {
+      v.change_value(n);
+      return this
+    }
+    if(!Cl.approx(n, v.value())) {
+      this.addEditVar(v);
+      this.beginEdit();
+      try {
+        this.suggestValue(v, n)
+      }catch(e) {
+        throw new Cl.errors.InternalError("Error in setEditedValue");
+      }
+      this.endEdit()
+    }
+    return this
+  };
+  Cl.SimplexSolver.prototype.FContainsVariable = function(v) {
+    return this.columnsHasKey(v) || this.rowExpression(v) != null
+  };
+  Cl.SimplexSolver.prototype.addVar = function(v) {
+    if(!this.FContainsVariable(v)) {
+      try {
+        this.addStay(v)
+      }catch(e) {
+        throw new Cl.errorsInternalError("Error in addVar -- required failure is impossible");
+      }
+    }
+    return this
+  };
+  Cl.SimplexSolver.prototype.getInternalInfo = function() {
+    retstr += "\nSolver info:\n";
+    retstr += "Stay Error Variables: ";
+    retstr += this._stayPlusErrorVars.length + this._stayMinusErrorVars.length;
+    retstr += " (" + this._stayPlusErrorVars.length + " +, ";
+    retstr += this._stayMinusErrorVars.length + " -)\n";
+    retstr += "Edit Variables: " + this._editVarMap.size();
+    retstr += "\n";
+    return retstr
+  };
+  Cl.SimplexSolver.prototype.getDebugInfo = function() {
+    var bstr;
+    bstr = this.toString();
+    bstr += this.getInternalInfo();
+    bstr += "\n";
+    return bstr
+  };
+  Cl.SimplexSolver.prototype.toString = function() {
+    var bstr;
+    bstr = Cl.SimplexSolver.superClass_.toString.call(this);
+    bstr += "\n_stayPlusErrorVars: ";
+    bstr += "[" + this._stayPlusErrorVars + "]";
+    bstr += "\n_stayMinusErrorVars: ";
+    bstr += "[" + this._stayMinusErrorVars + "]";
+    bstr += "\n";
+    bstr += "_editVarMap:\n" + CL.hashToString(this._editVarMap);
+    bstr += "\n";
+    return bstr
+  };
+  Cl.SimplexSolver.prototype.getConstraintMap = function() {
+    return this._markerVars
+  };
+  Cl.SimplexSolver.prototype.addWithArtificialVariable = function(expr) {
+    var av, az, azRow, azTableauRow, e, entryVar;
+    av = new Cl.SlackVariable(++this._artificialCounter, "a");
+    az = new Cl.ObjectiveVariable("az");
+    azRow = expr.clone();
+    this.addRow(az, azRow);
+    this.addRow(av, expr);
+    this.optimize(az);
+    azTableauRow = this.rowExpression(az);
+    if(!Cl.approx(azTableauRow.constant(), 0)) {
+      this.removeRow(az);
+      this.removeColumn(av);
+      throw new Cl.errors.RequiredFailure;
+    }
+    e = this.rowExpression(av);
+    if(e != null) {
+      if(e.isConstant()) {
+        this.removeRow(av);
+        this.removeRow(az);
+        return
+      }
+      entryVar = e.anyPivotableVariable();
+      this.pivot(entryVar, av)
+    }
+    CL.Assert(!(this.rowExpression(av) != null), "rowExpression(av) == null");
+    this.removeColumn(av);
+    return this.removeRow(az)
+  };
+  Cl.SimplexSolver.prototype.tryAddingDirectly = function(expr) {
+    var subject;
+    subject = this.chooseSubject(expr);
+    if(subject == null) {
+      return false
+    }
+    expr.newSubject(subject);
+    if(this.columnsHasKey(subject)) {
+      this.substituteOut(subject, expr)
+    }
+    this.addRow(subject, expr);
+    return true
+  };
+  Cl.SimplexSolver.prototype.chooseSubject = function(expr) {
+    var coeff, foundNewRestricted, foundUnrestricted, retval, subject, terms;
+    subject = null;
+    foundUnrestricted = false;
+    foundNewRestricted = false;
+    terms = expr.terms();
+    retval = null;
+    terms.each(goog.bind(function(v, c) {
+      var col;
+      if(foundUnrestricted) {
+        if(!v.isRestricted() && !this.columnsHasKey(v)) {
+          retval = v
+        }
+      }else {
+        if(v.isRestricted()) {
+          if(!foundNewRestricted && !v.isDummy() && c < 0) {
+            col = this._columns.get(v);
+            if(!(col != null) || col.size() === 1 && this.columnsHasKey(this._objective)) {
+              subject = v;
+              return foundNewRestricted = true
+            }
+          }
+        }else {
+          subject = v;
+          return foundUnrestricted = true
+        }
+      }
+    }, this));
+    if(retval != null) {
+      return retval
+    }
+    if(subject != null) {
+      return subject
+    }
+    coeff = 0;
+    if(terms.keys().some(function(v) {
+      return!v.isDummy()
+    })) {
+      return null
+    }
+    terms.each(goog.bind(function(v, c) {
+      if(!this.columnsHasKey(v)) {
+        subject = v;
+        return coeff = c
+      }
+    }, this));
+    if(!Cl.approx(expr.constant(), 0)) {
+      throw new Cl.errors.RequiredFailure;
+    }
+    if(coeff > 0) {
+      expr.multiplyMe(-1)
+    }
+    return subject
+  };
+  Cl.SimplexSolver.prototype.deltaEditConstant = function(delta, plusErrorVar, minusErrorVar) {
+    var columnVars, exprMinus, exprPlus;
+    if(CL.fTraceOn) {
+      CL.fnenterprint("deltaEditConstant :" + delta + ", " + plusErrorVar + ", " + minusErrorVar)
+    }
+    exprPlus = this.rowExpression(plusErrorVar);
+    if(exprPlus != null) {
+      exprPlus.incrementConstant(delta);
+      if(exprPlus.constant() < 0) {
+        this._infeasibleRows.add(plusErrorVar)
+      }
+      return
+    }
+    exprMinus = this.rowExpression(minusErrorVar);
+    if(exprMinus != null) {
+      exprMinus.incrementConstant(-delta);
+      if(exprMinus.constant() < 0) {
+        this._infeasibleRows.add(minusErrorVar)
+      }
+      return
+    }
+    columnVars = this._columns.get(minusErrorVar);
+    if(!columnVars) {
+      throw new Error("columnVars is null -- tableau is:\n" + this);
+    }
+    return columnVars.each(goog.bind(function(basicVar) {
+      var c, expr;
+      expr = this.rowExpression(basicVar);
+      c = expr.coefficientFor(minusErrorVar);
+      expr.incrementConstant(c * delta);
+      if(basicVar.isRestricted() && expr.constant() < 0) {
+        return this._infeasibleRows.add(basicVar)
+      }
+    }, this))
+  };
+  Cl.SimplexSolver.prototype.dualOptimize = function() {
+    var entryVar, exitVar, expr, ratio, terms, zRow, _results;
+    if(CL.fTraceOn) {
+      CL.fnenterprint("dualOptimize:")
+    }
+    zRow = this.rowExpression(this._objective);
+    _results = [];
+    while(!this._infeasibleRows.isEmpty()) {
+      exitVar = this._infeasibleRows.values()[0];
+      this._infeasibleRows.remove(exitVar);
+      entryVar = null;
+      expr = this.rowExpression(exitVar);
+      _results.push(function() {
+        if(expr != null) {
+          if(expr.constant() < 0) {
+            ratio = Number.MAX_VALUE;
+            terms = expr.terms();
+            terms.each(function(v, c) {
+              var r, zc;
+              if(c > 0 && v.isPivotable()) {
+                zc = zRow.coefficientFor(v);
+                r = zc / c;
+                if(r < ratio || Cl.approx(r, ratio) && v.hashCode() < entryVar.hashCode()) {
+                  entryVar = v;
+                  return ratio = r
+                }
+              }
+            });
+            if(ratio === Number.MAX_VALUE) {
+              throw new Cl.errors.InternalError("ratio == nil (MAX_VALUE) in dualOptimize");
+            }
+            return this.pivot(entryVar, exitVar)
+          }
+        }
+      }.call(this))
+    }
+    return _results
+  };
+  Cl.SimplexSolver.prototype.newExpression = function(cn, eplus_eminus, prevEConstant) {
+    var cnExpr, cnTerms, dummyVar, eminus, eplus, expr, slackVar, sw, swCoeff, zRow;
+    cnExpr = cn.expression();
+    expr = new Cl.LinearExpression(cnExpr.constant());
+    slackVar = new Cl.SlackVariable;
+    dummyVar = new Cl.DummyVariable;
+    eminus = new Cl.SlackVariable;
+    eplus = new Cl.SlackVariable;
+    cnTerms = cnExpr.terms();
+    cnTerms.each(goog.bind(function(v, c) {
+      var e;
+      e = this.rowExpression(v);
+      if(e == null) {
+        return expr.addVariable(v, c)
+      }else {
+        return expr.addExpression(e, c)
+      }
+    }, this));
+    if(cn.isInequality()) {
+      ++this._slackCounter;
+      slackVar = new Cl.SlackVariable(this._slackCounter, "s");
+      expr.setVariable(slackVar, -1);
+      this._markerVars.put(cn, slackVar);
+      if(!cn.isRequired()) {
+        ++this._slackCounter;
+        eminus = new Cl.SlackVariable(this._slackCounter, "em");
+        expr.setVariable(eminus, 1);
+        zRow = this.rowExpression(this._objective);
+        sw = cn.strength().symbolicWeight().times(cn.weight());
+        zRow.setVariable(eminus, sw.toDouble());
+        this.insertErrorVar(cn, eminus);
+        this.noteAddedVariable(eminus, this._objective)
+      }
+    }else {
+      if(cn.isRequired()) {
+        ++this._dummyCounter;
+        dummyVar = new Cl.DummyVariable(this._dummyCounter, "d");
+        expr.setVariable(dummyVar, 1);
+        this._markerVars.put(cn, dummyVar)
+      }else {
+        ++this._slackCounter;
+        eplus = new Cl.SlackVariable(this._slackCounter, "ep");
+        eminus = new Cl.SlackVariable(this._slackCounter, "em");
+        expr.setVariable(eplus, -1);
+        expr.setVariable(eminus, 1);
+        this._markerVars.put(cn, eplus);
+        zRow = this.rowExpression(this._objective);
+        sw = cn.strength().symbolicWeight().times(cn.weight());
+        swCoeff = sw.toDouble();
+        zRow.setVariable(eplus, swCoeff);
+        this.noteAddedVariable(eplus, this._objective);
+        zRow.setVariable(eminus, swCoeff);
+        this.noteAddedVariable(eminus, this._objective);
+        this.insertErrorVar(cn, eminus);
+        this.insertErrorVar(cn, eplus);
+        if(cn.isStayConstraint()) {
+          this._stayPlusErrorVars.push(eplus);
+          this._stayMinusErrorVars.push(eminus)
+        }else {
+          if(cn.isEditConstraint()) {
+            eplus_eminus[0] = eplus;
+            eplus_eminus[1] = eminus;
+            prevEConstant[0] = cnExpr.constant()
+          }
+        }
+      }
+    }
+    if(expr.constant() < 0) {
+      expr.multiplyMe(-1)
+    }
+    return expr
+  };
+  Cl.SimplexSolver.prototype.optimize = function(zVar) {
+    var columnVars, entryVar, exitVar, minRatio, objectiveCoeff, r, terms, zRow, _results;
+    zRow = this.rowExpression(zVar);
+    CL.Assert(zRow != null, "zRow != null");
+    entryVar = null;
+    exitVar = null;
+    _results = [];
+    while(true) {
+      objectiveCoeff = 0;
+      terms = zRow.terms();
+      terms.escapingEach(function(v, c) {
+        if(v.isPivotable() && c < objectiveCoeff) {
+          objectiveCoeff = c;
+          entryVar = v;
+          return{brk:true}
+        }
+      });
+      if(objectiveCoeff >= -this._epsilon) {
+        return
+      }
+      minRatio = Number.MAX_VALUE;
+      columnVars = this._columns.get(entryVar);
+      r = 0;
+      columnVars.each(goog.bind(function(v) {
+        var coeff, expr;
+        if(this.fTraceOn) {
+          this.traceprint("Checking " + v)
+        }
+        if(v.isPivotable()) {
+          expr = this.rowExpression(v);
+          coeff = expr.coefficientFor(entryVar);
+          if(coeff < 0) {
+            r = -expr.constant() / coeff;
+            if(r < minRatio || Cl.approx(r, minRatio) && v.hashCode() < exitVar.hashCode()) {
+              minRatio = r;
+              return exitVar = v
+            }
+          }
+        }
+      }, this));
+      if(minRatio === Number.MAX_VALUE) {
+        throw new Cl.errors.InternalError("Objective function is unbounded in optimize");
+      }
+      _results.push(this.pivot(entryVar, exitVar))
+    }
+    return _results
+  };
+  Cl.SimplexSolver.prototype.pivot = function(entryVar, exitVar) {
+    var pexpr;
+    pexpr = this.removeRow(exitVar);
+    pexpr.changeSubject(exitVar, entryVar);
+    this.substituteOut(entryVar, pexpr);
+    return this.addRow(entryVar, pexpr)
+  };
+  Cl.SimplexSolver.prototype.resetStayConstants = function() {
+    var expr, i, _results;
+    i = 0;
+    _results = [];
+    while(i < this._stayPlusErrorVars.length) {
+      expr = this.rowExpression(this._stayPlusErrorVars[i]);
+      if(expr == null) {
+        expr = this.rowExpression(this._stayMinusErrorVars[i])
+      }
+      if(expr != null) {
+        expr.set_constant(0)
+      }
+      _results.push(i++)
+    }
+    return _results
+  };
+  Cl.SimplexSolver.prototype.setExternalVariables = function() {
+    this._externalParametricVars.each(goog.bind(function(v) {
+      if(this.rowExpression(v) != null) {
+        throw new Error("Error: variable" + v + " in _externalParametricVars is basic");
+      }else {
+        return v.change_value(0)
+      }
+    }, this));
+    this._externalRows.each(goog.bind(function(v) {
+      var expr;
+      expr = this.rowExpression(v);
+      return v.change_value(expr.constant())
+    }, this));
+    return this._fNeedsSolving = false
+  };
+  Cl.SimplexSolver.prototype.insertErrorVar = function(cn, aVar) {
+    var cnset;
+    cnset = this._errorVars.get(aVar);
+    if(cnset == null) {
+      this._errorVars.put(cn, cnset = new HashSet)
+    }
+    return cnset.add(aVar)
+  }
+});
+goog.provide("cassowary.core");
+goog.require("cljs.core");
+goog.require("Cl.LinearEquation");
+goog.require("Cl.SimplexSolver");
+goog.require("Cl.Constraint");
+goog.require("Cl.Variable");
+goog.require("Cl.CL");
+goog.require("Cl");
+cassowary.core.cvar = function() {
+  var cvar = null;
+  var cvar__0 = function() {
+    return cvar.call(null, 0)
+  };
+  var cvar__1 = function(val) {
+    return new Cl.Variable(parseFloat(val))
+  };
+  cvar = function(val) {
+    switch(arguments.length) {
+      case 0:
+        return cvar__0.call(this);
+      case 1:
+        return cvar__1.call(this, val)
+    }
+    throw"Invalid arity: " + arguments.length;
+  };
+  cvar.cljs$lang$arity$0 = cvar__0;
+  cvar.cljs$lang$arity$1 = cvar__1;
+  return cvar
+}();
+cassowary.core.value = function value(cvar) {
+  return cvar.value()
+};
+cassowary.core.simplex_solver = function simplex_solver() {
+  return new Cl.SimplexSolver
+};
+cassowary.core.constrain_BANG_ = function constrain_BANG_(solver, constraint) {
+  if(cljs.core.instance_QMARK_.call(null, Cl.Constraint, constraint)) {
+    return solver.addConstraint(constraint)
+  }else {
+    throw new Error("Called constrain! with something not derived from Cl.Constraint; perhaps you forgot (:refer-clojure :exclude [+ - =]) ?");
+  }
+};
+cassowary.core.unconstrain_BANG_ = function unconstrain_BANG_(solver, constraint) {
+  if(cljs.core.instance_QMARK_.call(null, Cl.Constraint, constraint)) {
+    return solver.removeConstraint(constraint)
+  }else {
+    throw new Error("Called unconstrain! with something not derived from Cl.Constraint; perhaps you forgot (:refer-clojure :exclude [+ - =]) ?");
+  }
+};
+cassowary.core.stay_BANG_ = function stay_BANG_(solver, cvar) {
+  return solver.addStay(cvar)
+};
+cassowary.core.contains_cassowary_QMARK_ = function() {
+  var contains_cassowary_QMARK___delegate = function(args) {
+    if(cljs.core.truth_(cljs.core.some.call(null, function(p1__6241_SHARP_) {
+      var or__3824__auto____6243 = cljs.core.instance_QMARK_.call(null, Cl.Variable, p1__6241_SHARP_);
+      if(or__3824__auto____6243) {
+        return or__3824__auto____6243
+      }else {
+        return cljs.core.instance_QMARK_.call(null, Cl.LinearExpression, p1__6241_SHARP_)
+      }
+    }, args))) {
+      return"\ufdd0'cassowary-var"
+    }else {
+      return"\ufdd0'number"
+    }
+  };
+  var contains_cassowary_QMARK_ = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return contains_cassowary_QMARK___delegate.call(this, args)
+  };
+  contains_cassowary_QMARK_.cljs$lang$maxFixedArity = 0;
+  contains_cassowary_QMARK_.cljs$lang$applyTo = function(arglist__6244) {
+    var args = cljs.core.seq(arglist__6244);
+    return contains_cassowary_QMARK___delegate(args)
+  };
+  contains_cassowary_QMARK_.cljs$lang$arity$variadic = contains_cassowary_QMARK___delegate;
+  return contains_cassowary_QMARK_
+}();
+cassowary.core._PLUS_ = function() {
+  var method_table__2592__auto____6245 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var prefer_table__2593__auto____6246 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var method_cache__2594__auto____6247 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var cached_hierarchy__2595__auto____6248 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var hierarchy__2596__auto____6249 = cljs.core._lookup.call(null, cljs.core.ObjMap.EMPTY, "\ufdd0'hierarchy", cljs.core.global_hierarchy);
+  return new cljs.core.MultiFn("+", cassowary.core.contains_cassowary_QMARK_, "\ufdd0'default", hierarchy__2596__auto____6249, method_table__2592__auto____6245, prefer_table__2593__auto____6246, method_cache__2594__auto____6247, cached_hierarchy__2595__auto____6248)
+}();
+cassowary.core._ = function() {
+  var method_table__2592__auto____6250 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var prefer_table__2593__auto____6251 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var method_cache__2594__auto____6252 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var cached_hierarchy__2595__auto____6253 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var hierarchy__2596__auto____6254 = cljs.core._lookup.call(null, cljs.core.ObjMap.EMPTY, "\ufdd0'hierarchy", cljs.core.global_hierarchy);
+  return new cljs.core.MultiFn("-", cassowary.core.contains_cassowary_QMARK_, "\ufdd0'default", hierarchy__2596__auto____6254, method_table__2592__auto____6250, prefer_table__2593__auto____6251, method_cache__2594__auto____6252, cached_hierarchy__2595__auto____6253)
+}();
+cassowary.core._STAR_ = function() {
+  var method_table__2592__auto____6255 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var prefer_table__2593__auto____6256 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var method_cache__2594__auto____6257 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var cached_hierarchy__2595__auto____6258 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var hierarchy__2596__auto____6259 = cljs.core._lookup.call(null, cljs.core.ObjMap.EMPTY, "\ufdd0'hierarchy", cljs.core.global_hierarchy);
+  return new cljs.core.MultiFn("*", cassowary.core.contains_cassowary_QMARK_, "\ufdd0'default", hierarchy__2596__auto____6259, method_table__2592__auto____6255, prefer_table__2593__auto____6256, method_cache__2594__auto____6257, cached_hierarchy__2595__auto____6258)
+}();
+cassowary.core._EQ_ = function() {
+  var method_table__2592__auto____6260 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var prefer_table__2593__auto____6261 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var method_cache__2594__auto____6262 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var cached_hierarchy__2595__auto____6263 = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
+  var hierarchy__2596__auto____6264 = cljs.core._lookup.call(null, cljs.core.ObjMap.EMPTY, "\ufdd0'hierarchy", cljs.core.global_hierarchy);
+  return new cljs.core.MultiFn("=", cassowary.core.contains_cassowary_QMARK_, "\ufdd0'default", hierarchy__2596__auto____6264, method_table__2592__auto____6260, prefer_table__2593__auto____6261, method_cache__2594__auto____6262, cached_hierarchy__2595__auto____6263)
+}();
+cljs.core._add_method.call(null, cassowary.core._PLUS_, "\ufdd0'number", function() {
+  var G__6265__delegate = function(args) {
+    return cljs.core.apply.call(null, cljs.core._PLUS_, args)
+  };
+  var G__6265 = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return G__6265__delegate.call(this, args)
+  };
+  G__6265.cljs$lang$maxFixedArity = 0;
+  G__6265.cljs$lang$applyTo = function(arglist__6266) {
+    var args = cljs.core.seq(arglist__6266);
+    return G__6265__delegate(args)
+  };
+  G__6265.cljs$lang$arity$variadic = G__6265__delegate;
+  return G__6265
+}());
+cljs.core._add_method.call(null, cassowary.core._EQ_, "\ufdd0'number", function() {
+  var G__6267__delegate = function(args) {
+    return cljs.core.apply.call(null, cljs.core._EQ_, args)
+  };
+  var G__6267 = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return G__6267__delegate.call(this, args)
+  };
+  G__6267.cljs$lang$maxFixedArity = 0;
+  G__6267.cljs$lang$applyTo = function(arglist__6268) {
+    var args = cljs.core.seq(arglist__6268);
+    return G__6267__delegate(args)
+  };
+  G__6267.cljs$lang$arity$variadic = G__6267__delegate;
+  return G__6267
+}());
+cljs.core._add_method.call(null, cassowary.core._STAR_, "\ufdd0'number", function() {
+  var G__6269__delegate = function(args) {
+    return cljs.core.apply.call(null, cljs.core._STAR_, args)
+  };
+  var G__6269 = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return G__6269__delegate.call(this, args)
+  };
+  G__6269.cljs$lang$maxFixedArity = 0;
+  G__6269.cljs$lang$applyTo = function(arglist__6270) {
+    var args = cljs.core.seq(arglist__6270);
+    return G__6269__delegate(args)
+  };
+  G__6269.cljs$lang$arity$variadic = G__6269__delegate;
+  return G__6269
+}());
+cljs.core._add_method.call(null, cassowary.core._, "\ufdd0'number", function() {
+  var G__6271__delegate = function(args) {
+    return cljs.core.apply.call(null, cljs.core._, args)
+  };
+  var G__6271 = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return G__6271__delegate.call(this, args)
+  };
+  G__6271.cljs$lang$maxFixedArity = 0;
+  G__6271.cljs$lang$applyTo = function(arglist__6272) {
+    var args = cljs.core.seq(arglist__6272);
+    return G__6271__delegate(args)
+  };
+  G__6271.cljs$lang$arity$variadic = G__6271__delegate;
+  return G__6271
+}());
+cljs.core._add_method.call(null, cassowary.core._PLUS_, "\ufdd0'cassowary-var", function() {
+  var G__6273__delegate = function(args) {
+    return cljs.core.apply.call(null, Cl.CL.Plus, args)
+  };
+  var G__6273 = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return G__6273__delegate.call(this, args)
+  };
+  G__6273.cljs$lang$maxFixedArity = 0;
+  G__6273.cljs$lang$applyTo = function(arglist__6274) {
+    var args = cljs.core.seq(arglist__6274);
+    return G__6273__delegate(args)
+  };
+  G__6273.cljs$lang$arity$variadic = G__6273__delegate;
+  return G__6273
+}());
+cljs.core._add_method.call(null, cassowary.core._, "\ufdd0'cassowary-var", function() {
+  var G__6275__delegate = function(args) {
+    return cljs.core.apply.call(null, Cl.CL.Minus, args)
+  };
+  var G__6275 = function(var_args) {
+    var args = null;
+    if(goog.isDef(var_args)) {
+      args = cljs.core.array_seq(Array.prototype.slice.call(arguments, 0), 0)
+    }
+    return G__6275__delegate.call(this, args)
+  };
+  G__6275.cljs$lang$maxFixedArity = 0;
+  G__6275.cljs$lang$applyTo = function(arglist__6276) {
+    var args = cljs.core.seq(arglist__6276);
+    return G__6275__delegate(args)
+  };
+  G__6275.cljs$lang$arity$variadic = G__6275__delegate;
+  return G__6275
+}());
+cljs.core._add_method.call(null, cassowary.core._STAR_, "\ufdd0'cassowary-var", function(a, b) {
+  return Cl.CL.Times.call(null, a, b)
+});
+cljs.core._add_method.call(null, cassowary.core._EQ_, "\ufdd0'cassowary-var", function(a, b) {
+  return new Cl.LinearEquation(a, b)
+});
 goog.provide("sketchpad.core");
 goog.require("cljs.core");
+goog.require("cassowary.core");
 goog.require("sketchpad.state_patches");
 goog.require("sketchpad.shapes");
+goog.require("cassowary.core");
 goog.require("sketchpad.state_patches");
 goog.require("sketchpad.shapes");
 sketchpad.core.current_universe = cljs.core.atom.call(null, cljs.core.ObjMap.EMPTY);
 sketchpad.core.start_x = cljs.core.atom.call(null, null);
 sketchpad.core.start_y = cljs.core.atom.call(null, null);
 sketchpad.core.drawables = function drawables(universe) {
-  return cljs.core.filter.call(null, function(p__116955) {
-    var vec__116956__116957 = p__116955;
-    var name__116958 = cljs.core.nth.call(null, vec__116956__116957, 0, null);
-    var item__116959 = cljs.core.nth.call(null, vec__116956__116957, 1, null);
-    var G__116960__116961 = item__116959;
-    if(G__116960__116961) {
+  return cljs.core.filter.call(null, function(p__66465) {
+    var vec__66466__66467 = p__66465;
+    var name__66468 = cljs.core.nth.call(null, vec__66466__66467, 0, null);
+    var item__66469 = cljs.core.nth.call(null, vec__66466__66467, 1, null);
+    var G__66470__66471 = item__66469;
+    if(G__66470__66471) {
       if(cljs.core.truth_(function() {
-        var or__3824__auto____116962 = null;
-        if(cljs.core.truth_(or__3824__auto____116962)) {
-          return or__3824__auto____116962
+        var or__3824__auto____66472 = null;
+        if(cljs.core.truth_(or__3824__auto____66472)) {
+          return or__3824__auto____66472
         }else {
-          return G__116960__116961.sketchpad$shapes$Drawable$
+          return G__66470__66471.sketchpad$shapes$Drawable$
         }
       }())) {
         return true
       }else {
-        if(!G__116960__116961.cljs$lang$protocol_mask$partition$) {
-          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__116960__116961)
+        if(!G__66470__66471.cljs$lang$protocol_mask$partition$) {
+          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__66470__66471)
         }else {
           return false
         }
       }
     }else {
-      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__116960__116961)
+      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__66470__66471)
     }
   }, universe)
 };
 sketchpad.core.selectables = function selectables(universe) {
-  return cljs.core.filter.call(null, function(p__116972) {
-    var vec__116973__116974 = p__116972;
-    var name__116975 = cljs.core.nth.call(null, vec__116973__116974, 0, null);
-    var item__116976 = cljs.core.nth.call(null, vec__116973__116974, 1, null);
-    var and__3822__auto____116977 = !cljs.core._EQ_.call(null, name__116975, universe.call(null, "\ufdd0'selected"));
-    if(and__3822__auto____116977) {
-      var G__116978__116979 = item__116976;
-      if(G__116978__116979) {
+  return cljs.core.filter.call(null, function(p__66482) {
+    var vec__66483__66484 = p__66482;
+    var name__66485 = cljs.core.nth.call(null, vec__66483__66484, 0, null);
+    var item__66486 = cljs.core.nth.call(null, vec__66483__66484, 1, null);
+    var and__3822__auto____66487 = cljs.core.not.call(null, cassowary.core._EQ_.call(null, name__66485, universe.call(null, "\ufdd0'selected")));
+    if(and__3822__auto____66487) {
+      var G__66488__66489 = item__66486;
+      if(G__66488__66489) {
         if(cljs.core.truth_(function() {
-          var or__3824__auto____116980 = null;
-          if(cljs.core.truth_(or__3824__auto____116980)) {
-            return or__3824__auto____116980
+          var or__3824__auto____66490 = null;
+          if(cljs.core.truth_(or__3824__auto____66490)) {
+            return or__3824__auto____66490
           }else {
-            return G__116978__116979.sketchpad$shapes$Selectable$
+            return G__66488__66489.sketchpad$shapes$Selectable$
           }
         }())) {
           return true
         }else {
-          if(!G__116978__116979.cljs$lang$protocol_mask$partition$) {
-            return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__116978__116979)
+          if(!G__66488__66489.cljs$lang$protocol_mask$partition$) {
+            return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__66488__66489)
           }else {
             return false
           }
         }
       }else {
-        return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__116978__116979)
+        return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__66488__66489)
       }
     }else {
-      return and__3822__auto____116977
+      return and__3822__auto____66487
     }
   }, universe)
 };
 sketchpad.core.draw_universe = function draw_universe(universe, ctx) {
   ctx.clearRect(0, 0, 800, 600);
-  var G__117000__117001 = cljs.core.seq.call(null, sketchpad.core.drawables.call(null, universe));
-  if(G__117000__117001) {
-    var G__117003__117005 = cljs.core.first.call(null, G__117000__117001);
-    var vec__117004__117006 = G__117003__117005;
-    var name__117007 = cljs.core.nth.call(null, vec__117004__117006, 0, null);
-    var item__117008 = cljs.core.nth.call(null, vec__117004__117006, 1, null);
-    var G__117000__117009 = G__117000__117001;
-    var G__117003__117010 = G__117003__117005;
-    var G__117000__117011 = G__117000__117009;
+  var G__66510__66511 = cljs.core.seq.call(null, sketchpad.core.drawables.call(null, universe));
+  if(G__66510__66511) {
+    var G__66513__66515 = cljs.core.first.call(null, G__66510__66511);
+    var vec__66514__66516 = G__66513__66515;
+    var name__66517 = cljs.core.nth.call(null, vec__66514__66516, 0, null);
+    var item__66518 = cljs.core.nth.call(null, vec__66514__66516, 1, null);
+    var G__66510__66519 = G__66510__66511;
+    var G__66513__66520 = G__66513__66515;
+    var G__66510__66521 = G__66510__66519;
     while(true) {
-      var vec__117012__117013 = G__117003__117010;
-      var name__117014 = cljs.core.nth.call(null, vec__117012__117013, 0, null);
-      var item__117015 = cljs.core.nth.call(null, vec__117012__117013, 1, null);
-      var G__117000__117016 = G__117000__117011;
-      sketchpad.shapes.draw.call(null, item__117015, ctx, universe);
-      var temp__3974__auto____117017 = cljs.core.next.call(null, G__117000__117016);
-      if(temp__3974__auto____117017) {
-        var G__117000__117018 = temp__3974__auto____117017;
-        var G__117019 = cljs.core.first.call(null, G__117000__117018);
-        var G__117020 = G__117000__117018;
-        G__117003__117010 = G__117019;
-        G__117000__117011 = G__117020;
+      var vec__66522__66523 = G__66513__66520;
+      var name__66524 = cljs.core.nth.call(null, vec__66522__66523, 0, null);
+      var item__66525 = cljs.core.nth.call(null, vec__66522__66523, 1, null);
+      var G__66510__66526 = G__66510__66521;
+      sketchpad.shapes.draw.call(null, item__66525, ctx, universe);
+      var temp__3974__auto____66527 = cljs.core.next.call(null, G__66510__66526);
+      if(temp__3974__auto____66527) {
+        var G__66510__66528 = temp__3974__auto____66527;
+        var G__66529 = cljs.core.first.call(null, G__66510__66528);
+        var G__66530 = G__66510__66528;
+        G__66513__66520 = G__66529;
+        G__66510__66521 = G__66530;
         continue
       }else {
         return null
@@ -21305,18 +23446,18 @@ sketchpad.core.draw_universe = function draw_universe(universe, ctx) {
   }
 };
 sketchpad.core.closest = function closest(u, cx, cy) {
-  var selectable__117033 = sketchpad.core.selectables.call(null, u);
-  var distances__117039 = cljs.core.map.call(null, function(p__117034) {
-    var vec__117035__117036 = p__117034;
-    var name__117037 = cljs.core.nth.call(null, vec__117035__117036, 0, null);
-    var item__117038 = cljs.core.nth.call(null, vec__117035__117036, 1, null);
-    return cljs.core.PersistentVector.fromArray([name__117037, sketchpad.shapes.cursor_distance.call(null, item__117038, cx, cy, u)], true)
-  }, selectable__117033);
-  var vec__117032__117040 = cljs.core.apply.call(null, cljs.core.min_key, cljs.core.second, distances__117039);
-  var item__117041 = cljs.core.nth.call(null, vec__117032__117040, 0, null);
-  var distance__117042 = cljs.core.nth.call(null, vec__117032__117040, 1, null);
-  if(distance__117042 < 10) {
-    return item__117041
+  var selectable__66543 = sketchpad.core.selectables.call(null, u);
+  var distances__66549 = cljs.core.map.call(null, function(p__66544) {
+    var vec__66545__66546 = p__66544;
+    var name__66547 = cljs.core.nth.call(null, vec__66545__66546, 0, null);
+    var item__66548 = cljs.core.nth.call(null, vec__66545__66546, 1, null);
+    return cljs.core.PersistentVector.fromArray([name__66547, sketchpad.shapes.cursor_distance.call(null, item__66548, cx, cy, u)], true)
+  }, selectable__66543);
+  var vec__66542__66550 = cljs.core.apply.call(null, cljs.core.min_key, cljs.core.second, distances__66549);
+  var item__66551 = cljs.core.nth.call(null, vec__66542__66550, 0, null);
+  var distance__66552 = cljs.core.nth.call(null, vec__66542__66550, 1, null);
+  if(distance__66552 < 10) {
+    return item__66551
   }else {
     return null
   }
@@ -21325,114 +23466,114 @@ sketchpad.core.event_location = function event_location(e) {
   return cljs.core.PersistentVector.fromArray([e.layerX, e.layerY], true)
 };
 sketchpad.core.highlight_closest = function highlight_closest(e) {
-  var u__117051 = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var vec__117050__117052 = sketchpad.core.event_location.call(null, e);
-  var cx__117053 = cljs.core.nth.call(null, vec__117050__117052, 0, null);
-  var cy__117054 = cljs.core.nth.call(null, vec__117050__117052, 1, null);
-  var item__117055 = sketchpad.core.closest.call(null, u__117051, cx__117053, cy__117054);
-  return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'highlighted", item__117055)
+  var u__66561 = cljs.core.deref.call(null, sketchpad.core.current_universe);
+  var vec__66560__66562 = sketchpad.core.event_location.call(null, e);
+  var cx__66563 = cljs.core.nth.call(null, vec__66560__66562, 0, null);
+  var cy__66564 = cljs.core.nth.call(null, vec__66560__66562, 1, null);
+  var item__66565 = sketchpad.core.closest.call(null, u__66561, cx__66563, cy__66564);
+  return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'highlighted", item__66565)
 };
 sketchpad.core.move_selected = function move_selected(e) {
-  var u__117070 = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var selected__117071 = (new cljs.core.Keyword("\ufdd0'selected")).call(null, u__117070);
-  if(cljs.core.truth_(selected__117071)) {
-    var vec__117072__117074 = cljs.core.PersistentVector.fromArray([cljs.core.deref.call(null, sketchpad.core.start_x), cljs.core.deref.call(null, sketchpad.core.start_y)], true);
-    var x1__117075 = cljs.core.nth.call(null, vec__117072__117074, 0, null);
-    var y1__117076 = cljs.core.nth.call(null, vec__117072__117074, 1, null);
-    var vec__117073__117077 = sketchpad.core.event_location.call(null, e);
-    var x2__117078 = cljs.core.nth.call(null, vec__117073__117077, 0, null);
-    var y2__117079 = cljs.core.nth.call(null, vec__117073__117077, 1, null);
-    var dx__117080 = x2__117078 - x1__117075;
-    var dy__117081 = y1__117076 - y1__117076;
-    var item__117082 = selected__117071.call(null, u__117070);
-    var new_u__117083 = sketchpad.state_patches.patch.call(null, u__117070, sketchpad.shapes.move_BANG_.call(null, item__117082, selected__117071, dx__117080, dy__117081, u__117070));
-    cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x2__117078));
-    cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y2__117079));
-    return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(p1__117043_SHARP_) {
-      return sketchpad.state_patches.patch.call(null, p1__117043_SHARP_, sketchpad.shapes.move_BANG_.call(null, selected__117071.call(null, u__117070), selected__117071, x2__117078 - x1__117075, y2__117079 - y1__117076, p1__117043_SHARP_))
+  var u__66580 = cljs.core.deref.call(null, sketchpad.core.current_universe);
+  var selected__66581 = (new cljs.core.Keyword("\ufdd0'selected")).call(null, u__66580);
+  if(cljs.core.truth_(selected__66581)) {
+    var vec__66582__66584 = cljs.core.PersistentVector.fromArray([cljs.core.deref.call(null, sketchpad.core.start_x), cljs.core.deref.call(null, sketchpad.core.start_y)], true);
+    var x1__66585 = cljs.core.nth.call(null, vec__66582__66584, 0, null);
+    var y1__66586 = cljs.core.nth.call(null, vec__66582__66584, 1, null);
+    var vec__66583__66587 = sketchpad.core.event_location.call(null, e);
+    var x2__66588 = cljs.core.nth.call(null, vec__66583__66587, 0, null);
+    var y2__66589 = cljs.core.nth.call(null, vec__66583__66587, 1, null);
+    var dx__66590 = cassowary.core._.call(null, x2__66588, x1__66585);
+    var dy__66591 = cassowary.core._.call(null, y1__66586, y1__66586);
+    var item__66592 = selected__66581.call(null, u__66580);
+    var new_u__66593 = sketchpad.state_patches.patch.call(null, u__66580, sketchpad.shapes.move_BANG_.call(null, item__66592, selected__66581, dx__66590, dy__66591, u__66580));
+    cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x2__66588));
+    cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y2__66589));
+    return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(p1__66553_SHARP_) {
+      return sketchpad.state_patches.patch.call(null, p1__66553_SHARP_, sketchpad.shapes.move_BANG_.call(null, selected__66581.call(null, u__66580), selected__66581, cassowary.core._.call(null, x2__66588, x1__66585), cassowary.core._.call(null, y2__66589, y1__66586), p1__66553_SHARP_))
     })
   }else {
     return null
   }
 };
 sketchpad.core.select_closest = function select_closest(e) {
-  var vec__117088__117089 = sketchpad.core.event_location.call(null, e);
-  var x__117090 = cljs.core.nth.call(null, vec__117088__117089, 0, null);
-  var y__117091 = cljs.core.nth.call(null, vec__117088__117089, 1, null);
-  cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x__117090));
-  cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y__117091));
+  var vec__66598__66599 = sketchpad.core.event_location.call(null, e);
+  var x__66600 = cljs.core.nth.call(null, vec__66598__66599, 0, null);
+  var y__66601 = cljs.core.nth.call(null, vec__66598__66599, 1, null);
+  cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x__66600));
+  cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y__66601));
   return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(u) {
     return cljs.core.assoc.call(null, u, "\ufdd0'selected", (new cljs.core.Keyword("\ufdd0'highlighted")).call(null, u))
   })
 };
 sketchpad.core.deselect_selected = function deselect_selected(e) {
-  var u__117140 = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var selected__117141 = u__117140.call(null, "\ufdd0'selected");
-  var highlighted__117142 = u__117140.call(null, "\ufdd0'highlighted");
-  var both_points__117144 = function() {
-    var and__3822__auto____117143 = cljs.core.instance_QMARK_.call(null, sketchpad.shapes.Point, u__117140.call(null, selected__117141));
-    if(and__3822__auto____117143) {
-      return cljs.core.instance_QMARK_.call(null, sketchpad.shapes.Point, u__117140.call(null, highlighted__117142))
+  var u__66650 = cljs.core.deref.call(null, sketchpad.core.current_universe);
+  var selected__66651 = u__66650.call(null, "\ufdd0'selected");
+  var highlighted__66652 = u__66650.call(null, "\ufdd0'highlighted");
+  var both_points__66654 = function() {
+    var and__3822__auto____66653 = cljs.core.instance_QMARK_.call(null, sketchpad.shapes.Point, u__66650.call(null, selected__66651));
+    if(and__3822__auto____66653) {
+      return cljs.core.instance_QMARK_.call(null, sketchpad.shapes.Point, u__66650.call(null, highlighted__66652))
     }else {
-      return and__3822__auto____117143
+      return and__3822__auto____66653
     }
   }();
-  if(cljs.core.truth_(both_points__117144)) {
-    console.log("merging", selected__117141, "and", highlighted__117142);
+  if(cljs.core.truth_(both_points__66654)) {
+    console.log("merging", selected__66651, "and", highlighted__66652);
     cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'highlighted", null);
-    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, highlighted__117142);
-    var G__117145__117147 = cljs.core.seq.call(null, u__117140);
-    if(G__117145__117147) {
-      var G__117149__117151 = cljs.core.first.call(null, G__117145__117147);
-      var vec__117150__117152 = G__117149__117151;
-      var name__117153 = cljs.core.nth.call(null, vec__117150__117152, 0, null);
-      var item__117154 = cljs.core.nth.call(null, vec__117150__117152, 1, null);
-      var G__117145__117155 = G__117145__117147;
-      var G__117149__117156 = G__117149__117151;
-      var G__117145__117157 = G__117145__117155;
+    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, highlighted__66652);
+    var G__66655__66657 = cljs.core.seq.call(null, u__66650);
+    if(G__66655__66657) {
+      var G__66659__66661 = cljs.core.first.call(null, G__66655__66657);
+      var vec__66660__66662 = G__66659__66661;
+      var name__66663 = cljs.core.nth.call(null, vec__66660__66662, 0, null);
+      var item__66664 = cljs.core.nth.call(null, vec__66660__66662, 1, null);
+      var G__66655__66665 = G__66655__66657;
+      var G__66659__66666 = G__66659__66661;
+      var G__66655__66667 = G__66655__66665;
       while(true) {
-        var vec__117158__117159 = G__117149__117156;
-        var name__117160 = cljs.core.nth.call(null, vec__117158__117159, 0, null);
-        var item__117161 = cljs.core.nth.call(null, vec__117158__117159, 1, null);
-        var G__117145__117162 = G__117145__117157;
-        var G__117146__117163 = cljs.core.seq.call(null, item__117161);
-        if(G__117146__117163) {
-          var G__117165__117167 = cljs.core.first.call(null, G__117146__117163);
-          var vec__117166__117168 = G__117165__117167;
-          var key__117169 = cljs.core.nth.call(null, vec__117166__117168, 0, null);
-          var val__117170 = cljs.core.nth.call(null, vec__117166__117168, 1, null);
-          var G__117146__117171 = G__117146__117163;
-          var G__117165__117172 = G__117165__117167;
-          var G__117146__117173 = G__117146__117171;
+        var vec__66668__66669 = G__66659__66666;
+        var name__66670 = cljs.core.nth.call(null, vec__66668__66669, 0, null);
+        var item__66671 = cljs.core.nth.call(null, vec__66668__66669, 1, null);
+        var G__66655__66672 = G__66655__66667;
+        var G__66656__66673 = cljs.core.seq.call(null, item__66671);
+        if(G__66656__66673) {
+          var G__66675__66677 = cljs.core.first.call(null, G__66656__66673);
+          var vec__66676__66678 = G__66675__66677;
+          var key__66679 = cljs.core.nth.call(null, vec__66676__66678, 0, null);
+          var val__66680 = cljs.core.nth.call(null, vec__66676__66678, 1, null);
+          var G__66656__66681 = G__66656__66673;
+          var G__66675__66682 = G__66675__66677;
+          var G__66656__66683 = G__66656__66681;
           while(true) {
-            var vec__117174__117175 = G__117165__117172;
-            var key__117176 = cljs.core.nth.call(null, vec__117174__117175, 0, null);
-            var val__117177 = cljs.core.nth.call(null, vec__117174__117175, 1, null);
-            var G__117146__117178 = G__117146__117173;
-            if(cljs.core._EQ_.call(null, val__117177, highlighted__117142)) {
-              console.log("setting", name__117160, key__117176, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name__117160, key__117176], true)), "to", selected__117141);
-              cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name__117160, key__117176], true), selected__117141);
-              if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(G__117165__117172, G__117146__117173, G__117149__117156, G__117145__117157, vec__117174__117175, key__117176, val__117177, G__117146__117178, G__117165__117167, vec__117166__117168, key__117169, val__117170, G__117146__117171, G__117146__117163, vec__117158__117159, name__117160, item__117161, G__117145__117162) {
-                return function(p__117179) {
-                  var vec__117180__117181 = p__117179;
-                  var key__117182 = cljs.core.nth.call(null, vec__117180__117181, 0, null);
-                  var val__117183 = cljs.core.nth.call(null, vec__117180__117181, 1, null);
-                  return cljs.core._EQ_.call(null, val__117183, selected__117141)
+            var vec__66684__66685 = G__66675__66682;
+            var key__66686 = cljs.core.nth.call(null, vec__66684__66685, 0, null);
+            var val__66687 = cljs.core.nth.call(null, vec__66684__66685, 1, null);
+            var G__66656__66688 = G__66656__66683;
+            if(cljs.core.truth_(cassowary.core._EQ_.call(null, val__66687, highlighted__66652))) {
+              console.log("setting", name__66670, key__66686, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name__66670, key__66686], true)), "to", selected__66651);
+              cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name__66670, key__66686], true), selected__66651);
+              if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(G__66675__66682, G__66656__66683, G__66659__66666, G__66655__66667, vec__66684__66685, key__66686, val__66687, G__66656__66688, G__66675__66677, vec__66676__66678, key__66679, val__66680, G__66656__66681, G__66656__66673, vec__66668__66669, name__66670, item__66671, G__66655__66672) {
+                return function(p__66689) {
+                  var vec__66690__66691 = p__66689;
+                  var key__66692 = cljs.core.nth.call(null, vec__66690__66691, 0, null);
+                  var val__66693 = cljs.core.nth.call(null, vec__66690__66691, 1, null);
+                  return cassowary.core._EQ_.call(null, val__66693, selected__66651)
                 }
-              }(G__117165__117172, G__117146__117173, G__117149__117156, G__117145__117157, vec__117174__117175, key__117176, val__117177, G__117146__117178, G__117165__117167, vec__117166__117168, key__117169, val__117170, G__117146__117171, G__117146__117163, vec__117158__117159, name__117160, item__117161, G__117145__117162), item__117161))) {
-                cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name__117160)
+              }(G__66675__66682, G__66656__66683, G__66659__66666, G__66655__66667, vec__66684__66685, key__66686, val__66687, G__66656__66688, G__66675__66677, vec__66676__66678, key__66679, val__66680, G__66656__66681, G__66656__66673, vec__66668__66669, name__66670, item__66671, G__66655__66672), item__66671))) {
+                cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name__66670)
               }else {
               }
-              console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name__117160, key__117176], true)))
+              console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name__66670, key__66686], true)))
             }else {
             }
-            var temp__3974__auto____117184 = cljs.core.next.call(null, G__117146__117178);
-            if(temp__3974__auto____117184) {
-              var G__117146__117185 = temp__3974__auto____117184;
-              var G__117188 = cljs.core.first.call(null, G__117146__117185);
-              var G__117189 = G__117146__117185;
-              G__117165__117172 = G__117188;
-              G__117146__117173 = G__117189;
+            var temp__3974__auto____66694 = cljs.core.next.call(null, G__66656__66688);
+            if(temp__3974__auto____66694) {
+              var G__66656__66695 = temp__3974__auto____66694;
+              var G__66698 = cljs.core.first.call(null, G__66656__66695);
+              var G__66699 = G__66656__66695;
+              G__66675__66682 = G__66698;
+              G__66656__66683 = G__66699;
               continue
             }else {
             }
@@ -21440,13 +23581,13 @@ sketchpad.core.deselect_selected = function deselect_selected(e) {
           }
         }else {
         }
-        var temp__3974__auto____117186 = cljs.core.next.call(null, G__117145__117162);
-        if(temp__3974__auto____117186) {
-          var G__117145__117187 = temp__3974__auto____117186;
-          var G__117190 = cljs.core.first.call(null, G__117145__117187);
-          var G__117191 = G__117145__117187;
-          G__117149__117156 = G__117190;
-          G__117145__117157 = G__117191;
+        var temp__3974__auto____66696 = cljs.core.next.call(null, G__66655__66672);
+        if(temp__3974__auto____66696) {
+          var G__66655__66697 = temp__3974__auto____66696;
+          var G__66700 = cljs.core.first.call(null, G__66655__66697);
+          var G__66701 = G__66655__66697;
+          G__66659__66666 = G__66700;
+          G__66655__66667 = G__66701;
           continue
         }else {
         }
@@ -21459,17 +23600,42 @@ sketchpad.core.deselect_selected = function deselect_selected(e) {
   cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0'selected", null);
   return console.log(cljs.core.deref.call(null, sketchpad.core.current_universe))
 };
+sketchpad.core.applying_constraints = false;
+sketchpad.core.apply_constraints = function apply_constraints(_66711, _66712, _, u) {
+  if(cljs.core.not.call(null, sketchpad.core.applying_constraints)) {
+    var applying_constraints66713__66714 = sketchpad.core.applying_constraints;
+    try {
+      sketchpad.core.applying_constraints = true;
+      var p1__66716 = u.call(null, "\ufdd0'p1");
+      var solver__66717 = cassowary.core.simplex_solver.call(null);
+      var p1x__66718 = cassowary.core.cvar.call(null, (new cljs.core.Keyword("\ufdd0'x")).call(null, p1__66716));
+      var p1y__66719 = cassowary.core.cvar.call(null, (new cljs.core.Keyword("\ufdd0'y")).call(null, p1__66716));
+      cassowary.core.stay_BANG_.call(null, solver__66717, p1x__66718);
+      cassowary.core.stay_BANG_.call(null, solver__66717, p1y__66719);
+      cassowary.core.constrain_BANG_.call(null, solver__66717, cassowary.core._EQ_.call(null, p1y__66719, cassowary.core._STAR_.call(null, p1x__66718, 0.4)));
+      console.log("applying constraints", cassowary.core.value.call(null, p1x__66718), cassowary.core.value.call(null, p1y__66719));
+      cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'p1", "\ufdd0'x"], true), cassowary.core.value.call(null, p1x__66718));
+      cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray(["\ufdd0'p1", "\ufdd0'y"], true), cassowary.core.value.call(null, p1y__66719));
+      return console.log("applied constraints", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray(["\ufdd0'p1", "\ufdd0'x"], true)))
+    }finally {
+      sketchpad.core.applying_constraints = applying_constraints66713__66714
+    }
+  }else {
+    return null
+  }
+};
+cljs.core.add_watch.call(null, sketchpad.core.current_universe, "\ufdd0'constrain", sketchpad.core.apply_constraints);
 sketchpad.core.main = function main() {
-  var canvas__117194 = document.getElementById("canvas");
-  var ctx__117195 = canvas__117194.getContext("2d");
+  var canvas__66722 = document.getElementById("canvas");
+  var ctx__66723 = canvas__66722.getContext("2d");
   cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.conj, cljs.core.ObjMap.fromObject(["\ufdd0'p1", "\ufdd0'p3", "\ufdd0'c1", "\ufdd0'p2", "\ufdd0'l2", "\ufdd0'l3", "\ufdd0'p4", "\ufdd0'l1", "\ufdd0'p5", "\ufdd0'l5", "\ufdd0'l4"], {"\ufdd0'p1":new sketchpad.shapes.Point(50, 20), "\ufdd0'p3":new sketchpad.shapes.Point(210, 210), "\ufdd0'c1":new sketchpad.shapes.Circle("\ufdd0'p3", "\ufdd0'p4", "\ufdd0'p5"), "\ufdd0'p2":new sketchpad.shapes.Point(300, 300), "\ufdd0'l2":new sketchpad.shapes.Line("\ufdd0'p2", 
   "\ufdd0'p3"), "\ufdd0'l3":new sketchpad.shapes.Line("\ufdd0'p1", "\ufdd0'p4"), "\ufdd0'p4":new sketchpad.shapes.Point(340, 210), "\ufdd0'l1":new sketchpad.shapes.Line("\ufdd0'p1", "\ufdd0'p2"), "\ufdd0'p5":new sketchpad.shapes.Point(210, 340), "\ufdd0'l5":new sketchpad.shapes.Line("\ufdd0'p3", "\ufdd0'p5"), "\ufdd0'l4":new sketchpad.shapes.Line("\ufdd0'p1", "\ufdd0'p5")}));
   setInterval(function() {
-    return sketchpad.core.draw_universe.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), ctx__117195)
+    return sketchpad.core.draw_universe.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), ctx__66723)
   }, 16);
-  canvas__117194.addEventListener("mousemove", sketchpad.core.highlight_closest);
-  canvas__117194.addEventListener("mousemove", sketchpad.core.move_selected);
-  canvas__117194.addEventListener("mousedown", sketchpad.core.select_closest);
-  return canvas__117194.addEventListener("mouseup", sketchpad.core.deselect_selected)
+  canvas__66722.addEventListener("mousemove", sketchpad.core.highlight_closest);
+  canvas__66722.addEventListener("mousemove", sketchpad.core.move_selected);
+  canvas__66722.addEventListener("mousedown", sketchpad.core.select_closest);
+  return canvas__66722.addEventListener("mouseup", sketchpad.core.deselect_selected)
 };
 goog.exportSymbol("sketchpad.core.main", sketchpad.core.main);
