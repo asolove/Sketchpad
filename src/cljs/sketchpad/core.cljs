@@ -1,8 +1,7 @@
 (ns sketchpad.core
-  (:refer-clojure :exclude [+ - = *])
   (:use [sketchpad.shapes :only [draw cursor-distance Selectable Drawable Point Line Circle move!]]
         [sketchpad.state-patches :only [patch]]
-        [cassowary.core :only [+ - = * cvar value constrain! unconstrain! stay! simplex-solver]]))
+        [sketchpad.constrain :only [Same Colinear Constraint walk-downhill]]))
 
 (def current-universe (atom {}))
 (def start-x (atom nil))
@@ -80,37 +79,38 @@
   (swap! current-universe assoc :selected nil)
   (js/console.log @current-universe))
 
+(defn constraints [universe]
+  (filter (partial satisfies? Constraint)
+          (map val universe)))
 
-(def ^:dynamic applying-constraints false)
+;; FIXME this is problematic, only allows numeric vars
+(defn var-names [universe]
+  (map name (filter #(number? (val %)) universe)))
 
-(defn apply-constraints [_ _ _ u]
-  (when (not applying-constraints)
-    (binding [applying-constraints true]
-      (let [p1 (u :p1)
-            solver (simplex-solver)
-            p1x (cvar (:x p1))
-            p1y (cvar (:y p1))]
-        (stay! solver p1x)
-        (stay! solver p1y)
-        (constrain! solver (= p1y (* p1x .4)))
-        (js/console.log "applying constraints" (value p1x) (value p1y))
-        (swap! current-universe assoc-in [:p1 :x] (value p1x))
-        (swap! current-universe assoc-in [:p1 :y] (value p1y))
-        (js/console.log "applied constraints" (get-in @current-universe [:p1 :x]))))))
-
-(add-watch current-universe :constrain apply-constraints)
-
+(defn apply-constraints [universe]
+  (let [constraints (map val (filter #(satisfies? Constraint (val %)) universe))
+        vars (map val)
+        env universe]
+    (walk-downhill constraints vars env)))
 
 (defn ^:export main []
   (let [canvas (js/document.getElementById "canvas")
         ctx (.getContext canvas "2d")]
     (swap! current-universe conj
            {
-            :p1 (Point. 50 20)
-            :p2 (Point. 300 300)
-            :p3 (Point. 210 210)
-            :p4 (Point. 340 210)
-            :p5 (Point. 210 340)
+            :x1 50
+            :x2 300
+            :x3 210
+            :x4 340
+            :y1 20
+            :y2 300
+            :y3 210
+            :y4 340
+            :p1 (Point. :x1 :y1)
+            :p2 (Point. :x2 :y2)
+            :p3 (Point. :x3 :y3)
+            :p4 (Point. :x4 :y4)
+            :p5 (Point. :x1 :y2)
             :l1 (Line. :p1 :p2)
             :l2 (Line. :p2 :p3)
             :l3 (Line. :p1 :p4)
