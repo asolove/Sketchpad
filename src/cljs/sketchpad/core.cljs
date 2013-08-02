@@ -102,15 +102,17 @@
             :x2 300
             :x3 210
             :x4 340
+            :x5 400
             :y1 20
             :y2 300
             :y3 210
             :y4 340
+            :y5 40
             :p1 (Point. :x1 :y1)
             :p2 (Point. :x2 :y2)
             :p3 (Point. :x3 :y3)
             :p4 (Point. :x4 :y4)
-            :p5 (Point. :x1 :y2)
+            :p5 (Point. :x5 :y5)
             :l1 (Line. :p1 :p2)
             :l2 (Line. :p2 :p3)
             :l3 (Line. :p1 :p4)

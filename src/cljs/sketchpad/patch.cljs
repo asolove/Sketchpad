@@ -9,7 +9,7 @@
     (into {} (for [key (union (set (keys state)) (set (keys diff)))]
                [key (let [val1 (key state)
                           val2 (key diff)]
-                      (if (and val1 val2)
+                      (if (and (map? val1) (map? val2))
                         (merge val1 val2)
                         (or val2 val1)))]))
     state))
