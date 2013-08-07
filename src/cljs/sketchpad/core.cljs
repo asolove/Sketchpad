@@ -17,6 +17,20 @@
              (not (= name (universe :selected)))
              (satisfies? Selectable item))) universe))
 
+(defn constraints [universe]
+  (filter (partial satisfies? Constraint)
+          (map val universe)))
+
+;; FIXME this is problematic, only allows numeric vars
+(defn var-names [universe]
+  (map name (filter #(number? (val %)) universe)))
+
+(defn apply-constraints [universe]
+  (let [constraints (map val (filter #(satisfies? Constraint (val %)) universe))
+        vars (map val)
+        env universe]
+    (walk-downhill constraints vars env)))
+
 (defn draw-universe [universe ctx]
   (.clearRect ctx 0 0 800 600)
   (doseq [[name item] (drawables universe)]
@@ -49,7 +63,7 @@
             new-u (patch u (move! item selected dx dy u))]
         (swap! start-x (constantly x2))
         (swap! start-y (constantly y2))
-        (swap! current-universe #(patch % (move! (selected u) selected (- x2 x1) (- y2 y1) %)))))))
+        (swap! current-universe #(apply-constraints (patch % (move! (selected u) selected (- x2 x1) (- y2 y1) %))))))))
 
 (defn select-closest [e]
   (let [[x y] (event-location e)]
@@ -79,25 +93,12 @@
   (swap! current-universe assoc :selected nil)
   (js/console.log @current-universe))
 
-(defn constraints [universe]
-  (filter (partial satisfies? Constraint)
-          (map val universe)))
-
-;; FIXME this is problematic, only allows numeric vars
-(defn var-names [universe]
-  (map name (filter #(number? (val %)) universe)))
-
-(defn apply-constraints [universe]
-  (let [constraints (map val (filter #(satisfies? Constraint (val %)) universe))
-        vars (map val)
-        env universe]
-    (walk-downhill constraints vars env)))
-
 (defn ^:export main []
   (let [canvas (js/document.getElementById "canvas")
         ctx (.getContext canvas "2d")]
     (swap! current-universe conj
            {
+            :constraint1 (sketchpad.constrain.Colinear. :x1 :y1 :x2 :y2 :x3 :y3)
             :x1 50
             :x2 300
             :x3 210
@@ -115,9 +116,6 @@
             :p5 (Point. :x5 :y5)
             :l1 (Line. :p1 :p2)
             :l2 (Line. :p2 :p3)
-            :l3 (Line. :p1 :p4)
-            :l4 (Line. :p1 :p5)
-            :l5 (Line. :p3 :p5)
             :c1 (Circle. :p3 :p4 :p5)
            })
 

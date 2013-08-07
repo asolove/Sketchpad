@@ -86,10 +86,7 @@
   Moveable
   (move! [circle name dx dy universe]
     (into {} (map (fn [name]
-                    ;; FIXME: doesn't work with new scheme
                     (let [{x :x y :y} (universe name)]
-                      []
-                      [name {:x (+ x dx) :y (+ y dy)}]))
+                      {x (+ dx (universe x))
+                       y (+ dy (universe y))}))
                   [center start end]))))
-                                  
-    
