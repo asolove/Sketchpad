@@ -10,10 +10,15 @@ A ClojureScript recreation of Ivan Sutherland's Sketchpad, the first graphical u
 ## Status
 
 * DONE: Basic drawing of points, circles, and lines, rendered to <canvas>
+* TODO: add arcs, erasure, numbers, other drawable items
 * TODO: update the UI to have real affordances
 * TODO: masters and instances
-* TODO: constraints
-  * The original user a linear constraint solver and a method for creating numerical approximation of non-linear constraints. The description in the thesis is not yet clear to me. We could alternately implement a quadratic constraint solver.
+* IN PROGRESS: constraints
+  * DONE: reproduce the basic interface of Sketchpad's energy-relaxation solver.
+  * TODO: debug possible infinite loops, perf problems in naive relaxation solver. Make constraint solver async, yielding control so events can be handled.
+  * TODO: add constraint types: midpoint, perpendicular, same length
+  * TODO: add a UI for adding and viewing constraints
+  * ?: reproduce the faster solver method that identifies a DAG of constraint dependencies
 
 ## License
 
