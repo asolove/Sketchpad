@@ -61,6 +61,6 @@
 (defn walk-downhill
   [cs vars env]
   (let [[var [_ slope]] (sharpest-slope cs vars env)]
-    (if (< (abs slope) 0.01)
+    (if (< (abs slope) 0.1)
       env
       (recur cs vars (update-in env [var] (if (neg? slope) - +) 0.1)))))
