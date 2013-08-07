@@ -25,8 +25,9 @@
   (error [self env]
     (let [[x1 y1 x2 y2 x3 y3] (map env [x1 y1 x2 y2 x3 y3])
           slope (/ (- y2 y1) (- x2 x1))
-          colinear-x3 (+ y1 (/ (- y3 y1) slope))
-          colinear-y3 (+ x1 (* slope (- x3 x1)))
+          slope (if (= slope 0) 0.01 slope)
+          colinear-x3 (+ x1 (/ (- y3 y1) slope))
+          colinear-y3 (+ y1 (* slope (- x3 x1)))
           off-x (abs (- x3 colinear-x3))
           off-y (abs (- y3 colinear-y3))]
       (min off-x off-y))))
@@ -53,14 +54,10 @@
   (let [approximations (into {} (map #(vec [% (linear-approximation cs % env)]) vars))]
     (apply max-key (comp abs second val) approximations)))
 
-;; magic numbers are suspicious:
-;; why 0.001 as dx? 
-;; why 0.01 as the step? could be dynamic, based on slope
-;; why 0.1 dE/dx as the stopping point? should be smarter if we've
-;; made lots of changes or are going in circles
+;; magic numbers are suspicious: dx, max-slope, etc.
 (defn walk-downhill
   [cs vars env]
   (let [[var [_ slope]] (sharpest-slope cs vars env)]
-    (if (< (abs slope) 0.1)
+    (if (< (abs slope) 1)
       env
-      (recur cs vars (update-in env [var] (if (neg? slope) - +) 0.1)))))
+      (recur cs vars (update-in env [var] (if (neg? slope) - +) 1)))))

@@ -23630,33 +23630,33 @@ sketchpad.constrain.Same.prototype.cljs$core$ILookup$_lookup$arity$2 = function(
   var self__ = this;
   return this__2865__auto__.cljs$core$ILookup$_lookup$arity$3(this__2865__auto__, k__2866__auto__, null)
 };
-sketchpad.constrain.Same.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2867__auto__, k9656, else__2868__auto__) {
+sketchpad.constrain.Same.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2867__auto__, k17567, else__2868__auto__) {
   var self__ = this;
-  if(k9656 === "\ufdd0:a") {
+  if(k17567 === "\ufdd0:a") {
     return self__.a
   }else {
-    if(k9656 === "\ufdd0:b") {
+    if(k17567 === "\ufdd0:b") {
       return self__.b
     }else {
       if("\ufdd0:else") {
-        return cljs.core.get.call(null, self__.__extmap, k9656, else__2868__auto__)
+        return cljs.core.get.call(null, self__.__extmap, k17567, else__2868__auto__)
       }else {
         return null
       }
     }
   }
 };
-sketchpad.constrain.Same.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2872__auto__, k__2873__auto__, G__9655) {
+sketchpad.constrain.Same.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2872__auto__, k__2873__auto__, G__17566) {
   var self__ = this;
-  var pred__9658 = cljs.core.identical_QMARK_;
-  var expr__9659 = k__2873__auto__;
-  if(pred__9658.call(null, "\ufdd0:a", expr__9659)) {
-    return new sketchpad.constrain.Same(G__9655, self__.b, self__.__meta, self__.__extmap, null)
+  var pred__17569 = cljs.core.identical_QMARK_;
+  var expr__17570 = k__2873__auto__;
+  if(pred__17569.call(null, "\ufdd0:a", expr__17570)) {
+    return new sketchpad.constrain.Same(G__17566, self__.b, self__.__meta, self__.__extmap, null)
   }else {
-    if(pred__9658.call(null, "\ufdd0:b", expr__9659)) {
-      return new sketchpad.constrain.Same(self__.a, G__9655, self__.__meta, self__.__extmap, null)
+    if(pred__17569.call(null, "\ufdd0:b", expr__17570)) {
+      return new sketchpad.constrain.Same(self__.a, G__17566, self__.__meta, self__.__extmap, null)
     }else {
-      return new sketchpad.constrain.Same(self__.a, self__.b, self__.__meta, cljs.core.assoc.call(null, self__.__extmap, k__2873__auto__, G__9655), null)
+      return new sketchpad.constrain.Same(self__.a, self__.b, self__.__meta, cljs.core.assoc.call(null, self__.__extmap, k__2873__auto__, G__17566), null)
     }
   }
 };
@@ -23720,9 +23720,9 @@ sketchpad.constrain.Same.prototype.cljs$core$IEquiv$_equiv$arity$2 = function(th
     return false
   }
 };
-sketchpad.constrain.Same.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2864__auto__, G__9655) {
+sketchpad.constrain.Same.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2864__auto__, G__17566) {
   var self__ = this;
-  return new sketchpad.constrain.Same(self__.a, self__.b, G__9655, self__.__extmap, self__.__hash)
+  return new sketchpad.constrain.Same(self__.a, self__.b, G__17566, self__.__extmap, self__.__hash)
 };
 sketchpad.constrain.Same.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2863__auto__) {
   var self__ = this;
@@ -23746,8 +23746,8 @@ sketchpad.constrain.Same.cljs$lang$ctorPrWriter = function(this__2899__auto__, w
 sketchpad.constrain.__GT_Same = function __GT_Same(a, b) {
   return new sketchpad.constrain.Same(a, b)
 };
-sketchpad.constrain.map__GT_Same = function map__GT_Same(G__9657) {
-  return new sketchpad.constrain.Same((new cljs.core.Keyword("\ufdd0:a")).call(null, G__9657), (new cljs.core.Keyword("\ufdd0:b")).call(null, G__9657), null, cljs.core.dissoc.call(null, G__9657, "\ufdd0:a", "\ufdd0:b"))
+sketchpad.constrain.map__GT_Same = function map__GT_Same(G__17568) {
+  return new sketchpad.constrain.Same((new cljs.core.Keyword("\ufdd0:a")).call(null, G__17568), (new cljs.core.Keyword("\ufdd0:b")).call(null, G__17568), null, cljs.core.dissoc.call(null, G__17568, "\ufdd0:a", "\ufdd0:b"))
 };
 goog.provide("sketchpad.constrain.Colinear");
 sketchpad.constrain.Colinear = function(x1, y1, x2, y2, x3, y3, __meta, __extmap) {
@@ -23784,28 +23784,28 @@ sketchpad.constrain.Colinear.prototype.cljs$core$ILookup$_lookup$arity$2 = funct
   var self__ = this;
   return this__2865__auto__.cljs$core$ILookup$_lookup$arity$3(this__2865__auto__, k__2866__auto__, null)
 };
-sketchpad.constrain.Colinear.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2867__auto__, k9662, else__2868__auto__) {
+sketchpad.constrain.Colinear.prototype.cljs$core$ILookup$_lookup$arity$3 = function(this__2867__auto__, k17573, else__2868__auto__) {
   var self__ = this;
-  if(k9662 === "\ufdd0:x1") {
+  if(k17573 === "\ufdd0:x1") {
     return self__.x1
   }else {
-    if(k9662 === "\ufdd0:y1") {
+    if(k17573 === "\ufdd0:y1") {
       return self__.y1
     }else {
-      if(k9662 === "\ufdd0:x2") {
+      if(k17573 === "\ufdd0:x2") {
         return self__.x2
       }else {
-        if(k9662 === "\ufdd0:y2") {
+        if(k17573 === "\ufdd0:y2") {
           return self__.y2
         }else {
-          if(k9662 === "\ufdd0:x3") {
+          if(k17573 === "\ufdd0:x3") {
             return self__.x3
           }else {
-            if(k9662 === "\ufdd0:y3") {
+            if(k17573 === "\ufdd0:y3") {
               return self__.y3
             }else {
               if("\ufdd0:else") {
-                return cljs.core.get.call(null, self__.__extmap, k9662, else__2868__auto__)
+                return cljs.core.get.call(null, self__.__extmap, k17573, else__2868__auto__)
               }else {
                 return null
               }
@@ -23816,29 +23816,29 @@ sketchpad.constrain.Colinear.prototype.cljs$core$ILookup$_lookup$arity$3 = funct
     }
   }
 };
-sketchpad.constrain.Colinear.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2872__auto__, k__2873__auto__, G__9661) {
+sketchpad.constrain.Colinear.prototype.cljs$core$IAssociative$_assoc$arity$3 = function(this__2872__auto__, k__2873__auto__, G__17572) {
   var self__ = this;
-  var pred__9664 = cljs.core.identical_QMARK_;
-  var expr__9665 = k__2873__auto__;
-  if(pred__9664.call(null, "\ufdd0:x1", expr__9665)) {
-    return new sketchpad.constrain.Colinear(G__9661, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
+  var pred__17575 = cljs.core.identical_QMARK_;
+  var expr__17576 = k__2873__auto__;
+  if(pred__17575.call(null, "\ufdd0:x1", expr__17576)) {
+    return new sketchpad.constrain.Colinear(G__17572, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
   }else {
-    if(pred__9664.call(null, "\ufdd0:y1", expr__9665)) {
-      return new sketchpad.constrain.Colinear(self__.x1, G__9661, self__.x2, self__.y2, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
+    if(pred__17575.call(null, "\ufdd0:y1", expr__17576)) {
+      return new sketchpad.constrain.Colinear(self__.x1, G__17572, self__.x2, self__.y2, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
     }else {
-      if(pred__9664.call(null, "\ufdd0:x2", expr__9665)) {
-        return new sketchpad.constrain.Colinear(self__.x1, self__.y1, G__9661, self__.y2, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
+      if(pred__17575.call(null, "\ufdd0:x2", expr__17576)) {
+        return new sketchpad.constrain.Colinear(self__.x1, self__.y1, G__17572, self__.y2, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
       }else {
-        if(pred__9664.call(null, "\ufdd0:y2", expr__9665)) {
-          return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, G__9661, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
+        if(pred__17575.call(null, "\ufdd0:y2", expr__17576)) {
+          return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, G__17572, self__.x3, self__.y3, self__.__meta, self__.__extmap, null)
         }else {
-          if(pred__9664.call(null, "\ufdd0:x3", expr__9665)) {
-            return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, G__9661, self__.y3, self__.__meta, self__.__extmap, null)
+          if(pred__17575.call(null, "\ufdd0:x3", expr__17576)) {
+            return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, G__17572, self__.y3, self__.__meta, self__.__extmap, null)
           }else {
-            if(pred__9664.call(null, "\ufdd0:y3", expr__9665)) {
-              return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, G__9661, self__.__meta, self__.__extmap, null)
+            if(pred__17575.call(null, "\ufdd0:y3", expr__17576)) {
+              return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, G__17572, self__.__meta, self__.__extmap, null)
             }else {
-              return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3, self__.__meta, cljs.core.assoc.call(null, self__.__extmap, k__2873__auto__, G__9661), null)
+              return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3, self__.__meta, cljs.core.assoc.call(null, self__.__extmap, k__2873__auto__, G__17572), null)
             }
           }
         }
@@ -23861,16 +23861,17 @@ sketchpad.constrain.Colinear.prototype.sketchpad$constrain$Constraint$degrees_of
 };
 sketchpad.constrain.Colinear.prototype.sketchpad$constrain$Constraint$error$arity$2 = function(self, env) {
   var self__ = this;
-  var vec__9667 = cljs.core.map.call(null, env, cljs.core.PersistentVector.fromArray([self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3], true));
-  var x1__$1 = cljs.core.nth.call(null, vec__9667, 0, null);
-  var y1__$1 = cljs.core.nth.call(null, vec__9667, 1, null);
-  var x2__$1 = cljs.core.nth.call(null, vec__9667, 2, null);
-  var y2__$1 = cljs.core.nth.call(null, vec__9667, 3, null);
-  var x3__$1 = cljs.core.nth.call(null, vec__9667, 4, null);
-  var y3__$1 = cljs.core.nth.call(null, vec__9667, 5, null);
+  var vec__17578 = cljs.core.map.call(null, env, cljs.core.PersistentVector.fromArray([self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3], true));
+  var x1__$1 = cljs.core.nth.call(null, vec__17578, 0, null);
+  var y1__$1 = cljs.core.nth.call(null, vec__17578, 1, null);
+  var x2__$1 = cljs.core.nth.call(null, vec__17578, 2, null);
+  var y2__$1 = cljs.core.nth.call(null, vec__17578, 3, null);
+  var x3__$1 = cljs.core.nth.call(null, vec__17578, 4, null);
+  var y3__$1 = cljs.core.nth.call(null, vec__17578, 5, null);
   var slope = (y2__$1 - y1__$1) / (x2__$1 - x1__$1);
-  var colinear_x3 = y1__$1 + (y3__$1 - y1__$1) / slope;
-  var colinear_y3 = x1__$1 + slope * (x3__$1 - x1__$1);
+  var slope__$1 = cljs.core._EQ_.call(null, slope, 0) ? 0.01 : slope;
+  var colinear_x3 = x1__$1 + (y3__$1 - y1__$1) / slope__$1;
+  var colinear_y3 = y1__$1 + slope__$1 * (x3__$1 - x1__$1);
   var off_x = sketchpad.constrain.abs.call(null, x3__$1 - colinear_x3);
   var off_y = sketchpad.constrain.abs.call(null, y3__$1 - colinear_y3);
   var x__2640__auto__ = off_x;
@@ -23921,9 +23922,9 @@ sketchpad.constrain.Colinear.prototype.cljs$core$IEquiv$_equiv$arity$2 = functio
     return false
   }
 };
-sketchpad.constrain.Colinear.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2864__auto__, G__9661) {
+sketchpad.constrain.Colinear.prototype.cljs$core$IWithMeta$_with_meta$arity$2 = function(this__2864__auto__, G__17572) {
   var self__ = this;
-  return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3, G__9661, self__.__extmap, self__.__hash)
+  return new sketchpad.constrain.Colinear(self__.x1, self__.y1, self__.x2, self__.y2, self__.x3, self__.y3, G__17572, self__.__extmap, self__.__hash)
 };
 sketchpad.constrain.Colinear.prototype.cljs$core$IMeta$_meta$arity$1 = function(this__2863__auto__) {
   var self__ = this;
@@ -23947,17 +23948,18 @@ sketchpad.constrain.Colinear.cljs$lang$ctorPrWriter = function(this__2899__auto_
 sketchpad.constrain.__GT_Colinear = function __GT_Colinear(x1, y1, x2, y2, x3, y3) {
   return new sketchpad.constrain.Colinear(x1, y1, x2, y2, x3, y3)
 };
-sketchpad.constrain.map__GT_Colinear = function map__GT_Colinear(G__9663) {
-  return new sketchpad.constrain.Colinear((new cljs.core.Keyword("\ufdd0:x1")).call(null, G__9663), (new cljs.core.Keyword("\ufdd0:y1")).call(null, G__9663), (new cljs.core.Keyword("\ufdd0:x2")).call(null, G__9663), (new cljs.core.Keyword("\ufdd0:y2")).call(null, G__9663), (new cljs.core.Keyword("\ufdd0:x3")).call(null, G__9663), (new cljs.core.Keyword("\ufdd0:y3")).call(null, G__9663), null, cljs.core.dissoc.call(null, G__9663, "\ufdd0:x1", "\ufdd0:y1", "\ufdd0:x2", "\ufdd0:y2", "\ufdd0:x3", "\ufdd0:y3"))
+sketchpad.constrain.map__GT_Colinear = function map__GT_Colinear(G__17574) {
+  return new sketchpad.constrain.Colinear((new cljs.core.Keyword("\ufdd0:x1")).call(null, G__17574), (new cljs.core.Keyword("\ufdd0:y1")).call(null, G__17574), (new cljs.core.Keyword("\ufdd0:x2")).call(null, G__17574), (new cljs.core.Keyword("\ufdd0:y2")).call(null, G__17574), (new cljs.core.Keyword("\ufdd0:x3")).call(null, G__17574), (new cljs.core.Keyword("\ufdd0:y3")).call(null, G__17574), null, cljs.core.dissoc.call(null, G__17574, "\ufdd0:x1", "\ufdd0:y1", "\ufdd0:x2", "\ufdd0:y2", "\ufdd0:x3", 
+  "\ufdd0:y3"))
 };
 sketchpad.constrain.total_energy = function total_energy(constraints, env) {
-  return cljs.core.apply.call(null, cljs.core._PLUS_, cljs.core.map.call(null, function(p1__9668_SHARP_) {
-    return Math.pow.call(null, sketchpad.constrain.error.call(null, p1__9668_SHARP_, env), 2)
+  return cljs.core.apply.call(null, cljs.core._PLUS_, cljs.core.map.call(null, function(p1__17579_SHARP_) {
+    return Math.pow.call(null, sketchpad.constrain.error.call(null, p1__17579_SHARP_, env), 2)
   }, constraints))
 };
 sketchpad.constrain.relevant_constraints = function relevant_constraints(var$, constraints, env) {
-  return cljs.core.filter.call(null, function(p1__9669_SHARP_) {
-    return cljs.core.set.call(null, sketchpad.constrain.constrained.call(null, p1__9669_SHARP_, env)).call(null, var$)
+  return cljs.core.filter.call(null, function(p1__17580_SHARP_) {
+    return cljs.core.set.call(null, sketchpad.constrain.constrained.call(null, p1__17580_SHARP_, env)).call(null, var$)
   }, constraints)
 };
 sketchpad.constrain.linear_approximation = function linear_approximation(constraints, var$, env) {
@@ -23972,27 +23974,27 @@ sketchpad.constrain.linear_approximation = function linear_approximation(constra
   return cljs.core.PersistentVector.fromArray([intercept, slope], true)
 };
 sketchpad.constrain.sharpest_slope = function sharpest_slope(cs, vars, env) {
-  var approximations = cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(p1__9670_SHARP_) {
-    return cljs.core.vec.call(null, cljs.core.PersistentVector.fromArray([p1__9670_SHARP_, sketchpad.constrain.linear_approximation.call(null, cs, p1__9670_SHARP_, env)], true))
+  var approximations = cljs.core.into.call(null, cljs.core.PersistentArrayMap.EMPTY, cljs.core.map.call(null, function(p1__17581_SHARP_) {
+    return cljs.core.vec.call(null, cljs.core.PersistentVector.fromArray([p1__17581_SHARP_, sketchpad.constrain.linear_approximation.call(null, cs, p1__17581_SHARP_, env)], true))
   }, vars));
   return cljs.core.apply.call(null, cljs.core.max_key, cljs.core.comp.call(null, sketchpad.constrain.abs, cljs.core.second, cljs.core.val), approximations)
 };
 sketchpad.constrain.walk_downhill = function walk_downhill(cs, vars, env) {
   while(true) {
-    var vec__9673 = sketchpad.constrain.sharpest_slope.call(null, cs, vars, env);
-    var var$ = cljs.core.nth.call(null, vec__9673, 0, null);
-    var vec__9674 = cljs.core.nth.call(null, vec__9673, 1, null);
-    var _ = cljs.core.nth.call(null, vec__9674, 0, null);
-    var slope = cljs.core.nth.call(null, vec__9674, 1, null);
-    if(sketchpad.constrain.abs.call(null, slope) < 0.1) {
+    var vec__17584 = sketchpad.constrain.sharpest_slope.call(null, cs, vars, env);
+    var var$ = cljs.core.nth.call(null, vec__17584, 0, null);
+    var vec__17585 = cljs.core.nth.call(null, vec__17584, 1, null);
+    var _ = cljs.core.nth.call(null, vec__17585, 0, null);
+    var slope = cljs.core.nth.call(null, vec__17585, 1, null);
+    if(sketchpad.constrain.abs.call(null, slope) < 1) {
       return env
     }else {
-      var G__9675 = cs;
-      var G__9676 = vars;
-      var G__9677 = cljs.core.update_in.call(null, env, cljs.core.PersistentVector.fromArray([var$], true), slope < 0 ? cljs.core._ : cljs.core._PLUS_, 0.1);
-      cs = G__9675;
-      vars = G__9676;
-      env = G__9677;
+      var G__17586 = cs;
+      var G__17587 = vars;
+      var G__17588 = cljs.core.update_in.call(null, env, cljs.core.PersistentVector.fromArray([var$], true), slope < 0 ? cljs.core._ : cljs.core._PLUS_, 1);
+      cs = G__17586;
+      vars = G__17587;
+      env = G__17588;
       continue
     }
     break
@@ -24010,60 +24012,60 @@ sketchpad.core.current_universe = cljs.core.atom.call(null, cljs.core.Persistent
 sketchpad.core.start_x = cljs.core.atom.call(null, null);
 sketchpad.core.start_y = cljs.core.atom.call(null, null);
 sketchpad.core.drawables = function drawables(universe) {
-  return cljs.core.filter.call(null, function(p__9169) {
-    var vec__9170 = p__9169;
-    var name = cljs.core.nth.call(null, vec__9170, 0, null);
-    var item = cljs.core.nth.call(null, vec__9170, 1, null);
-    var G__9171 = item;
-    if(G__9171) {
+  return cljs.core.filter.call(null, function(p__13903) {
+    var vec__13904 = p__13903;
+    var name = cljs.core.nth.call(null, vec__13904, 0, null);
+    var item = cljs.core.nth.call(null, vec__13904, 1, null);
+    var G__13905 = item;
+    if(G__13905) {
       if(cljs.core.truth_(function() {
         var or__3943__auto__ = null;
         if(cljs.core.truth_(or__3943__auto__)) {
           return or__3943__auto__
         }else {
-          return G__9171.sketchpad$shapes$Drawable$
+          return G__13905.sketchpad$shapes$Drawable$
         }
       }())) {
         return true
       }else {
-        if(!G__9171.cljs$lang$protocol_mask$partition$) {
-          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__9171)
+        if(!G__13905.cljs$lang$protocol_mask$partition$) {
+          return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__13905)
         }else {
           return false
         }
       }
     }else {
-      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__9171)
+      return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Drawable, G__13905)
     }
   }, universe)
 };
 sketchpad.core.selectables = function selectables(universe) {
-  return cljs.core.filter.call(null, function(p__9175) {
-    var vec__9176 = p__9175;
-    var name = cljs.core.nth.call(null, vec__9176, 0, null);
-    var item = cljs.core.nth.call(null, vec__9176, 1, null);
+  return cljs.core.filter.call(null, function(p__13909) {
+    var vec__13910 = p__13909;
+    var name = cljs.core.nth.call(null, vec__13910, 0, null);
+    var item = cljs.core.nth.call(null, vec__13910, 1, null);
     var and__3941__auto__ = !cljs.core._EQ_.call(null, name, universe.call(null, "\ufdd0:selected"));
     if(and__3941__auto__) {
-      var G__9177 = item;
-      if(G__9177) {
+      var G__13911 = item;
+      if(G__13911) {
         if(cljs.core.truth_(function() {
           var or__3943__auto__ = null;
           if(cljs.core.truth_(or__3943__auto__)) {
             return or__3943__auto__
           }else {
-            return G__9177.sketchpad$shapes$Selectable$
+            return G__13911.sketchpad$shapes$Selectable$
           }
         }())) {
           return true
         }else {
-          if(!G__9177.cljs$lang$protocol_mask$partition$) {
-            return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__9177)
+          if(!G__13911.cljs$lang$protocol_mask$partition$) {
+            return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__13911)
           }else {
             return false
           }
         }
       }else {
-        return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__9177)
+        return cljs.core.type_satisfies_.call(null, sketchpad.shapes.Selectable, G__13911)
       }
     }else {
       return and__3941__auto__
@@ -24074,32 +24076,32 @@ sketchpad.core.constraints = function constraints(universe) {
   return cljs.core.filter.call(null, cljs.core.partial.call(null, sketchpad.core.satisfies_QMARK_, sketchpad.constrain.Constraint), cljs.core.map.call(null, cljs.core.val, universe))
 };
 sketchpad.core.var_names = function var_names(universe) {
-  return cljs.core.map.call(null, cljs.core.key, cljs.core.filter.call(null, function(p1__9178_SHARP_) {
-    return typeof cljs.core.val.call(null, p1__9178_SHARP_) === "number"
+  return cljs.core.map.call(null, cljs.core.key, cljs.core.filter.call(null, function(p1__13912_SHARP_) {
+    return typeof cljs.core.val.call(null, p1__13912_SHARP_) === "number"
   }, universe))
 };
 sketchpad.core.apply_constraints = function apply_constraints(universe) {
-  var constraints = cljs.core.map.call(null, cljs.core.val, cljs.core.filter.call(null, function(p1__9179_SHARP_) {
-    var G__9181 = cljs.core.val.call(null, p1__9179_SHARP_);
-    if(G__9181) {
+  var constraints = cljs.core.map.call(null, cljs.core.val, cljs.core.filter.call(null, function(p1__13913_SHARP_) {
+    var G__13915 = cljs.core.val.call(null, p1__13913_SHARP_);
+    if(G__13915) {
       if(cljs.core.truth_(function() {
         var or__3943__auto__ = null;
         if(cljs.core.truth_(or__3943__auto__)) {
           return or__3943__auto__
         }else {
-          return G__9181.sketchpad$constrain$Constraint$
+          return G__13915.sketchpad$constrain$Constraint$
         }
       }())) {
         return true
       }else {
-        if(!G__9181.cljs$lang$protocol_mask$partition$) {
-          return cljs.core.type_satisfies_.call(null, sketchpad.constrain.Constraint, G__9181)
+        if(!G__13915.cljs$lang$protocol_mask$partition$) {
+          return cljs.core.type_satisfies_.call(null, sketchpad.constrain.Constraint, G__13915)
         }else {
           return false
         }
       }
     }else {
-      return cljs.core.type_satisfies_.call(null, sketchpad.constrain.Constraint, G__9181)
+      return cljs.core.type_satisfies_.call(null, sketchpad.constrain.Constraint, G__13915)
     }
   }, universe));
   var vars = sketchpad.core.var_names.call(null, universe);
@@ -24108,53 +24110,53 @@ sketchpad.core.apply_constraints = function apply_constraints(universe) {
 };
 sketchpad.core.draw_universe = function draw_universe(universe, ctx) {
   ctx.clearRect(0, 0, 800, 600);
-  var seq__9188 = cljs.core.seq.call(null, sketchpad.core.drawables.call(null, universe));
-  var chunk__9189 = null;
-  var count__9190 = 0;
-  var i__9191 = 0;
+  var seq__13922 = cljs.core.seq.call(null, sketchpad.core.drawables.call(null, universe));
+  var chunk__13923 = null;
+  var count__13924 = 0;
+  var i__13925 = 0;
   while(true) {
-    if(i__9191 < count__9190) {
-      var vec__9192 = cljs.core._nth.call(null, chunk__9189, i__9191);
-      var name = cljs.core.nth.call(null, vec__9192, 0, null);
-      var item = cljs.core.nth.call(null, vec__9192, 1, null);
+    if(i__13925 < count__13924) {
+      var vec__13926 = cljs.core._nth.call(null, chunk__13923, i__13925);
+      var name = cljs.core.nth.call(null, vec__13926, 0, null);
+      var item = cljs.core.nth.call(null, vec__13926, 1, null);
       sketchpad.shapes.draw.call(null, item, ctx, universe);
-      var G__9194 = seq__9188;
-      var G__9195 = chunk__9189;
-      var G__9196 = count__9190;
-      var G__9197 = i__9191 + 1;
-      seq__9188 = G__9194;
-      chunk__9189 = G__9195;
-      count__9190 = G__9196;
-      i__9191 = G__9197;
+      var G__13928 = seq__13922;
+      var G__13929 = chunk__13923;
+      var G__13930 = count__13924;
+      var G__13931 = i__13925 + 1;
+      seq__13922 = G__13928;
+      chunk__13923 = G__13929;
+      count__13924 = G__13930;
+      i__13925 = G__13931;
       continue
     }else {
-      var temp__4092__auto__ = cljs.core.seq.call(null, seq__9188);
+      var temp__4092__auto__ = cljs.core.seq.call(null, seq__13922);
       if(temp__4092__auto__) {
-        var seq__9188__$1 = temp__4092__auto__;
-        if(cljs.core.chunked_seq_QMARK_.call(null, seq__9188__$1)) {
-          var c__3037__auto__ = cljs.core.chunk_first.call(null, seq__9188__$1);
-          var G__9198 = cljs.core.chunk_rest.call(null, seq__9188__$1);
-          var G__9199 = c__3037__auto__;
-          var G__9200 = cljs.core.count.call(null, c__3037__auto__);
-          var G__9201 = 0;
-          seq__9188 = G__9198;
-          chunk__9189 = G__9199;
-          count__9190 = G__9200;
-          i__9191 = G__9201;
+        var seq__13922__$1 = temp__4092__auto__;
+        if(cljs.core.chunked_seq_QMARK_.call(null, seq__13922__$1)) {
+          var c__3037__auto__ = cljs.core.chunk_first.call(null, seq__13922__$1);
+          var G__13932 = cljs.core.chunk_rest.call(null, seq__13922__$1);
+          var G__13933 = c__3037__auto__;
+          var G__13934 = cljs.core.count.call(null, c__3037__auto__);
+          var G__13935 = 0;
+          seq__13922 = G__13932;
+          chunk__13923 = G__13933;
+          count__13924 = G__13934;
+          i__13925 = G__13935;
           continue
         }else {
-          var vec__9193 = cljs.core.first.call(null, seq__9188__$1);
-          var name = cljs.core.nth.call(null, vec__9193, 0, null);
-          var item = cljs.core.nth.call(null, vec__9193, 1, null);
+          var vec__13927 = cljs.core.first.call(null, seq__13922__$1);
+          var name = cljs.core.nth.call(null, vec__13927, 0, null);
+          var item = cljs.core.nth.call(null, vec__13927, 1, null);
           sketchpad.shapes.draw.call(null, item, ctx, universe);
-          var G__9202 = cljs.core.next.call(null, seq__9188__$1);
-          var G__9203 = null;
-          var G__9204 = 0;
-          var G__9205 = 0;
-          seq__9188 = G__9202;
-          chunk__9189 = G__9203;
-          count__9190 = G__9204;
-          i__9191 = G__9205;
+          var G__13936 = cljs.core.next.call(null, seq__13922__$1);
+          var G__13937 = null;
+          var G__13938 = 0;
+          var G__13939 = 0;
+          seq__13922 = G__13936;
+          chunk__13923 = G__13937;
+          count__13924 = G__13938;
+          i__13925 = G__13939;
           continue
         }
       }else {
@@ -24167,16 +24169,16 @@ sketchpad.core.draw_universe = function draw_universe(universe, ctx) {
 sketchpad.core.closest = function closest(u, cx, cy) {
   var selectable = sketchpad.core.selectables.call(null, u);
   var distances = cljs.core.map.call(null, function(selectable) {
-    return function(p__9210) {
-      var vec__9211 = p__9210;
-      var name = cljs.core.nth.call(null, vec__9211, 0, null);
-      var item = cljs.core.nth.call(null, vec__9211, 1, null);
+    return function(p__13944) {
+      var vec__13945 = p__13944;
+      var name = cljs.core.nth.call(null, vec__13945, 0, null);
+      var item = cljs.core.nth.call(null, vec__13945, 1, null);
       return cljs.core.PersistentVector.fromArray([name, sketchpad.shapes.cursor_distance.call(null, item, cx, cy, u)], true)
     }
   }(selectable), selectable);
-  var vec__9209 = cljs.core.apply.call(null, cljs.core.min_key, cljs.core.second, distances);
-  var item = cljs.core.nth.call(null, vec__9209, 0, null);
-  var distance = cljs.core.nth.call(null, vec__9209, 1, null);
+  var vec__13943 = cljs.core.apply.call(null, cljs.core.min_key, cljs.core.second, distances);
+  var item = cljs.core.nth.call(null, vec__13943, 0, null);
+  var distance = cljs.core.nth.call(null, vec__13943, 1, null);
   if(distance < 10) {
     return item
   }else {
@@ -24188,9 +24190,9 @@ sketchpad.core.event_location = function event_location(e) {
 };
 sketchpad.core.highlight_closest = function highlight_closest(e) {
   var u = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var vec__9213 = sketchpad.core.event_location.call(null, e);
-  var cx = cljs.core.nth.call(null, vec__9213, 0, null);
-  var cy = cljs.core.nth.call(null, vec__9213, 1, null);
+  var vec__13947 = sketchpad.core.event_location.call(null, e);
+  var cx = cljs.core.nth.call(null, vec__13947, 0, null);
+  var cy = cljs.core.nth.call(null, vec__13947, 1, null);
   var item = sketchpad.core.closest.call(null, u, cx, cy);
   return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0:highlighted", item)
 };
@@ -24198,139 +24200,139 @@ sketchpad.core.move_selected = function move_selected(e) {
   var u = cljs.core.deref.call(null, sketchpad.core.current_universe);
   var selected = (new cljs.core.Keyword("\ufdd0:selected")).call(null, u);
   if(cljs.core.truth_(selected)) {
-    var vec__9217 = cljs.core.PersistentVector.fromArray([cljs.core.deref.call(null, sketchpad.core.start_x), cljs.core.deref.call(null, sketchpad.core.start_y)], true);
-    var x1 = cljs.core.nth.call(null, vec__9217, 0, null);
-    var y1 = cljs.core.nth.call(null, vec__9217, 1, null);
-    var vec__9218 = sketchpad.core.event_location.call(null, e);
-    var x2 = cljs.core.nth.call(null, vec__9218, 0, null);
-    var y2 = cljs.core.nth.call(null, vec__9218, 1, null);
+    var vec__13951 = cljs.core.PersistentVector.fromArray([cljs.core.deref.call(null, sketchpad.core.start_x), cljs.core.deref.call(null, sketchpad.core.start_y)], true);
+    var x1 = cljs.core.nth.call(null, vec__13951, 0, null);
+    var y1 = cljs.core.nth.call(null, vec__13951, 1, null);
+    var vec__13952 = sketchpad.core.event_location.call(null, e);
+    var x2 = cljs.core.nth.call(null, vec__13952, 0, null);
+    var y2 = cljs.core.nth.call(null, vec__13952, 1, null);
     var dx = x2 - x1;
     var dy = y1 - y1;
     var item = selected.call(null, u);
     var new_u = sketchpad.state_patches.patch.call(null, u, sketchpad.shapes.move_BANG_.call(null, item, selected, dx, dy, u));
     cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x2));
     cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y2));
-    return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(p1__9214_SHARP_) {
-      return sketchpad.core.apply_constraints.call(null, sketchpad.state_patches.patch.call(null, p1__9214_SHARP_, sketchpad.shapes.move_BANG_.call(null, selected.call(null, u), selected, x2 - x1, y2 - y1, p1__9214_SHARP_)))
+    return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(p1__13948_SHARP_) {
+      return sketchpad.core.apply_constraints.call(null, sketchpad.state_patches.patch.call(null, p1__13948_SHARP_, sketchpad.shapes.move_BANG_.call(null, selected.call(null, u), selected, x2 - x1, y2 - y1, p1__13948_SHARP_)))
     })
   }else {
     return null
   }
 };
 sketchpad.core.select_closest = function select_closest(e) {
-  var vec__9220_9221 = sketchpad.core.event_location.call(null, e);
-  var x_9222 = cljs.core.nth.call(null, vec__9220_9221, 0, null);
-  var y_9223 = cljs.core.nth.call(null, vec__9220_9221, 1, null);
-  cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x_9222));
-  cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y_9223));
+  var vec__13954_13955 = sketchpad.core.event_location.call(null, e);
+  var x_13956 = cljs.core.nth.call(null, vec__13954_13955, 0, null);
+  var y_13957 = cljs.core.nth.call(null, vec__13954_13955, 1, null);
+  cljs.core.swap_BANG_.call(null, sketchpad.core.start_x, cljs.core.constantly.call(null, x_13956));
+  cljs.core.swap_BANG_.call(null, sketchpad.core.start_y, cljs.core.constantly.call(null, y_13957));
   return cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, function(u) {
     return cljs.core.assoc.call(null, u, "\ufdd0:selected", (new cljs.core.Keyword("\ufdd0:highlighted")).call(null, u))
   })
 };
 sketchpad.core.deselect_selected = function deselect_selected(e) {
-  var u_9276 = cljs.core.deref.call(null, sketchpad.core.current_universe);
-  var selected_9277 = u_9276.call(null, "\ufdd0:selected");
-  var highlighted_9278 = u_9276.call(null, "\ufdd0:highlighted");
-  var both_points_9279 = function() {
-    var and__3941__auto__ = u_9276.call(null, selected_9277) instanceof sketchpad.shapes.Point;
+  var u_14010 = cljs.core.deref.call(null, sketchpad.core.current_universe);
+  var selected_14011 = u_14010.call(null, "\ufdd0:selected");
+  var highlighted_14012 = u_14010.call(null, "\ufdd0:highlighted");
+  var both_points_14013 = function() {
+    var and__3941__auto__ = u_14010.call(null, selected_14011) instanceof sketchpad.shapes.Point;
     if(and__3941__auto__) {
-      return u_9276.call(null, highlighted_9278) instanceof sketchpad.shapes.Point
+      return u_14010.call(null, highlighted_14012) instanceof sketchpad.shapes.Point
     }else {
       return and__3941__auto__
     }
   }();
-  if(cljs.core.truth_(both_points_9279)) {
-    console.log("merging", selected_9277, "and", highlighted_9278);
+  if(cljs.core.truth_(both_points_14013)) {
+    console.log("merging", selected_14011, "and", highlighted_14012);
     cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc, "\ufdd0:highlighted", null);
-    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, highlighted_9278);
-    var seq__9250_9280 = cljs.core.seq.call(null, u_9276);
-    var chunk__9255_9281 = null;
-    var count__9256_9282 = 0;
-    var i__9257_9283 = 0;
+    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, highlighted_14012);
+    var seq__13984_14014 = cljs.core.seq.call(null, u_14010);
+    var chunk__13989_14015 = null;
+    var count__13990_14016 = 0;
+    var i__13991_14017 = 0;
     while(true) {
-      if(i__9257_9283 < count__9256_9282) {
-        var vec__9262_9284 = cljs.core._nth.call(null, chunk__9255_9281, i__9257_9283);
-        var name_9285 = cljs.core.nth.call(null, vec__9262_9284, 0, null);
-        var item_9286 = cljs.core.nth.call(null, vec__9262_9284, 1, null);
-        var seq__9258_9287 = cljs.core.seq.call(null, item_9286);
-        var chunk__9259_9288 = null;
-        var count__9260_9289 = 0;
-        var i__9261_9290 = 0;
+      if(i__13991_14017 < count__13990_14016) {
+        var vec__13996_14018 = cljs.core._nth.call(null, chunk__13989_14015, i__13991_14017);
+        var name_14019 = cljs.core.nth.call(null, vec__13996_14018, 0, null);
+        var item_14020 = cljs.core.nth.call(null, vec__13996_14018, 1, null);
+        var seq__13992_14021 = cljs.core.seq.call(null, item_14020);
+        var chunk__13993_14022 = null;
+        var count__13994_14023 = 0;
+        var i__13995_14024 = 0;
         while(true) {
-          if(i__9261_9290 < count__9260_9289) {
-            var vec__9263_9291 = cljs.core._nth.call(null, chunk__9259_9288, i__9261_9290);
-            var key_9292 = cljs.core.nth.call(null, vec__9263_9291, 0, null);
-            var val_9293 = cljs.core.nth.call(null, vec__9263_9291, 1, null);
-            if(cljs.core._EQ_.call(null, val_9293, highlighted_9278)) {
-              console.log("setting", name_9285, key_9292, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9285, key_9292], true)), "to", selected_9277);
-              cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_9285, key_9292], true), selected_9277);
-              if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__9258_9287, chunk__9259_9288, count__9260_9289, i__9261_9290, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9263_9291, key_9292, val_9293, vec__9262_9284, name_9285, item_9286) {
-                return function(p__9264) {
-                  var vec__9265 = p__9264;
-                  var key__$1 = cljs.core.nth.call(null, vec__9265, 0, null);
-                  var val__$1 = cljs.core.nth.call(null, vec__9265, 1, null);
-                  return cljs.core._EQ_.call(null, val__$1, selected_9277)
+          if(i__13995_14024 < count__13994_14023) {
+            var vec__13997_14025 = cljs.core._nth.call(null, chunk__13993_14022, i__13995_14024);
+            var key_14026 = cljs.core.nth.call(null, vec__13997_14025, 0, null);
+            var val_14027 = cljs.core.nth.call(null, vec__13997_14025, 1, null);
+            if(cljs.core._EQ_.call(null, val_14027, highlighted_14012)) {
+              console.log("setting", name_14019, key_14026, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14019, key_14026], true)), "to", selected_14011);
+              cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_14019, key_14026], true), selected_14011);
+              if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__13992_14021, chunk__13993_14022, count__13994_14023, i__13995_14024, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__13997_14025, key_14026, val_14027, vec__13996_14018, name_14019, item_14020) {
+                return function(p__13998) {
+                  var vec__13999 = p__13998;
+                  var key__$1 = cljs.core.nth.call(null, vec__13999, 0, null);
+                  var val__$1 = cljs.core.nth.call(null, vec__13999, 1, null);
+                  return cljs.core._EQ_.call(null, val__$1, selected_14011)
                 }
-              }(seq__9258_9287, chunk__9259_9288, count__9260_9289, i__9261_9290, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9263_9291, key_9292, val_9293, vec__9262_9284, name_9285, item_9286), item_9286))) {
-                cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_9285)
+              }(seq__13992_14021, chunk__13993_14022, count__13994_14023, i__13995_14024, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__13997_14025, key_14026, val_14027, vec__13996_14018, name_14019, item_14020), item_14020))) {
+                cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_14019)
               }else {
               }
-              console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9285, key_9292], true)))
+              console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14019, key_14026], true)))
             }else {
             }
-            var G__9294 = seq__9258_9287;
-            var G__9295 = chunk__9259_9288;
-            var G__9296 = count__9260_9289;
-            var G__9297 = i__9261_9290 + 1;
-            seq__9258_9287 = G__9294;
-            chunk__9259_9288 = G__9295;
-            count__9260_9289 = G__9296;
-            i__9261_9290 = G__9297;
+            var G__14028 = seq__13992_14021;
+            var G__14029 = chunk__13993_14022;
+            var G__14030 = count__13994_14023;
+            var G__14031 = i__13995_14024 + 1;
+            seq__13992_14021 = G__14028;
+            chunk__13993_14022 = G__14029;
+            count__13994_14023 = G__14030;
+            i__13995_14024 = G__14031;
             continue
           }else {
-            var temp__4092__auto___9298 = cljs.core.seq.call(null, seq__9258_9287);
-            if(temp__4092__auto___9298) {
-              var seq__9258_9299__$1 = temp__4092__auto___9298;
-              if(cljs.core.chunked_seq_QMARK_.call(null, seq__9258_9299__$1)) {
-                var c__3037__auto___9300 = cljs.core.chunk_first.call(null, seq__9258_9299__$1);
-                var G__9301 = cljs.core.chunk_rest.call(null, seq__9258_9299__$1);
-                var G__9302 = c__3037__auto___9300;
-                var G__9303 = cljs.core.count.call(null, c__3037__auto___9300);
-                var G__9304 = 0;
-                seq__9258_9287 = G__9301;
-                chunk__9259_9288 = G__9302;
-                count__9260_9289 = G__9303;
-                i__9261_9290 = G__9304;
+            var temp__4092__auto___14032 = cljs.core.seq.call(null, seq__13992_14021);
+            if(temp__4092__auto___14032) {
+              var seq__13992_14033__$1 = temp__4092__auto___14032;
+              if(cljs.core.chunked_seq_QMARK_.call(null, seq__13992_14033__$1)) {
+                var c__3037__auto___14034 = cljs.core.chunk_first.call(null, seq__13992_14033__$1);
+                var G__14035 = cljs.core.chunk_rest.call(null, seq__13992_14033__$1);
+                var G__14036 = c__3037__auto___14034;
+                var G__14037 = cljs.core.count.call(null, c__3037__auto___14034);
+                var G__14038 = 0;
+                seq__13992_14021 = G__14035;
+                chunk__13993_14022 = G__14036;
+                count__13994_14023 = G__14037;
+                i__13995_14024 = G__14038;
                 continue
               }else {
-                var vec__9266_9305 = cljs.core.first.call(null, seq__9258_9299__$1);
-                var key_9306 = cljs.core.nth.call(null, vec__9266_9305, 0, null);
-                var val_9307 = cljs.core.nth.call(null, vec__9266_9305, 1, null);
-                if(cljs.core._EQ_.call(null, val_9307, highlighted_9278)) {
-                  console.log("setting", name_9285, key_9306, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9285, key_9306], true)), "to", selected_9277);
-                  cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_9285, key_9306], true), selected_9277);
-                  if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__9258_9287, chunk__9259_9288, count__9260_9289, i__9261_9290, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9266_9305, key_9306, val_9307, seq__9258_9299__$1, temp__4092__auto___9298, vec__9262_9284, name_9285, item_9286) {
-                    return function(p__9267) {
-                      var vec__9268 = p__9267;
-                      var key__$1 = cljs.core.nth.call(null, vec__9268, 0, null);
-                      var val__$1 = cljs.core.nth.call(null, vec__9268, 1, null);
-                      return cljs.core._EQ_.call(null, val__$1, selected_9277)
+                var vec__14000_14039 = cljs.core.first.call(null, seq__13992_14033__$1);
+                var key_14040 = cljs.core.nth.call(null, vec__14000_14039, 0, null);
+                var val_14041 = cljs.core.nth.call(null, vec__14000_14039, 1, null);
+                if(cljs.core._EQ_.call(null, val_14041, highlighted_14012)) {
+                  console.log("setting", name_14019, key_14040, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14019, key_14040], true)), "to", selected_14011);
+                  cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_14019, key_14040], true), selected_14011);
+                  if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__13992_14021, chunk__13993_14022, count__13994_14023, i__13995_14024, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__14000_14039, key_14040, val_14041, seq__13992_14033__$1, temp__4092__auto___14032, vec__13996_14018, name_14019, item_14020) {
+                    return function(p__14001) {
+                      var vec__14002 = p__14001;
+                      var key__$1 = cljs.core.nth.call(null, vec__14002, 0, null);
+                      var val__$1 = cljs.core.nth.call(null, vec__14002, 1, null);
+                      return cljs.core._EQ_.call(null, val__$1, selected_14011)
                     }
-                  }(seq__9258_9287, chunk__9259_9288, count__9260_9289, i__9261_9290, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9266_9305, key_9306, val_9307, seq__9258_9299__$1, temp__4092__auto___9298, vec__9262_9284, name_9285, item_9286), item_9286))) {
-                    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_9285)
+                  }(seq__13992_14021, chunk__13993_14022, count__13994_14023, i__13995_14024, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__14000_14039, key_14040, val_14041, seq__13992_14033__$1, temp__4092__auto___14032, vec__13996_14018, name_14019, item_14020), item_14020))) {
+                    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_14019)
                   }else {
                   }
-                  console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9285, key_9306], true)))
+                  console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14019, key_14040], true)))
                 }else {
                 }
-                var G__9308 = cljs.core.next.call(null, seq__9258_9299__$1);
-                var G__9309 = null;
-                var G__9310 = 0;
-                var G__9311 = 0;
-                seq__9258_9287 = G__9308;
-                chunk__9259_9288 = G__9309;
-                count__9260_9289 = G__9310;
-                i__9261_9290 = G__9311;
+                var G__14042 = cljs.core.next.call(null, seq__13992_14033__$1);
+                var G__14043 = null;
+                var G__14044 = 0;
+                var G__14045 = 0;
+                seq__13992_14021 = G__14042;
+                chunk__13993_14022 = G__14043;
+                count__13994_14023 = G__14044;
+                i__13995_14024 = G__14045;
                 continue
               }
             }else {
@@ -24338,113 +24340,113 @@ sketchpad.core.deselect_selected = function deselect_selected(e) {
           }
           break
         }
-        var G__9312 = seq__9250_9280;
-        var G__9313 = chunk__9255_9281;
-        var G__9314 = count__9256_9282;
-        var G__9315 = i__9257_9283 + 1;
-        seq__9250_9280 = G__9312;
-        chunk__9255_9281 = G__9313;
-        count__9256_9282 = G__9314;
-        i__9257_9283 = G__9315;
+        var G__14046 = seq__13984_14014;
+        var G__14047 = chunk__13989_14015;
+        var G__14048 = count__13990_14016;
+        var G__14049 = i__13991_14017 + 1;
+        seq__13984_14014 = G__14046;
+        chunk__13989_14015 = G__14047;
+        count__13990_14016 = G__14048;
+        i__13991_14017 = G__14049;
         continue
       }else {
-        var temp__4092__auto___9316 = cljs.core.seq.call(null, seq__9250_9280);
-        if(temp__4092__auto___9316) {
-          var seq__9250_9317__$1 = temp__4092__auto___9316;
-          if(cljs.core.chunked_seq_QMARK_.call(null, seq__9250_9317__$1)) {
-            var c__3037__auto___9318 = cljs.core.chunk_first.call(null, seq__9250_9317__$1);
-            var G__9319 = cljs.core.chunk_rest.call(null, seq__9250_9317__$1);
-            var G__9320 = c__3037__auto___9318;
-            var G__9321 = cljs.core.count.call(null, c__3037__auto___9318);
-            var G__9322 = 0;
-            seq__9250_9280 = G__9319;
-            chunk__9255_9281 = G__9320;
-            count__9256_9282 = G__9321;
-            i__9257_9283 = G__9322;
+        var temp__4092__auto___14050 = cljs.core.seq.call(null, seq__13984_14014);
+        if(temp__4092__auto___14050) {
+          var seq__13984_14051__$1 = temp__4092__auto___14050;
+          if(cljs.core.chunked_seq_QMARK_.call(null, seq__13984_14051__$1)) {
+            var c__3037__auto___14052 = cljs.core.chunk_first.call(null, seq__13984_14051__$1);
+            var G__14053 = cljs.core.chunk_rest.call(null, seq__13984_14051__$1);
+            var G__14054 = c__3037__auto___14052;
+            var G__14055 = cljs.core.count.call(null, c__3037__auto___14052);
+            var G__14056 = 0;
+            seq__13984_14014 = G__14053;
+            chunk__13989_14015 = G__14054;
+            count__13990_14016 = G__14055;
+            i__13991_14017 = G__14056;
             continue
           }else {
-            var vec__9269_9323 = cljs.core.first.call(null, seq__9250_9317__$1);
-            var name_9324 = cljs.core.nth.call(null, vec__9269_9323, 0, null);
-            var item_9325 = cljs.core.nth.call(null, vec__9269_9323, 1, null);
-            var seq__9251_9326 = cljs.core.seq.call(null, item_9325);
-            var chunk__9252_9327 = null;
-            var count__9253_9328 = 0;
-            var i__9254_9329 = 0;
+            var vec__14003_14057 = cljs.core.first.call(null, seq__13984_14051__$1);
+            var name_14058 = cljs.core.nth.call(null, vec__14003_14057, 0, null);
+            var item_14059 = cljs.core.nth.call(null, vec__14003_14057, 1, null);
+            var seq__13985_14060 = cljs.core.seq.call(null, item_14059);
+            var chunk__13986_14061 = null;
+            var count__13987_14062 = 0;
+            var i__13988_14063 = 0;
             while(true) {
-              if(i__9254_9329 < count__9253_9328) {
-                var vec__9270_9330 = cljs.core._nth.call(null, chunk__9252_9327, i__9254_9329);
-                var key_9331 = cljs.core.nth.call(null, vec__9270_9330, 0, null);
-                var val_9332 = cljs.core.nth.call(null, vec__9270_9330, 1, null);
-                if(cljs.core._EQ_.call(null, val_9332, highlighted_9278)) {
-                  console.log("setting", name_9324, key_9331, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9324, key_9331], true)), "to", selected_9277);
-                  cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_9324, key_9331], true), selected_9277);
-                  if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__9251_9326, chunk__9252_9327, count__9253_9328, i__9254_9329, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9270_9330, key_9331, val_9332, vec__9269_9323, name_9324, item_9325, seq__9250_9317__$1, temp__4092__auto___9316) {
-                    return function(p__9271) {
-                      var vec__9272 = p__9271;
-                      var key__$1 = cljs.core.nth.call(null, vec__9272, 0, null);
-                      var val__$1 = cljs.core.nth.call(null, vec__9272, 1, null);
-                      return cljs.core._EQ_.call(null, val__$1, selected_9277)
+              if(i__13988_14063 < count__13987_14062) {
+                var vec__14004_14064 = cljs.core._nth.call(null, chunk__13986_14061, i__13988_14063);
+                var key_14065 = cljs.core.nth.call(null, vec__14004_14064, 0, null);
+                var val_14066 = cljs.core.nth.call(null, vec__14004_14064, 1, null);
+                if(cljs.core._EQ_.call(null, val_14066, highlighted_14012)) {
+                  console.log("setting", name_14058, key_14065, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14058, key_14065], true)), "to", selected_14011);
+                  cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_14058, key_14065], true), selected_14011);
+                  if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__13985_14060, chunk__13986_14061, count__13987_14062, i__13988_14063, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__14004_14064, key_14065, val_14066, vec__14003_14057, name_14058, item_14059, seq__13984_14051__$1, temp__4092__auto___14050) {
+                    return function(p__14005) {
+                      var vec__14006 = p__14005;
+                      var key__$1 = cljs.core.nth.call(null, vec__14006, 0, null);
+                      var val__$1 = cljs.core.nth.call(null, vec__14006, 1, null);
+                      return cljs.core._EQ_.call(null, val__$1, selected_14011)
                     }
-                  }(seq__9251_9326, chunk__9252_9327, count__9253_9328, i__9254_9329, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9270_9330, key_9331, val_9332, vec__9269_9323, name_9324, item_9325, seq__9250_9317__$1, temp__4092__auto___9316), item_9325))) {
-                    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_9324)
+                  }(seq__13985_14060, chunk__13986_14061, count__13987_14062, i__13988_14063, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__14004_14064, key_14065, val_14066, vec__14003_14057, name_14058, item_14059, seq__13984_14051__$1, temp__4092__auto___14050), item_14059))) {
+                    cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_14058)
                   }else {
                   }
-                  console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9324, key_9331], true)))
+                  console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14058, key_14065], true)))
                 }else {
                 }
-                var G__9333 = seq__9251_9326;
-                var G__9334 = chunk__9252_9327;
-                var G__9335 = count__9253_9328;
-                var G__9336 = i__9254_9329 + 1;
-                seq__9251_9326 = G__9333;
-                chunk__9252_9327 = G__9334;
-                count__9253_9328 = G__9335;
-                i__9254_9329 = G__9336;
+                var G__14067 = seq__13985_14060;
+                var G__14068 = chunk__13986_14061;
+                var G__14069 = count__13987_14062;
+                var G__14070 = i__13988_14063 + 1;
+                seq__13985_14060 = G__14067;
+                chunk__13986_14061 = G__14068;
+                count__13987_14062 = G__14069;
+                i__13988_14063 = G__14070;
                 continue
               }else {
-                var temp__4092__auto___9337__$1 = cljs.core.seq.call(null, seq__9251_9326);
-                if(temp__4092__auto___9337__$1) {
-                  var seq__9251_9338__$1 = temp__4092__auto___9337__$1;
-                  if(cljs.core.chunked_seq_QMARK_.call(null, seq__9251_9338__$1)) {
-                    var c__3037__auto___9339 = cljs.core.chunk_first.call(null, seq__9251_9338__$1);
-                    var G__9340 = cljs.core.chunk_rest.call(null, seq__9251_9338__$1);
-                    var G__9341 = c__3037__auto___9339;
-                    var G__9342 = cljs.core.count.call(null, c__3037__auto___9339);
-                    var G__9343 = 0;
-                    seq__9251_9326 = G__9340;
-                    chunk__9252_9327 = G__9341;
-                    count__9253_9328 = G__9342;
-                    i__9254_9329 = G__9343;
+                var temp__4092__auto___14071__$1 = cljs.core.seq.call(null, seq__13985_14060);
+                if(temp__4092__auto___14071__$1) {
+                  var seq__13985_14072__$1 = temp__4092__auto___14071__$1;
+                  if(cljs.core.chunked_seq_QMARK_.call(null, seq__13985_14072__$1)) {
+                    var c__3037__auto___14073 = cljs.core.chunk_first.call(null, seq__13985_14072__$1);
+                    var G__14074 = cljs.core.chunk_rest.call(null, seq__13985_14072__$1);
+                    var G__14075 = c__3037__auto___14073;
+                    var G__14076 = cljs.core.count.call(null, c__3037__auto___14073);
+                    var G__14077 = 0;
+                    seq__13985_14060 = G__14074;
+                    chunk__13986_14061 = G__14075;
+                    count__13987_14062 = G__14076;
+                    i__13988_14063 = G__14077;
                     continue
                   }else {
-                    var vec__9273_9344 = cljs.core.first.call(null, seq__9251_9338__$1);
-                    var key_9345 = cljs.core.nth.call(null, vec__9273_9344, 0, null);
-                    var val_9346 = cljs.core.nth.call(null, vec__9273_9344, 1, null);
-                    if(cljs.core._EQ_.call(null, val_9346, highlighted_9278)) {
-                      console.log("setting", name_9324, key_9345, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9324, key_9345], true)), "to", selected_9277);
-                      cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_9324, key_9345], true), selected_9277);
-                      if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__9251_9326, chunk__9252_9327, count__9253_9328, i__9254_9329, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9273_9344, key_9345, val_9346, seq__9251_9338__$1, temp__4092__auto___9337__$1, vec__9269_9323, name_9324, item_9325, seq__9250_9317__$1, temp__4092__auto___9316) {
-                        return function(p__9274) {
-                          var vec__9275 = p__9274;
-                          var key__$1 = cljs.core.nth.call(null, vec__9275, 0, null);
-                          var val__$1 = cljs.core.nth.call(null, vec__9275, 1, null);
-                          return cljs.core._EQ_.call(null, val__$1, selected_9277)
+                    var vec__14007_14078 = cljs.core.first.call(null, seq__13985_14072__$1);
+                    var key_14079 = cljs.core.nth.call(null, vec__14007_14078, 0, null);
+                    var val_14080 = cljs.core.nth.call(null, vec__14007_14078, 1, null);
+                    if(cljs.core._EQ_.call(null, val_14080, highlighted_14012)) {
+                      console.log("setting", name_14058, key_14079, "from", cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14058, key_14079], true)), "to", selected_14011);
+                      cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.assoc_in, cljs.core.PersistentVector.fromArray([name_14058, key_14079], true), selected_14011);
+                      if(1 < cljs.core.count.call(null, cljs.core.filter.call(null, function(seq__13985_14060, chunk__13986_14061, count__13987_14062, i__13988_14063, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__14007_14078, key_14079, val_14080, seq__13985_14072__$1, temp__4092__auto___14071__$1, vec__14003_14057, name_14058, item_14059, seq__13984_14051__$1, temp__4092__auto___14050) {
+                        return function(p__14008) {
+                          var vec__14009 = p__14008;
+                          var key__$1 = cljs.core.nth.call(null, vec__14009, 0, null);
+                          var val__$1 = cljs.core.nth.call(null, vec__14009, 1, null);
+                          return cljs.core._EQ_.call(null, val__$1, selected_14011)
                         }
-                      }(seq__9251_9326, chunk__9252_9327, count__9253_9328, i__9254_9329, seq__9250_9280, chunk__9255_9281, count__9256_9282, i__9257_9283, vec__9273_9344, key_9345, val_9346, seq__9251_9338__$1, temp__4092__auto___9337__$1, vec__9269_9323, name_9324, item_9325, seq__9250_9317__$1, temp__4092__auto___9316), item_9325))) {
-                        cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_9324)
+                      }(seq__13985_14060, chunk__13986_14061, count__13987_14062, i__13988_14063, seq__13984_14014, chunk__13989_14015, count__13990_14016, i__13991_14017, vec__14007_14078, key_14079, val_14080, seq__13985_14072__$1, temp__4092__auto___14071__$1, vec__14003_14057, name_14058, item_14059, seq__13984_14051__$1, temp__4092__auto___14050), item_14059))) {
+                        cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.dissoc, name_14058)
                       }else {
                       }
-                      console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_9324, key_9345], true)))
+                      console.log(cljs.core.get_in.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), cljs.core.PersistentVector.fromArray([name_14058, key_14079], true)))
                     }else {
                     }
-                    var G__9347 = cljs.core.next.call(null, seq__9251_9338__$1);
-                    var G__9348 = null;
-                    var G__9349 = 0;
-                    var G__9350 = 0;
-                    seq__9251_9326 = G__9347;
-                    chunk__9252_9327 = G__9348;
-                    count__9253_9328 = G__9349;
-                    i__9254_9329 = G__9350;
+                    var G__14081 = cljs.core.next.call(null, seq__13985_14072__$1);
+                    var G__14082 = null;
+                    var G__14083 = 0;
+                    var G__14084 = 0;
+                    seq__13985_14060 = G__14081;
+                    chunk__13986_14061 = G__14082;
+                    count__13987_14062 = G__14083;
+                    i__13988_14063 = G__14084;
                     continue
                   }
                 }else {
@@ -24452,14 +24454,14 @@ sketchpad.core.deselect_selected = function deselect_selected(e) {
               }
               break
             }
-            var G__9351 = cljs.core.next.call(null, seq__9250_9317__$1);
-            var G__9352 = null;
-            var G__9353 = 0;
-            var G__9354 = 0;
-            seq__9250_9280 = G__9351;
-            chunk__9255_9281 = G__9352;
-            count__9256_9282 = G__9353;
-            i__9257_9283 = G__9354;
+            var G__14085 = cljs.core.next.call(null, seq__13984_14051__$1);
+            var G__14086 = null;
+            var G__14087 = 0;
+            var G__14088 = 0;
+            seq__13984_14014 = G__14085;
+            chunk__13989_14015 = G__14086;
+            count__13990_14016 = G__14087;
+            i__13991_14017 = G__14088;
             continue
           }
         }else {
@@ -24475,8 +24477,8 @@ sketchpad.core.deselect_selected = function deselect_selected(e) {
 sketchpad.core.main = function main() {
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
-  var start = cljs.core.PersistentHashMap.fromArrays(["\ufdd0:p1", "\ufdd0:p3", "\ufdd0:c1", "\ufdd0:p2", "\ufdd0:y5", "\ufdd0:l2", "\ufdd0:p4", "\ufdd0:l1", "\ufdd0:p5", "\ufdd0:x4", "\ufdd0:y4", "\ufdd0:y3", "\ufdd0:x5", "\ufdd0:y2", "\ufdd0:y1", "\ufdd0:x3", "\ufdd0:x2", "\ufdd0:x1", "\ufdd0:constraint2"], [new sketchpad.shapes.Point("\ufdd0:x1", "\ufdd0:y1"), new sketchpad.shapes.Point("\ufdd0:x3", "\ufdd0:y3"), new sketchpad.shapes.Circle("\ufdd0:p3", "\ufdd0:p4", "\ufdd0:p5"), new sketchpad.shapes.Point("\ufdd0:x2", 
-  "\ufdd0:y2"), 40, new sketchpad.shapes.Line("\ufdd0:p2", "\ufdd0:p3"), new sketchpad.shapes.Point("\ufdd0:x4", "\ufdd0:y4"), new sketchpad.shapes.Line("\ufdd0:p1", "\ufdd0:p2"), new sketchpad.shapes.Point("\ufdd0:x5", "\ufdd0:y5"), 340, 340, 210, 400, 300, 20, 210, 300, 50, new sketchpad.constrain.Same("\ufdd0:x1", "\ufdd0:x5")]);
+  var start = cljs.core.PersistentHashMap.fromArrays(["\ufdd0:p1", "\ufdd0:p3", "\ufdd0:c1", "\ufdd0:p2", "\ufdd0:y5", "\ufdd0:l2", "\ufdd0:p4", "\ufdd0:l1", "\ufdd0:p5", "\ufdd0:x4", "\ufdd0:y4", "\ufdd0:y3", "\ufdd0:x5", "\ufdd0:y2", "\ufdd0:y1", "\ufdd0:x3", "\ufdd0:x2", "\ufdd0:x1", "\ufdd0:constraint1", "\ufdd0:constraint2"], [new sketchpad.shapes.Point("\ufdd0:x1", "\ufdd0:y1"), new sketchpad.shapes.Point("\ufdd0:x3", "\ufdd0:y3"), new sketchpad.shapes.Circle("\ufdd0:p3", "\ufdd0:p4", "\ufdd0:p5"), 
+  new sketchpad.shapes.Point("\ufdd0:x2", "\ufdd0:y2"), 40, new sketchpad.shapes.Line("\ufdd0:p2", "\ufdd0:p3"), new sketchpad.shapes.Point("\ufdd0:x4", "\ufdd0:y4"), new sketchpad.shapes.Line("\ufdd0:p1", "\ufdd0:p2"), new sketchpad.shapes.Point("\ufdd0:x5", "\ufdd0:y5"), 340, 340, 210, 400, 300, 20, 210, 300, 50, new sketchpad.constrain.Colinear("\ufdd0:x1", "\ufdd0:y1", "\ufdd0:x2", "\ufdd0:y2", "\ufdd0:x3", "\ufdd0:y3"), new sketchpad.constrain.Same("\ufdd0:x1", "\ufdd0:x5")]);
   cljs.core.swap_BANG_.call(null, sketchpad.core.current_universe, cljs.core.conj, sketchpad.core.apply_constraints.call(null, start));
   setInterval(function() {
     return sketchpad.core.draw_universe.call(null, cljs.core.deref.call(null, sketchpad.core.current_universe), ctx)

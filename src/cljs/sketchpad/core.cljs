@@ -97,7 +97,7 @@
   (let [canvas (js/document.getElementById "canvas")
         ctx (.getContext canvas "2d")
         start {
-               ;; :constraint1 (sketchpad.constrain.Colinear. :x1 :y1 :x2 :y2 :x3 :y3)
+               :constraint1 (sketchpad.constrain.Colinear. :x1 :y1 :x2 :y2 :x3 :y3)
                :constraint2 (sketchpad.constrain.Same. :x1 :x5)
                :x1 50
                :x2 300
