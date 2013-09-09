@@ -56,8 +56,10 @@
 
 ;; magic numbers are suspicious: dx, max-slope, etc.
 (defn walk-downhill
-  [cs vars env]
-  (let [[var [_ slope]] (sharpest-slope cs vars env)]
-    (if (< (abs slope) 1)
-      env
-      (recur cs vars (update-in env [var] (if (neg? slope) - +) 1)))))
+  ([cs vars env]
+     (time (walk-downhill cs vars env 0)))
+  ([cs vars env times]
+     (let [[var [_ slope]] (sharpest-slope cs vars env)]
+       (if (or (> times 1000) (< (abs slope) 1))
+         env
+         (recur cs vars (update-in env [var] (if (neg? slope) - +) 1) (inc times))))))
