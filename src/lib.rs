@@ -44,8 +44,8 @@ impl Universe {
 #[wasm_bindgen]
 impl Universe {
     pub fn new() -> Universe {
-        let width = 64;
-        let height = 64;
+        let width = 64 * 2;
+        let height = 64 * 2;
 
         let cells = (0..width * height)
             .map(|i| {
