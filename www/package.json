@@ -34,6 +34,6 @@
     "copy-webpack-plugin": "^5.0.0"
   },
   "dependencies": {
-    "wasm-game-of-life": "file:../pkg"
+    "sketchpad": "file:../pkg"
   }
 }

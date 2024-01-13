@@ -1,21 +1,37 @@
-<div align="center">
+# Sketchpad
 
-  <h1><code>wasm-pack-template</code></h1>
+An in-progress re-implementation of Ivan Sutherland's Sketchpad,
+runnable in webassembly in the browser.
 
-  <strong>A template for kick starting a Rust and WebAssembly project using <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+## How to use
 
-  <p>
-    <a href="https://travis-ci.org/rustwasm/wasm-pack-template"><img src="https://img.shields.io/travis/rustwasm/wasm-pack-template.svg?style=flat-square" alt="Build Status" /></a>
-  </p>
+### Initial setup
 
-  <h3>
-    <a href="https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html">Tutorial</a>
-    <span> | </span>
-    <a href="https://discordapp.com/channels/442252698964721669/443151097398296587">Chat</a>
-  </h3>
+- Install [Rust stable](https://rustup.rs/)
+- Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
+- Install Node (v16 is known to work)
+- Install NPM dependencies:
 
-  <sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
-</div>
+```sh
+cd www/
+npm install
+```
+
+### Each session
+
+- To build webpack code: `wasm-pack build`
+- To run js server: `cd www; npm run start;`
+
+### License and Contributions
+
+- Available under the [Apache](LICENSE_APACHE) and [MIT](LICENSE_MIT) licenses, at your choice.
+- Based on and thanks to [wasm-pack-template](https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html) from <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a>
+
+---
+
+# Based on wasm-pack-template README
+
+TODO: clean up into internal docs
 
 ## About
 
@@ -27,19 +43,10 @@ publishing the resulting package to NPM.
 Be sure to check out [other `wasm-pack` tutorials online][tutorials] for other
 templates and usages of `wasm-pack`.
 
-[tutorials]: https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html
+[tutorials]:
 [template-docs]: https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html
 
 ## 🚴 Usage
-
-### 🐑 Use `cargo generate` to Clone this Template
-
-[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
-
-```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
-cd my-project
-```
 
 ### 🛠️ Build with `wasm-pack build`
 
@@ -61,24 +68,7 @@ wasm-pack publish
 
 ## 🔋 Batteries Included
 
-* [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
+- [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
   between WebAssembly and JavaScript.
-* [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
+- [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
   for logging panic messages to the developer console.
-* `LICENSE-APACHE` and `LICENSE-MIT`: most Rust projects are licensed this way, so these are included for you
-
-## License
-
-Licensed under either of
-
-* Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
-* MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-at your option.
-
-### Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally
-submitted for inclusion in the work by you, as defined in the Apache-2.0
-license, shall be dual licensed as above, without any additional terms or
-conditions.
