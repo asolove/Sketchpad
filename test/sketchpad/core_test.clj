@@ -1,7 +1,0 @@
-(ns sketchpad.core-test
-  (:use clojure.test
-        sketchpad.core))
-
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
