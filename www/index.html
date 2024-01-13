@@ -18,7 +18,16 @@
       menu {
         display: flex;
         justify-content: left;
-        gap: 4px;
+        gap: 6px;
+      }
+      #fps {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        padding: 5px;
+        background: #ccc;
+        font: 12px "Fira Mono", mono;
+        white-space: pre;
       }
     </style>
   </head>
@@ -29,6 +38,7 @@
     </menu>
     <canvas id="game-of-life-canvas"></canvas>
 
+    <div id="fps"></div>
     <script src="./bootstrap.js"></script>
   </body>
 </html>

@@ -1,7 +1,7 @@
 import { Universe, Cell } from "wasm-game-of-life";
 import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
 
-const FPS = new class {
+const fps = new class {
   constructor() {
     this.fps = document.getElementById("fps");
     this.frames = [];
@@ -45,7 +45,7 @@ max of last 100 = ${Math.round(max)}
 };
 
 
-const CELL_SIZE = 5; //px;
+const CELL_SIZE = 2; //px;
 const GRID_COLOR = '#cccccc';
 const DEAD_COLOR = '#ffffff';
 const ALIVE_COLOR = '#000000';
@@ -99,11 +99,13 @@ stopButton.addEventListener("click", () => {
 const getIndex = (row, column) => row * width + column;
 
 const render = () => {
+  fps.render();
   const ctx = canvas.getContext('2d');
 
   // Grid
   ctx.beginPath();
   ctx.strokeStyle = GRID_COLOR;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   // vertical lines
   for (let i=0; i<=width; i++) {
     ctx.moveTo(i * (CELL_SIZE+1) + 1, 0);
@@ -121,10 +123,13 @@ const render = () => {
   const cellsPtr = universe.cells();
   const cells = new Uint8Array(memory.buffer, cellsPtr, width*height);
   ctx.beginPath();
+
+  ctx.fillStyle = ALIVE_COLOR;
   for(let r = 0; r<height; r++) {
     for(let c = 0; c<width; c++) {
       const cell = cells[getIndex(r, c)];
-      ctx.fillStyle = cell === Cell.Alive ? ALIVE_COLOR : DEAD_COLOR;
+      if(cell !== Cell.Alive) continue;
+      ctx.fillStyle = ALIVE_COLOR;
       ctx.fillRect(
         c * (CELL_SIZE + 1) + 1,
         r * (CELL_SIZE + 1) + 1,
