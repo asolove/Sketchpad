@@ -1,7 +1,16 @@
 mod utils;
 
-use std::fmt;
+use std::{f32::consts::PI, fmt};
 use wasm_bindgen::prelude::*;
+
+extern crate web_sys;
+
+// A macro to provide `println!(..)`-style syntax for `console.log` logging.
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    }
+}
 
 #[wasm_bindgen]
 #[repr(u8)]
@@ -9,6 +18,15 @@ use wasm_bindgen::prelude::*;
 pub enum Cell {
     Dead = 0,
     Alive = 1,
+}
+
+impl Cell {
+    pub fn toggle(&mut self) {
+        *self = match *self {
+            Cell::Dead => Cell::Alive,
+            Cell::Alive => Cell::Dead,
+        };
+    }
 }
 
 #[wasm_bindgen]
@@ -24,7 +42,7 @@ impl Universe {
     }
 
     fn live_neighbor_count(&self, row: u32, col: u32) -> u8 {
-        let mut count = 0;
+        let mut count: u8 = 0;
         for delta_row in [self.height - 1, 0, 1].iter().cloned() {
             for delta_col in [self.width - 1, 0, 1].iter().cloned() {
                 if delta_row == 0 && delta_col == 0 {
@@ -44,8 +62,10 @@ impl Universe {
 #[wasm_bindgen]
 impl Universe {
     pub fn new() -> Universe {
-        let width = 64 * 2;
-        let height = 64 * 2;
+        utils::set_panic_hook();
+
+        let width = 64;
+        let height = 64;
 
         let cells = (0..width * height)
             .map(|i| {
@@ -78,14 +98,35 @@ impl Universe {
         self.cells.as_ptr()
     }
 
+    pub fn toggle_cell(&mut self, row: u32, col: u32) {
+        let idx = self.get_index(row, col);
+        self.cells[idx].toggle();
+    }
+
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+        self.clear_all();
+    }
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+        self.clear_all();
+    }
+
+    pub fn clear_all(&mut self) {
+        self.cells = (0..self.width * self.height).map(|_i| Cell::Dead).collect();
+    }
+
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
+
+        let mut changes: u32 = 0;
 
         for row in 0..self.height {
             for col in 0..self.width {
                 let idx = self.get_index(row, col);
                 let cell = self.cells[idx];
                 let ns = self.live_neighbor_count(row, col);
+
                 let next_cell = match (cell, ns) {
                     (Cell::Alive, x) if x < 2 => Cell::Dead,
                     (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
@@ -93,10 +134,27 @@ impl Universe {
                     (Cell::Dead, 3) => Cell::Alive,
                     (otherwise, _) => otherwise,
                 };
+                if next_cell != cell {
+                    changes += 1;
+                }
                 next[idx] = next_cell;
             }
         }
+        log!("Changes this round: {}", changes);
         self.cells = next;
+    }
+}
+
+impl Universe {
+    pub fn get_cells(&self) -> &[Cell] {
+        &self.cells
+    }
+
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let idx = self.get_index(row, col);
+            self.cells[idx] = Cell::Alive;
+        }
     }
 }
 
