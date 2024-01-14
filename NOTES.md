@@ -3,7 +3,7 @@
 ## M1: try out basics
 
 - [x] Pipe events from JS to WASM and pipe logs back.
-- [ ] Click -> add point -> drawn on canvas
+- [x] Click -> add point -> drawn on canvas
 - [ ] Pen tool: draw points and connect them with lines
 - [ ] Select tool: hover points/lines to select
 - [ ] Simplest constraint: two lines have same length
