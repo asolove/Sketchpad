@@ -1,50 +1,19 @@
-mod utils;
+#![allow(special_module_name)]
+mod main;
 
-use std::fmt;
+// Entry point for wasm
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-extern crate web_sys;
-use web_sys::console;
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen(start)]
+pub fn start() -> Result<(), JsValue> {
+    console_log::init_with_level(log::Level::Debug).unwrap();
 
-// A macro to provide `println!(..)`-style syntax for `console.log` logging.
-macro_rules! log {
-    ( $( $t:tt )* ) => {
-        web_sys::console::log_1(&format!( $( $t )* ).into());
-    }
-}
+    use log::info;
+    info!("Logging works!");
 
-#[wasm_bindgen]
-pub struct Point {
-    x: i32,
-    y: i32,
-}
-
-#[wasm_bindgen]
-pub struct Controller {
-    width: i32,
-    height: i32,
-    points: Vec<Point>,
-}
-
-#[wasm_bindgen]
-impl Controller {
-    pub fn new(width: i32, height: i32) -> Controller {
-        utils::set_panic_hook();
-        let points: Vec<Point> = vec![Point { x: 1, y: 2 }];
-
-        Controller {
-            width,
-            height,
-            points,
-        }
-    }
-
-    pub fn mouse_moved(&self, x: i32, y: i32) {
-        log!("Mouse moved: {}, {}", x, y);
-    }
-
-    pub fn clicked(&mut self, x: i32, y: i32) {
-        log!("Clicked: {}, {}", x, y);
-        self.points.push(Point { x: x, y: y })
-    }
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+    main::main();
+    Ok(())
 }
