@@ -1,5 +1,7 @@
 mod utils;
 
+use rand;
+use rand::seq::SliceRandom;
 use wasm_bindgen::prelude::*;
 
 extern crate web_sys;
@@ -112,5 +114,10 @@ impl Controller {
             (x1, x2) = (x0, x1);
             (y1, y2) = (y0, y1);
         }
+    }
+
+    pub fn twinkle(&mut self) {
+        let mut rng = rand::thread_rng();
+        self.pixels.as_mut_slice().shuffle(&mut rng);
     }
 }
