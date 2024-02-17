@@ -5,6 +5,8 @@
     <title>Sketchpad</title>
     <style>
       body {
+        margin: 0;
+        padding: 0;
         position: absolute;
         top: 0;
         left: 0;
@@ -28,10 +30,17 @@
         font: 12px "Fira Mono", mono;
         white-space: pre;
       }
+      .panel {
+        margin-left: 20px;
+        padding: 20px;
+        border-left: 4px solid black;
+        border-right: 5px solid black;
+      }
       canvas {
         border-radius: 2px;
       }
       .display-module {
+        position: relative;
         background: black;
         padding: 103px;
         border: 3px outset #999;
@@ -63,19 +72,132 @@
       .screw.center {
         left: 360px;
       }
+
+      footer {
+        padding-top: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+      nav.buttons {
+        background-color: rgb(255 255 255 / 0.5);
+        text-align: center;
+        border: 1px solid black;
+        padding: 5px;
+      }
+      nav.buttons button {
+        height: 40px;
+        width: 40px;
+        border: 1px inset black;
+        font-family: monospace;
+        color: rgb(0 0 0 / 0.8);
+      }
+      input[type="radio"]:checked {
+        background: radial-gradient(
+          rgb(255 255 255 / 1),
+          rgb(240 240 240 / 0.1)
+        );
+      }
+
+      input[type="radio"] {
+        height: 6px;
+        width: 6px;
+        margin: 0px;
+        padding: 1px;
+        border: none;
+        background: #333;
+        appearance: none;
+        border-radius: 3px;
+      }
+
+      .indicators {
+        display: inline-grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        padding: 10px 20px;
+        background: #111;
+        border-radius: 2px;
+      }
     </style>
   </head>
   <body>
-    <div class="display-module">
-      <span class="screw top left"></span>
-      <span class="screw top center"></span>
-      <span class="screw top right"></span>
-      <span class="screw mid left"></span>
-      <span class="screw mid right"></span>
-      <span class="screw bottom left"></span>
-      <span class="screw bottom center"></span>
-      <span class="screw bottom right"></span>
-      <canvas id="canvas" width="512" height="512"></canvas>
+    <div class="panel">
+      <nav class="buttons">
+        <button>9</button>
+        <button>8</button>
+        <button>7</button>
+        <button>6</button>
+        <button>5</button>
+        <button>4</button>
+        <button>3</button>
+        <button>2</button>
+        <button>1</button>
+      </nav>
+      <div class="display-module">
+        <span class="screw top left"></span>
+        <span class="screw top center"></span>
+        <span class="screw top right"></span>
+        <span class="screw mid left"></span>
+        <span class="screw mid right"></span>
+        <span class="screw bottom left"></span>
+        <span class="screw bottom center"></span>
+        <span class="screw bottom right"></span>
+        <canvas id="canvas" width="512" height="512"></canvas>
+      </div>
+
+      <footer>
+        <div class="indicators">
+          <input type="radio" checked />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" checked />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" checked />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" checked />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" checked />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+        </div>
+
+        <div class="indicators">
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+          <input type="radio" />
+        </div>
+      </footer>
     </div>
 
     <script src="./bootstrap.js"></script>
