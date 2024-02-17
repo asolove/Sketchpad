@@ -60,6 +60,8 @@ impl Controller {
         self.show_line(RIGHT, TOP, RIGHT, BOTTOM);
         self.show_line(RIGHT, BOTTOM, LEFT, BOTTOM);
         self.show_line(LEFT, BOTTOM, LEFT, TOP);
+
+        self.show_line(LEFT, BOTTOM, RIGHT, TOP);
     }
 
     pub fn show_line(&mut self, x1: u16, y1: u16, x2: u16, y2: u16) {
@@ -67,15 +69,18 @@ impl Controller {
         let ydiff = y2.abs_diff(y1);
         let steps = xdiff.max(ydiff);
 
-        let dx = xdiff as f64 / steps as f64;
-        let dy = ydiff as f64 / steps as f64;
+        let dx = (x2 as i32 - x1 as i32) as f64 / steps as f64;
+        let dy = (y2 as i32 - y1 as i32) as f64 / steps as f64;
 
-        let mut x = x2.min(x1);
-        let mut y: u16 = y2.min(y1);
+        let mut x: f64 = x1 as f64;
+        let mut y: f64 = y1 as f64;
         for step in 0..steps {
-            self.pixels.push(Pixel { x, y });
-            x = (x as f64 + dx).round() as u16;
-            y = (y as f64 + dy).round() as u16;
+            self.pixels.push(Pixel {
+                x: x.round() as u16,
+                y: y.round() as u16,
+            });
+            x = x + dx;
+            y = y + dy;
         }
     }
 }

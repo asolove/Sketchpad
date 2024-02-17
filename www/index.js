@@ -4,14 +4,18 @@ import { memory } from "sketchpad/sketchpad_bg";
 const WIDTH = 1024;
 const HEIGHT = 1024;
 const canvas = document.getElementById("canvas");
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
+canvas.width = WIDTH / 2;
+canvas.height = HEIGHT / 2;
 
 let controller = Controller.new();
 controller.show_ink();
 
 let i = 0;
 let PIXELS_PER_DRAW = 100000 / 20 / 60;
+
+
+let ctx = canvas.getContext('2d');
+ctx.scale(0.5, 0.5);
 
 let render = () => {
   const pixels = new Uint16Array(memory.buffer, controller.pixels(), 2 * controller.pixels_size());
