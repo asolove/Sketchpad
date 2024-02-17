@@ -60,6 +60,10 @@ impl Controller {
         self.show_line(LEFT, BOTTOM, LEFT, TOP);
 
         self.show_line(LEFT, BOTTOM, RIGHT, TOP);
+
+        self.show_circle(300, 300, 100);
+        self.show_line(200, 200, 200, 400);
+        self.show_line(400, 200, 400, 400);
     }
 
     pub fn show_line(&mut self, x1: u16, y1: u16, x2: u16, y2: u16) {
@@ -79,6 +83,34 @@ impl Controller {
             });
             x = x + dx;
             y = y + dy;
+        }
+    }
+
+    // TODO: add in drawing only sub-arcs of the circle
+    pub fn show_circle(&mut self, cx: u16, cy: u16, radius: u16) {
+        let cxf: f64 = cx as f64;
+        let cyf: f64 = cy as f64;
+        let r: f64 = radius as f64;
+
+        let mut x1: f64 = (cx + radius) as f64;
+        let mut y1: f64 = cy as f64;
+        let mut x2 = x1;
+        let mut y2 = y1 - 1.0;
+
+        // TODO: how do we know when to stop?
+        let steps = 720;
+        for _ in 0..steps {
+            self.pixels.push(Pixel {
+                x: x1.round() as u16,
+                y: y1.round() as u16,
+            });
+
+            // x_i = x_i-2 + 2/R * (y_i-1 - y_c)
+            let x0 = x2 + (2.0 / r) * (y1 - cyf);
+            let y0 = y2 - (2.0 / r) * (x1 - cxf);
+
+            (x1, x2) = (x0, x1);
+            (y1, y2) = (y0, y1);
         }
     }
 }
