@@ -1,10 +1,8 @@
 mod utils;
 
-use std::{char::MAX, fmt};
 use wasm_bindgen::prelude::*;
 
 extern crate web_sys;
-use web_sys::console;
 
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.
 macro_rules! log {
@@ -52,10 +50,10 @@ impl Controller {
 
     pub fn show_ink(&mut self) {
         self.pixels = vec![];
-        let TOP = 200;
-        let BOTTOM = 800;
-        let LEFT = 100;
-        let RIGHT = 900;
+        const TOP: u16 = 200;
+        const BOTTOM: u16 = 800;
+        const LEFT: u16 = 100;
+        const RIGHT: u16 = 900;
         self.show_line(LEFT, TOP, RIGHT, TOP);
         self.show_line(RIGHT, TOP, RIGHT, BOTTOM);
         self.show_line(RIGHT, BOTTOM, LEFT, BOTTOM);
@@ -74,7 +72,7 @@ impl Controller {
 
         let mut x: f64 = x1 as f64;
         let mut y: f64 = y1 as f64;
-        for step in 0..steps {
+        for _ in 0..steps {
             self.pixels.push(Pixel {
                 x: x.round() as u16,
                 y: y.round() as u16,

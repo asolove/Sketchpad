@@ -5,7 +5,7 @@ runnable in webassembly in the browser.
 
 ## How to use
 
-### Initial setup
+### Install dependencies
 
 - Install [Rust stable](https://rustup.rs/)
 - Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/)
@@ -17,12 +17,12 @@ cd www/
 npm install
 ```
 
-### Each session
+### Run
 
 - To build webpack code: `wasm-pack build`
 - To run js server: `cd www; npm run start;`
 
-### License and Contributions
+## License and Contributions
 
 - Available under the [Apache](LICENSE_APACHE) and [MIT](LICENSE_MIT) licenses, at your choice.
 - Based on and thanks to [wasm-pack-template](https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html) from <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a>

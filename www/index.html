@@ -29,16 +29,54 @@
         white-space: pre;
       }
       canvas {
+        border-radius: 2px;
+      }
+      .display-module {
         background: black;
+        padding: 103px;
+        border: 3px outset #999;
+      }
+      .screw {
+        display: block;
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 4px;
+        background-color: #666;
+        border: 1px inset #ccc;
+      }
+      .screw.top {
+        top: 10px;
+      }
+      .screw.mid {
+        top: 360px;
+      }
+      .screw.bottom {
+        bottom: 10px;
+      }
+      .screw.left {
+        left: 10px;
+      }
+      .screw.right {
+        right: 10px;
+      }
+      .screw.center {
+        left: 360px;
       }
     </style>
   </head>
   <body>
-    <menu>
-      <button id="a">A</button>
-      <button id="b">B</button>
-    </menu>
-    <canvas id="canvas" width="512" height="512"></canvas>
+    <div class="display-module">
+      <span class="screw top left"></span>
+      <span class="screw top center"></span>
+      <span class="screw top right"></span>
+      <span class="screw mid left"></span>
+      <span class="screw mid right"></span>
+      <span class="screw bottom left"></span>
+      <span class="screw bottom center"></span>
+      <span class="screw bottom right"></span>
+      <canvas id="canvas" width="512" height="512"></canvas>
+    </div>
 
     <script src="./bootstrap.js"></script>
   </body>

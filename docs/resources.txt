@@ -1,0 +1,11 @@
+
+## Video of Sketchpad in use
+
+- [Historical retrospective with 1963 demo clips](https://www.youtube.com/watch?v=6orsmFndx_o)
+  Shows interactive usage and pretty clearly demonstrates the "twinkle" display mode.
+  
+## Videos about Sketchpad
+
+- [Curiosity and Possibility: The Ivan Sutherland Story](https://www.youtube.com/watch?v=vPsFPmgT0YM)
+  A retrospective video made by the National Inventors' Hall of Fame
+
