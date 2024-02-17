@@ -13,23 +13,30 @@ let controller = Controller.new();
 controller.show_ink();
 
 let i = 0;
-let PIXELS_PER_DRAW = 100000 / 20 / 60;
+let PIXELS_PER_DRAW = 100000 / 30 / 60;
 
+let ctx = canvas.getContext('2d');
+ctx.scale(0.5, 0.5);
 
-  let ctx = canvas.getContext('2d');
-  ctx.scale(0.5, 0.5);
+let twinkle = true;
 
 let render = () => {
-
   const pixels = new Uint16Array(memory.buffer, controller.pixels(), 2 * controller.pixels_size());
 
-  ctx.fillStyle = "rgb(60 60 60  / 3%)";
+  ctx.fillStyle = "rgb(60 60 60  / 2%)";
   ctx.fillRect(0, 0, WIDTH / SCALE, HEIGHT / SCALE);
 
   ctx.fillStyle = "rgb(230 240 255 / 50%)";
-  for(let j=0; j<controller.pixels_size(); j++) {
+  for(let j=0; j<PIXELS_PER_DRAW; j++) {
+    if (twinkle) {
+      // FIXME: twinkle should really permute the array so that each pixel
+      // gets drawn once before any other pixel gets drawn twice.
+      i = Math.floor(Math.random() * controller.pixels_size());
+    } else {
+      i = (i + 1) % controller.pixels_size();
+    }
     ctx.beginPath();
-    let xIndex = j * 2;
+    let xIndex = i * 2;
     ctx.arc(pixels[xIndex], pixels[xIndex + 1], 1, 0, 2 * Math.PI);
     ctx.fill();
   }
