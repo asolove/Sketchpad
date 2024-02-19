@@ -2,9 +2,9 @@ import { Controller, Pixel } from "sketchpad";
 import { memory } from "sketchpad/sketchpad_bg";
 
 
-const WIDTH = 512;
-const HEIGHT = 512;
-const SCALE = 0.5; // scaling between Sketchpad pixels and monitor pixels
+const SCALE = 1; // scaling between Sketchpad pixels and monitor pixels
+const WIDTH = 1024 * SCALE;
+const HEIGHT = 1024 * SCALE;
 const canvas = document.getElementById("canvas");
 canvas.width = WIDTH;
 canvas.height = HEIGHT;
@@ -17,7 +17,7 @@ let i = 0;
 let PIXELS_PER_DRAW = 100000 / 10 / 60;
 
 let ctx = canvas.getContext('2d');
-ctx.scale(0.5, 0.5);
+ctx.scale(SCALE, SCALE);
 
 let render = () => {
   const pixels = new Uint16Array(memory.buffer, controller.pixels(), 2 * controller.pixels_size());

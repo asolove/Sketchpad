@@ -96,23 +96,18 @@ impl Controller {
 
         let mut x1: f64 = (cx + radius) as f64;
         let mut y1: f64 = cy as f64;
-        let mut x2 = x1;
-        let mut y2 = y1 - 1.0;
 
         // TODO: how do we know when to stop?
-        let steps = 720;
+        let steps = 628;
         for _ in 0..steps {
             self.pixels.push(Pixel {
                 x: x1.round() as u16,
                 y: y1.round() as u16,
             });
 
-            // x_i = x_i-2 + 2/R * (y_i-1 - y_c)
-            let x0 = x2 + (2.0 / r) * (y1 - cyf);
-            let y0 = y2 - (2.0 / r) * (x1 - cxf);
-
-            (x1, x2) = (x0, x1);
-            (y1, y2) = (y0, y1);
+            // Sutherland's thesis, p.78, figure 5-5
+            x1 = x1 + (1.0 / r) * (y1 - cyf);
+            y1 = y1 - (1.0 / r) * (x1 - cxf);
         }
     }
 
