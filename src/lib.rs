@@ -14,23 +14,24 @@ macro_rules! log {
 }
 
 #[wasm_bindgen]
+#[derive(Clone)]
 pub struct Pixel {
     x: u16,
     y: u16,
 }
 
 #[wasm_bindgen]
-pub struct Controller {
+#[derive(Clone)]
+pub struct DisplayFile {
     pixels: Vec<Pixel>,
 }
 
 #[wasm_bindgen]
-impl Controller {
-    pub fn new() -> Controller {
-        utils::set_panic_hook();
+impl DisplayFile {
+    pub fn new() -> DisplayFile {
         let pixels: Vec<Pixel> = vec![Pixel { x: 1, y: 2 }];
 
-        Controller { pixels }
+        DisplayFile { pixels }
     }
 
     pub fn pixels(&self) -> *const Pixel {
@@ -39,15 +40,6 @@ impl Controller {
 
     pub fn pixels_size(&self) -> usize {
         self.pixels.len()
-    }
-
-    pub fn mouse_moved(&self, x: u16, y: u16) {
-        log!("Mouse moved: {}, {}", x, y);
-    }
-
-    pub fn clicked(&mut self, x: u16, y: u16) {
-        log!("Clicked: {}, {}", x, y);
-        self.pixels.push(Pixel { x: x, y: y })
     }
 
     pub fn show_ink(&mut self) {
@@ -114,5 +106,33 @@ impl Controller {
     pub fn twinkle(&mut self) {
         let mut rng = rand::thread_rng();
         self.pixels.as_mut_slice().shuffle(&mut rng);
+    }
+}
+
+#[wasm_bindgen]
+pub struct Controller {
+    display_file: DisplayFile,
+}
+
+#[wasm_bindgen]
+impl Controller {
+    pub fn new() -> Controller {
+        utils::set_panic_hook();
+        Controller {
+            display_file: DisplayFile::new(),
+        }
+    }
+
+    pub fn display_file(&self) -> DisplayFile {
+        self.display_file.clone()
+    }
+
+    pub fn mouse_moved(&self, x: u16, y: u16) {
+        // log!("Mouse moved: {}, {}", x, y);
+    }
+
+    pub fn clicked(&mut self, x: u16, y: u16) {
+        // log!("Clicked: {}, {}", x, y);
+        self.display_file.pixels.push(Pixel { x: x, y: y })
     }
 }

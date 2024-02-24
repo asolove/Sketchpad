@@ -1,8 +1,8 @@
-import { Controller, Pixel } from "sketchpad";
+import { Controller, DisplayFile, Pixel } from "sketchpad";
 import { memory } from "sketchpad/sketchpad_bg";
 
 
-const SCALE = 1; // scaling between Sketchpad pixels and monitor pixels
+const SCALE = 0.5; // scaling between Sketchpad pixels and monitor pixels
 const WIDTH = 1024 * SCALE;
 const HEIGHT = 1024 * SCALE;
 const canvas = document.getElementById("canvas");
@@ -10,8 +10,10 @@ canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
 let controller = Controller.new();
-controller.show_ink();
-controller.twinkle();
+let display_file = controller.display_file();
+console.log(controller, display_file);
+display_file.show_ink();
+display_file.twinkle();
 
 let i = 0;
 let PIXELS_PER_DRAW = 100000 / 10 / 60;
@@ -20,14 +22,14 @@ let ctx = canvas.getContext('2d');
 ctx.scale(SCALE, SCALE);
 
 let render = () => {
-  const pixels = new Uint16Array(memory.buffer, controller.pixels(), 2 * controller.pixels_size());
+  const pixels = new Uint16Array(memory.buffer, display_file.pixels(), 2 * display_file.pixels_size());
 
   ctx.fillStyle = "rgb(40 40 40 / 5%)";
   ctx.fillRect(0, 0, WIDTH / SCALE, HEIGHT / SCALE);
 
   ctx.fillStyle = "rgb(230 240 255 / 50%)";
   for(let j=0; j<PIXELS_PER_DRAW; j++) {
-    i = (i + 1) % controller.pixels_size();
+    i = (i + 1) % display_file.pixels_size();
     ctx.beginPath();
     let xIndex = i * 2;
     ctx.arc(pixels[xIndex], pixels[xIndex + 1], 1, 0, 2 * Math.PI);
