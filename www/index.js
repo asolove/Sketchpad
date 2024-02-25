@@ -2,7 +2,7 @@ import { Controller, DisplayFile, Pixel } from "sketchpad";
 import { memory } from "sketchpad/sketchpad_bg";
 
 
-const SCALE = 0.5; // scaling between Sketchpad pixels and monitor pixels
+const SCALE = 0.75; // scaling between Sketchpad pixels and monitor pixels
 const WIDTH = 1024 * SCALE;
 const HEIGHT = 1024 * SCALE;
 const canvas = document.getElementById("canvas");
@@ -10,10 +10,7 @@ canvas.width = WIDTH;
 canvas.height = HEIGHT;
 
 let controller = Controller.new();
-let display_file = controller.display_file();
-console.log(controller, display_file);
-display_file.show_ink();
-display_file.twinkle();
+controller.draw();
 
 let i = 0;
 let PIXELS_PER_DRAW = 100000 / 10 / 60;
@@ -22,6 +19,7 @@ let ctx = canvas.getContext('2d');
 ctx.scale(SCALE, SCALE);
 
 let render = () => {
+  let display_file = controller.display_file();
   const pixels = new Uint16Array(memory.buffer, display_file.pixels(), 2 * display_file.pixels_size());
 
   ctx.fillStyle = "rgb(40 40 40 / 5%)";
