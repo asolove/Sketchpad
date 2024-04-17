@@ -22,7 +22,7 @@ npm install
 - To build webpack code: `wasm-pack build`
 - To run js server: `cd www; npm run start;`
 
-### Debugging
+### Having issues?
 
 - On some systems, I get an `ERR_OSSL_EVP_UNSUPPORTED` error, which you can fix with:
   `export NODE_OPTIONS=--openssl-legacy-provider`
