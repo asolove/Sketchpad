@@ -10,5 +10,8 @@
     "test": "bun test"
   },
   "author": "Adam Solove",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bun": "^1.1.1"
+  }
 }
