@@ -1,0 +1,14 @@
+{
+  "name": "sketchpad",
+  "version": "0.0.1",
+  "description": "An in-progress re-implementation of Ivan Sutherland's Sketchpad.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "bun test"
+  },
+  "author": "Adam Solove",
+  "license": "ISC"
+}
