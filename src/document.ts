@@ -1,12 +1,5 @@
+import { DisplayTransform, Drawonable } from "./display";
 import { Chicken, Hen, chickenParent } from "./ring";
-
-interface Drawonable {
-  draw(x: number, y: number): void;
-}
-
-interface DisplayTransform {
-  (x: number, y: number): { x: number; y: number };
-}
 
 interface Drawable {
   display(d: Drawonable, displayTransform: DisplayTransform): void;
@@ -70,8 +63,8 @@ class Line implements Drawable, Boundable, Movable {
 
 class Point implements Drawable, Boundable, Movable {
   display(d: Drawonable, displayTransform: DisplayTransform) {
-    let { x, y } = displayTransform(this.x, this.y);
-    d.draw(x, y);
+    let [x, y] = displayTransform(this.x, this.y);
+    d.drawPoint(x, y);
   }
   move(dx: number, dy: number) {}
   bounds() {

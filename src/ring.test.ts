@@ -25,26 +25,26 @@ describe("Ring", () => {
   test("removeChicken", () => {
     let hen = createHen(0);
 
-    addChicken(hen, 1);
-    let child2 = addChicken(hen, 2);
-    addChicken(hen, 3);
+    let chick1 = addChicken(hen, 1);
+    let chick2 = addChicken(hen, 2);
+    let chick3 = addChicken(hen, 3);
 
-    removeChicken(child2);
+    removeChicken(chick2);
 
-    let chicken = hen.next;
-    expect(chicken.self).toBe(1);
+    let currentChick = hen.next;
+    expect(currentChick.self).toBe(1);
 
-    chicken = chicken.next;
-    expect(chicken.self).toBe(3);
+    currentChick = currentChick.next;
+    expect(currentChick.self).toBe(3);
 
-    let next = chicken.next;
+    let next = currentChick.next;
     expect(next).toBe(hen);
   });
 
-  test("remove only child", () => {
+  test("remove only chick", () => {
     let hen = createHen(0);
-    let child = addChicken(hen, 1);
-    removeChicken(child);
+    let chick = addChicken(hen, 1);
+    removeChicken(chick);
 
     expect(hen.next).toBe(hen);
     expect(hen.prev).toBe(hen);
@@ -52,11 +52,11 @@ describe("Ring", () => {
 
   test("can't use removee child", () => {
     let hen = createHen(0);
-    let child = addChicken(hen, 1);
-    removeChicken(child);
+    let chick = addChicken(hen, 1);
+    removeChicken(chick);
 
-    expect(() => child.next).toThrow();
-    expect(() => child.prev).toThrow();
-    expect(() => child.self).toThrow();
+    expect(() => chick.next).toThrow();
+    expect(() => chick.prev).toThrow();
+    expect(() => chick.self).toThrow();
   });
 });
