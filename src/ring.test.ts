@@ -20,6 +20,14 @@ describe("Ring", () => {
 
     let next = chicken.next;
     expect(next).toBe(hen);
+
+    chicken = hen.prev;
+    expect(chicken.self).toBe(3);
+    chicken = chicken.prev;
+    expect(chicken.self).toBe(2);
+    chicken = chicken.prev;
+    expect(chicken.self).toBe(1);
+    expect(chicken.prev).toBe(hen);
   });
 
   test("removeChicken", () => {
@@ -50,7 +58,7 @@ describe("Ring", () => {
     expect(hen.prev).toBe(hen);
   });
 
-  test("can't use removee child", () => {
+  test("can't use removed child", () => {
     let hen = createHen(0);
     let chick = addChicken(hen, 1);
     removeChicken(chick);
