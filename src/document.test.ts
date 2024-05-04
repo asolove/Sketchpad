@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { addChicken, createHen, removeChicken } from "./ring";
+import { addChicken, collectChickens, createHen, removeChicken } from "./ring";
 import { Universe } from "./document";
 
 describe("Document", () => {
@@ -14,5 +14,19 @@ describe("Document", () => {
   test("create line segment", () => {
     let u = new Universe();
     let p = u.addPointInLineSegment([10, 20]);
+
+    let partsHen = u.currentPicture.parts;
+    let parts = collectChickens(partsHen);
+    expect(parts.length).toBe(3);
+  });
+
+  test("create second segment", () => {
+    let u = new Universe();
+    let p1 = u.addPointInLineSegment([10, 20]);
+    let p2 = u.addPointInLineSegment([20, 30]);
+
+    let partsHen = u.currentPicture.parts;
+    let parts = collectChickens(partsHen);
+    expect(parts.length).toBe(5);
   });
 });

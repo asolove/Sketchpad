@@ -6,6 +6,8 @@ import {
   chickenParent,
   collectChickens,
   createHen,
+  isChicken,
+  removeChicken,
 } from "./ring";
 
 interface Drawable {
@@ -47,21 +49,23 @@ export class Universe {
   }
 
   addPointInLineSegment(position: [number, number]): Point {
-    // eventually will need to consult UI mode/state to see what we want
-    // but for now assume we are in line-drawing mode and click to add a point
-    let movings = collectChickens(this.movings);
-    switch (movings.length) {
-      case 0:
-        let p0 = this.addPoint(position);
-        let p1 = this.addPoint(position);
-        let l = this.addLine(p0, p1);
-        addChicken(this.movings, p1);
-        return p0;
-      case 1:
-        return;
-      default:
-        throw new Error("Can't draw a line while multiple items are moving");
-    }
+    // TODO: this only handles drawing new points. In the future, this interface
+    // should change so if the pen is pointed at an existing point, it connects.
+    let current = this.movings.next;
+    if (isChicken(current.next))
+      throw new Error("Cannot draw line while more than one item is moving");
+
+    if (isChicken(current) && !(current.self instanceof Point))
+      throw new Error("Cannot draw line while current moving is not a Point.");
+
+    let p0 =
+      current.self instanceof Point ? current.self : this.addPoint(position);
+
+    let p1 = this.addPoint(position);
+    let l = this.addLine(p0, p1);
+    if (isChicken(current)) removeChicken(current);
+    addChicken(this.movings, p1);
+    return p1;
   }
 }
 
@@ -73,9 +77,10 @@ class Picture implements Drawable {
   }
 
   display(d: Drawonable, dt: DisplayTransform) {
-    let chicken = this.parts.next;
-    while (chicken.type === "chicken") {
-      chicken.self.display(d, dt);
+    let current = this.parts.next;
+    while (isChicken(current)) {
+      current.self.display(d, dt);
+      current = current.next;
     }
   }
 

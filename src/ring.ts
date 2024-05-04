@@ -19,6 +19,12 @@ export function createHen<A, B>(parent: A): Hen<A, B> {
   return fakeCompleteHen;
 }
 
+export function isHen<A, B>(
+  item: Chicken<A, B> | Hen<A, B>
+): item is Hen<A, B> {
+  return item && item.type === "hen";
+}
+
 export function collectChickens<A, B>(hen: Hen<A, B>): Array<B> {
   let r: Array<B> = [];
   let current = hen.next;
@@ -35,6 +41,12 @@ export type Chicken<Parent, Child> = {
   next: Chicken<Parent, Child> | Hen<Parent, Child>;
   prev: Chicken<Parent, Child> | Hen<Parent, Child>;
 };
+
+export function isChicken<A, B>(
+  item: Chicken<A, B> | Hen<A, B>
+): item is Chicken<A, B> {
+  return item && item.type === "chicken";
+}
 
 export function chickenParent<A, B>(chicken: Chicken<A, B>): A {
   let current: Chicken<A, B> | Hen<A, B> = chicken;
