@@ -19,6 +19,16 @@ export function createHen<A, B>(parent: A): Hen<A, B> {
   return fakeCompleteHen;
 }
 
+export function collectChickens<A, B>(hen: Hen<A, B>): Array<B> {
+  let r: Array<B> = [];
+  let current = hen.next;
+  while (current.type === "chicken") {
+    r.push(current.self);
+    current = current.next;
+  }
+  return r;
+}
+
 export type Chicken<Parent, Child> = {
   type: "chicken";
   self: Child;
