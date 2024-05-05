@@ -6,7 +6,7 @@ export interface DisplayTransform {
   (x: number, y: number): [number, number];
 }
 
-export class Display implements Drawonable {
+export class DisplayFile implements Drawonable {
   pixels: [number, number][];
   cx: number;
   cy: number;
