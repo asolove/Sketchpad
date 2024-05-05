@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { addChicken, collectChickens, createHen, removeChicken } from "./ring";
+import { collectChickens } from "./ring";
 import { Universe } from "./document";
 
 describe("Document", () => {

@@ -4,7 +4,6 @@ import {
   Hen,
   addChicken,
   chickenParent,
-  collectChickens,
   createHen,
   isChicken,
   removeChicken,
@@ -29,7 +28,7 @@ interface Movable {
   move(dx: number, dy: number);
 }
 
-export class Universe {
+export class Universe implements Drawable {
   currentPicture: Picture;
   pictures: Picture[];
   movings: Hen<Universe, Movable>;
@@ -66,6 +65,10 @@ export class Universe {
     if (isChicken(current)) removeChicken(current);
     addChicken(this.movings, p1);
     return p1;
+  }
+
+  display(d: Drawonable, dt: DisplayTransform) {
+    this.currentPicture.display(d, dt);
   }
 }
 

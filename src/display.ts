@@ -6,7 +6,7 @@ export interface DisplayTransform {
   (x: number, y: number): [number, number];
 }
 
-class Display implements Drawonable {
+export class Display implements Drawonable {
   pixels: [number, number][];
   cx: number;
   cy: number;
@@ -16,6 +16,7 @@ class Display implements Drawonable {
     this.cx = 0;
     this.cy = 0;
     this.zoom = 1;
+    this.pixels = [];
   }
 
   displayTransform(): DisplayTransform {
