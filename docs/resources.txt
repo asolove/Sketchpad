@@ -7,6 +7,8 @@
 	- 👀 [Interviews with Sutherland](https://computerhistory.org/blog/the-remarkable-ivan-sutherland/) at Computer History Museum
 	- ✅ [Sutherland interview](https://www.youtube.com/watch?v=HnvckW1FMHc) for HLF
 	- [Long biography from ACM](https://amturing.acm.org/award_winners/sutherland_3467412.cfm)
+  - [Sketchpad III](https://dspace.mit.edu/handle/1721.1/11559) a thesis adding 3D to Sketchpad, from around the same time.
+      May have interesting material on someone else learning to use the system and expand its codebase.
 
 - Second-hand demos or voiceovers
   - [Historical retrospective with 1963 demo clips](https://www.youtube.com/watch?v=6orsmFndx_o)
