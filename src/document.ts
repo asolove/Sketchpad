@@ -119,17 +119,30 @@ class Line implements Drawable, Boundable, Movable {
     this.picture = addChicken(picture, this);
   }
 
-  display(d: Drawonable) {}
+  display(d: Drawonable, dt: DisplayTransform) {
+    d.drawLine(dt(this.startCoordinates), dt(this.endCoordinates));
+  }
+
   move(dx: number, dy: number) {}
   bounds() {
     return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
   }
 
-  getStartPoint(): Point {
+  get startPoint(): Point {
     return chickenParent(this.start);
   }
-  getEndPoint(): Point {
+  get endPoint(): Point {
     return chickenParent(this.end);
+  }
+
+  get startCoordinates(): [number, number] {
+    let p = this.startPoint;
+    return [p.x, p.y];
+  }
+
+  get endCoordinates(): [number, number] {
+    let p = this.endPoint;
+    return [p.x, p.y];
   }
 }
 
@@ -158,8 +171,8 @@ class Point implements Drawable, Boundable, Movable {
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform) {
-    let [x, y] = displayTransform(this.x, this.y);
-    d.drawPoint(x, y);
+    let [x, y] = displayTransform([this.x, this.y]);
+    d.drawPoint([x, y]);
   }
   move(dx: number, dy: number) {}
   bounds() {
