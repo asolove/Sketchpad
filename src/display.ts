@@ -36,3 +36,23 @@ export class DisplayFile implements Drawonable {
     this.pixels.push([x, y]);
   }
 }
+
+export class Display {
+  #displayFile: DisplayFile;
+  #canvas: HTMLCanvasElement;
+
+  constructor(df: DisplayFile, canvas: HTMLCanvasElement) {
+    this.#displayFile = df;
+    this.#canvas = canvas;
+
+    requestAnimationFrame(() => this.render());
+  }
+
+  render() {
+    const ctx = this.#canvas.getContext("2d");
+    if (!ctx) throw new Error("canot get canvas context");
+
+    ctx.fillStyle = "rgb(200 0 0)";
+    ctx.fillRect(1, 1, 2, 2);
+  }
+}
