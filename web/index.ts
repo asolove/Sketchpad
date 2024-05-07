@@ -12,8 +12,19 @@ u.addPointInLineSegment([900, 900]);
 u.addPointInLineSegment([100, 900]);
 u.addPointInLineSegment([100, 100]);
 
+u.addPointInLineSegment([-100, -100]);
+u.addPointInLineSegment([-900, -100]);
+u.addPointInLineSegment([-900, -900]);
+u.addPointInLineSegment([-100, -900]);
+u.addPointInLineSegment([-100, -100]);
+
 let df = new DisplayFile();
 
-u.display(df, df.displayTransform());
+let loop = () => {
+  df.clear();
+  u.display(df, df.displayTransform());
+  requestAnimationFrame(loop);
+};
+loop();
 
 let d = new Display(df, canvas);

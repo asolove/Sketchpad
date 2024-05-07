@@ -1,3 +1,5 @@
+import { clamp } from "./lib";
+
 export interface Drawonable {
   drawPoint(point: [number, number]): void;
   drawLine(start: [number, number], end: [number, number]);
@@ -63,7 +65,7 @@ export class DisplayFile implements Drawonable {
 export class Display {
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
-  #pixelsPerDraw = 100;
+  #pixelsPerDraw = 2000;
   #pixelIndex = 0;
 
   constructor(df: DisplayFile, canvas: HTMLCanvasElement) {
@@ -76,6 +78,14 @@ export class Display {
     canvas.getContext("2d")?.scale(xScale, yScale);
 
     this.loop();
+
+    this.#canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      let zoom = this.#displayFile.zoom;
+      zoom += e.deltaY * 0.01;
+      zoom = clamp(0.1, zoom, 10);
+      this.#displayFile.zoom = zoom;
+    });
   }
 
   loop() {
@@ -88,7 +98,7 @@ export class Display {
 
     if (!ctx) throw new Error("canot get canvas context");
 
-    ctx.fillStyle = "rgb(40 40 40 / 5%)";
+    ctx.fillStyle = "rgb(30 30 30 / 20%)";
     ctx.fillRect(
       0,
       0,
