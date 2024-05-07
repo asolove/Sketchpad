@@ -112,6 +112,10 @@ export class Universe implements Drawable {
     return this.currentPicture.addSameXConstraint(p1, p2);
   }
 
+  addSameYConstraint(p1: Point, p2: Point): SameYConstraint {
+    return this.currentPicture.addSameYConstraint(p1, p2);
+  }
+
   display(d: Drawonable, dt: DisplayTransform) {
     this.currentPicture.display(d, dt);
   }
@@ -138,6 +142,9 @@ class Picture implements Drawable {
   addSameXConstraint(p1: Point, p2: Point): SameXConstraint {
     return new SameXConstraint(p1, p2, this.constraints);
   }
+  addSameYConstraint(p1: Point, p2: Point): SameYConstraint {
+    return new SameYConstraint(p1, p2, this.constraints);
+  }
 
   addPoint(position: [number, number]): Point {
     return new Point(position, this.parts, this.variables);
@@ -163,8 +170,8 @@ abstract class Constraint implements Movable, Drawable {
 }
 
 class SameXConstraint extends Constraint {
-  p1: Chicken<Variable, Constraint>;
-  p2: Chicken<Variable, Constraint>;
+  p1: Chicken<Point, Constraint>;
+  p2: Chicken<Point, Constraint>;
   picture: Chicken<Picture, Constraint>;
 
   constructor(p1: Point, p2: Point, picture: Hen<Picture, Constraint>) {
@@ -188,6 +195,41 @@ class SameXConstraint extends Constraint {
 
   name(): string {
     return "X";
+  }
+  ncon(): number {
+    return 1;
+  }
+  chvar(): number {
+    return 2;
+  }
+}
+
+class SameYConstraint extends Constraint {
+  p1: Chicken<Point, Constraint>;
+  p2: Chicken<Point, Constraint>;
+  picture: Chicken<Picture, Constraint>;
+
+  constructor(p1: Point, p2: Point, picture: Hen<Picture, Constraint>) {
+    super();
+    this.p1 = addChicken(p1.constraints, this);
+    this.p2 = addChicken(p2.constraints, this);
+    this.picture = addChicken(picture, this);
+  }
+
+  get y1() {
+    return chickenParent(this.p1).y;
+  }
+
+  get y2() {
+    return chickenParent(this.p2).y;
+  }
+
+  error(): number {
+    return Math.abs(this.y1 - this.y2);
+  }
+
+  name(): string {
+    return "Y";
   }
   ncon(): number {
     return 1;
@@ -286,6 +328,18 @@ class Point extends Variable implements Drawable, Boundable, Movable {
     } else if (exn < e0) {
       this.x -= 1;
       e0 = exn;
+    }
+
+    this.y += 1;
+    let eyp = this.error();
+    this.y -= 2;
+    let eyn = this.error();
+    this.y += 1;
+
+    if (eyp < eyn && eyp < e0) {
+      this.y += 1;
+    } else if (eyn < e0) {
+      this.y -= 1;
     }
   }
 

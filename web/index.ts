@@ -20,6 +20,7 @@ let pX = u.addPointInLineSegment([-100, -900]);
 u.addPointInLineSegment(p1);
 
 u.addSameXConstraint(p1, pX);
+u.addSameYConstraint(p1, pY);
 
 let df = new DisplayFile();
 
