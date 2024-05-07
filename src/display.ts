@@ -12,19 +12,21 @@ export class DisplayFile implements Drawonable {
   cx: number;
   cy: number;
   zoom: number;
+  logicalWidth = 1024;
+  logicalHeight = 1024;
 
   constructor() {
     this.cx = 0;
     this.cy = 0;
-    this.zoom = 1;
+    this.zoom = 0.5;
     this.pixels = [];
   }
 
   displayTransform(): DisplayTransform {
     return ([x, y]: [number, number]): [number, number] => {
       return [
-        Math.round((x - this.cx) * this.zoom),
-        Math.round((y - this.cy) * this.zoom),
+        Math.round((x - this.cx) * this.zoom) + this.logicalWidth / 2,
+        Math.round((y - this.cy) * this.zoom) + this.logicalHeight / 2,
       ];
     };
   }
@@ -59,13 +61,8 @@ export class DisplayFile implements Drawonable {
 }
 
 export class Display {
-  static LOGICAL_WIDTH = 1024;
-  static LOGIICAL_HEIGHT = 1024;
-
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
-  #logicalWidth = 1024;
-  #logicalHeight = 1024;
   #pixelsPerDraw = 100;
   #pixelIndex = 0;
 
@@ -74,8 +71,8 @@ export class Display {
     this.#canvas = canvas;
 
     // TODO: react to dom changes?
-    let xScale = canvas.width / this.#logicalWidth;
-    let yScale = canvas.height / this.#logicalHeight;
+    let xScale = canvas.width / this.#displayFile.logicalWidth;
+    let yScale = canvas.height / this.#displayFile.logicalHeight;
     canvas.getContext("2d")?.scale(xScale, yScale);
 
     this.loop();
@@ -92,7 +89,12 @@ export class Display {
     if (!ctx) throw new Error("canot get canvas context");
 
     ctx.fillStyle = "rgb(40 40 40 / 5%)";
-    ctx.fillRect(0, 0, this.#logicalWidth, this.#logicalHeight);
+    ctx.fillRect(
+      0,
+      0,
+      this.#displayFile.logicalWidth,
+      this.#displayFile.logicalHeight
+    );
 
     ctx.fillStyle = "rgb(230 240 255 / 50%)";
     const pixels = this.#displayFile.pixels;
