@@ -1,3 +1,4 @@
+import { Constraint, SameXConstraint, SameYConstraint } from "./constraint";
 import { DisplayTransform, Drawonable } from "./display";
 import { sum } from "./lib";
 import {
@@ -121,7 +122,7 @@ export class Universe implements Drawable {
   }
 }
 
-class Picture implements Drawable {
+export class Picture implements Drawable {
   parts: Hen<Picture, Drawable>;
   variables: Hen<Picture, Variable>;
   constraints: Hen<Picture, Constraint>;
@@ -157,86 +158,6 @@ class Picture implements Drawable {
 
 class Circle implements Drawable {
   display(d: Drawonable) {}
-}
-abstract class Constraint implements Movable, Drawable {
-  display(d: Drawonable, displayTransform: DisplayTransform): void {}
-
-  move(dx: number, dy: number) {}
-
-  abstract error(): number;
-  abstract name(): string;
-  abstract ncon(): number; // number of degrees of freedom removed
-  abstract chvar(): number; // changeable variables
-}
-
-class SameXConstraint extends Constraint {
-  p1: Chicken<Point, Constraint>;
-  p2: Chicken<Point, Constraint>;
-  picture: Chicken<Picture, Constraint>;
-
-  constructor(p1: Point, p2: Point, picture: Hen<Picture, Constraint>) {
-    super();
-    this.p1 = addChicken(p1.constraints, this);
-    this.p2 = addChicken(p2.constraints, this);
-    this.picture = addChicken(picture, this);
-  }
-
-  get x1() {
-    return chickenParent(this.p1).x;
-  }
-
-  get x2() {
-    return chickenParent(this.p2).x;
-  }
-
-  error(): number {
-    return Math.abs(this.x1 - this.x2);
-  }
-
-  name(): string {
-    return "X";
-  }
-  ncon(): number {
-    return 1;
-  }
-  chvar(): number {
-    return 2;
-  }
-}
-
-class SameYConstraint extends Constraint {
-  p1: Chicken<Point, Constraint>;
-  p2: Chicken<Point, Constraint>;
-  picture: Chicken<Picture, Constraint>;
-
-  constructor(p1: Point, p2: Point, picture: Hen<Picture, Constraint>) {
-    super();
-    this.p1 = addChicken(p1.constraints, this);
-    this.p2 = addChicken(p2.constraints, this);
-    this.picture = addChicken(picture, this);
-  }
-
-  get y1() {
-    return chickenParent(this.p1).y;
-  }
-
-  get y2() {
-    return chickenParent(this.p2).y;
-  }
-
-  error(): number {
-    return Math.abs(this.y1 - this.y2);
-  }
-
-  name(): string {
-    return "Y";
-  }
-  ncon(): number {
-    return 1;
-  }
-  chvar(): number {
-    return 2;
-  }
 }
 
 class Line implements Drawable, Boundable, Movable {
@@ -284,7 +205,7 @@ class Line implements Drawable, Boundable, Movable {
   }
 }
 
-class Point extends Variable implements Drawable, Boundable, Movable {
+export class Point extends Variable implements Drawable, Boundable, Movable {
   x: number;
   y: number;
 

@@ -13,7 +13,7 @@ u.addPointInLineSegment([900, 900]);
 u.addPointInLineSegment([100, 900]);
 u.addPointInLineSegment(p0);
 
-let p1 = u.addPointInLineSegment([-70, -60]);
+let p1 = u.addPointInLineSegment([0, 0]);
 let pY = u.addPointInLineSegment([-900, -100]);
 u.addPointInLineSegment([-900, -900]);
 let pX = u.addPointInLineSegment([-100, -900]);
