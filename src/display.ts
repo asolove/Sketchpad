@@ -82,7 +82,7 @@ export class Display {
     this.#canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
       let zoom = this.#displayFile.zoom;
-      zoom += e.deltaY * 0.01;
+      zoom += e.deltaY * -0.01;
       zoom = clamp(0.1, zoom, 10);
       this.#displayFile.zoom = zoom;
     });
