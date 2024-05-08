@@ -25,6 +25,12 @@ export function isHen<A, B>(
   return item && item.type === "hen";
 }
 
+export function clearHen<A, B>(hen: Hen<A, B>) {
+  // FIXME: clear out chickens
+  hen.next = hen;
+  hen.prev = hen;
+}
+
 export function collectChickens<A, B>(hen: Hen<A, B>): Array<B> {
   let r: Array<B> = [];
   let current = hen.next;

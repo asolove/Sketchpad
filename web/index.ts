@@ -22,6 +22,13 @@ u.addPointInLineSegment(p1);
 u.addSameXConstraint(p1, pX);
 u.addSameYConstraint(p1, pY);
 
+let p = u.currentPicture;
+
+let p2 = u.addPicture();
+u.addPointInLineSegment([0, 20]);
+u.addPointInLineSegment([0, -20]);
+u.currentPicture.addInstance(p, 100, -100, 0.5, Math.PI / 4);
+
 let df = new DisplayFile();
 
 let loop = () => {

@@ -6,6 +6,7 @@ import {
   Hen,
   addChicken,
   chickenParent,
+  clearHen,
   collectChickens,
   createHen,
   isChicken,
@@ -29,22 +30,6 @@ interface Boundable {
 
 interface Movable {
   move(dx: number, dy: number);
-}
-
-abstract class Variable {
-  isVariable: Chicken<Picture, Variable>;
-  constraints: Hen<Variable, Constraint>;
-
-  constructor(variables: Hen<Picture, Variable>) {
-    this.isVariable = addChicken(variables, this);
-  }
-
-  error() {
-    let cs = collectChickens(this.constraints);
-    return cs.map((c) => c.error()).reduce(sum, 0);
-  }
-
-  abstract satisfyConstraints(): void;
 }
 
 export class Universe implements Drawable {
@@ -76,6 +61,14 @@ export class Universe implements Drawable {
       )
     );
     this.constraintTimeout = setTimeout(() => this.loop(), 16);
+  }
+
+  addPicture(): Picture {
+    let p = new Picture();
+    this.pictures.push(p);
+    this.currentPicture = p;
+    clearHen(this.movings);
+    return p;
   }
 
   addPoint(position: [number, number]): Point {
@@ -122,15 +115,21 @@ export class Universe implements Drawable {
   }
 }
 
+type Attachable = Point | Line | Circle;
+
 export class Picture implements Drawable {
   parts: Hen<Picture, Drawable>;
   variables: Hen<Picture, Variable>;
   constraints: Hen<Picture, Constraint>;
+  attachers: Hen<Picture, Attachable>;
+  instances: Hen<Picture, Instance>;
 
   constructor() {
     this.parts = createHen(this);
     this.variables = createHen(this);
     this.constraints = createHen(this);
+    this.attachers = createHen(this);
+    this.instances = createHen(this);
   }
 
   display(d: Drawonable, dt: DisplayTransform) {
@@ -154,6 +153,99 @@ export class Picture implements Drawable {
   addLine(start: Point, end: Point): Line {
     return new Line(start.linesAndCircles, end.linesAndCircles, this.parts);
   }
+
+  // Adds an instance of `ofPicture` to the current picture.
+  addInstance(
+    ofPicture: Picture,
+    cx: number = 0,
+    cy: number = 0,
+    zoom: number = 1,
+    rotation: number = 0
+  ): Instance {
+    // TODO: check ofPicture for attachers and duplicate/constrain them
+    return new Instance(
+      this.variables,
+      this.parts,
+      ofPicture,
+      [cx, cy],
+      zoom,
+      rotation
+    );
+  }
+}
+
+abstract class Variable {
+  isVariable: Chicken<Picture, Variable>;
+  constraints: Hen<Variable, Constraint>;
+
+  constructor(variables: Hen<Picture, Variable>) {
+    this.isVariable = addChicken(variables, this);
+    this.constraints = createHen(this);
+  }
+
+  error() {
+    let cs = collectChickens(this.constraints);
+    return cs.map((c) => c.error()).reduce(sum, 0);
+  }
+
+  abstract satisfyConstraints(): void;
+}
+
+class Instance extends Variable implements Drawable {
+  cx: number;
+  cy: number;
+  zoom: number; // scale as multiple: 1 is original size
+  rotation: number; // rotation in radians: 0 is upright (original orientation), moves clockwise
+
+  inPicture: Chicken<Picture, Drawable>;
+  ofPicture: Chicken<Picture, Instance>;
+
+  constructor(
+    variables: Hen<Picture, Variable>,
+    inPicture: Hen<Picture, Drawable>,
+    ofPicture: Picture,
+    [cx, cy]: [number, number] = [0, 0],
+    zoom: number = 0.5,
+    rotation: number = 0
+  ) {
+    super(variables);
+    this.cx = cx;
+    this.cy = cy;
+    this.zoom = zoom;
+    this.rotation = rotation;
+
+    this.inPicture = addChicken(inPicture, this);
+    this.ofPicture = addChicken(ofPicture.instances, this);
+  }
+
+  error() {
+    let cs = collectChickens(this.constraints);
+    return cs.map((c) => c.error()).reduce(sum, 0);
+  }
+
+  display(d: Drawonable, displayTransform: DisplayTransform): void {
+    const dt: DisplayTransform = ([x, y]: [number, number]): [
+      number,
+      number
+    ] => {
+      let scaledX = x * this.zoom;
+      let scaledY = y * this.zoom;
+      return displayTransform([
+        scaledX * Math.cos(this.rotation) -
+          scaledY * Math.sin(this.rotation) +
+          this.cx,
+
+        scaledX * Math.sin(this.rotation) +
+          scaledY * Math.cos(this.rotation) +
+          this.cy,
+      ]);
+    };
+    chickenParent(this.ofPicture).display(d, dt);
+  }
+
+  satisfyConstraints() {
+    // TODO
+  }
 }
 
 class Circle implements Drawable {
@@ -164,7 +256,7 @@ class Line implements Drawable, Boundable, Movable {
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
 
-  attacher: Chicken<Picture, Drawable>;
+  attacher: Chicken<Picture, Attachable> | null;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
@@ -204,17 +296,15 @@ class Line implements Drawable, Boundable, Movable {
     return [p.x, p.y];
   }
 }
-
 export class Point extends Variable implements Drawable, Boundable, Movable {
   x: number;
   y: number;
 
-  attacher: Chicken<Picture, Drawable>;
+  attacher: Chicken<Picture, Attachable> | null;
   picture: Chicken<Picture, unknown>;
 
   linesAndCircles: Hen<Point, Line | Circle>;
 
-  constraints: Hen<Point, Constraint>;
   instancePointConstraints: Hen<Point, Constraint>;
   moving: Chicken<Universe, Movable>;
 
@@ -227,11 +317,8 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
     this.x = x;
     this.y = y;
     this.picture = addChicken(picture, this);
-    this.constraints = createHen(this);
     this.instancePointConstraints = createHen(this);
     this.linesAndCircles = createHen(this);
-
-    // TODO: handle null chicken for attacher?
   }
 
   // Constraints

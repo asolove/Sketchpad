@@ -65,7 +65,7 @@ export class DisplayFile implements Drawonable {
 export class Display {
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
-  #pixelsPerDraw = 2000;
+  #pixelsPerDraw = 600;
   #pixelIndex = 0;
 
   constructor(df: DisplayFile, canvas: HTMLCanvasElement) {
@@ -106,7 +106,7 @@ export class Display {
       this.#displayFile.logicalHeight
     );
 
-    ctx.fillStyle = "rgb(230 240 255 / 50%)";
+    ctx.fillStyle = "rgb(210 240 255 / 50%)";
     const pixels = this.#displayFile.pixels;
     if (pixels.length === 0) return;
     let i = this.#pixelIndex;
