@@ -8,6 +8,7 @@
   - 👀 [Interviews with Sutherland](https://computerhistory.org/blog/the-remarkable-ivan-sutherland/) at Computer History Museum
   - ✅ [Sutherland interview](https://www.youtube.com/watch?v=HnvckW1FMHc) for HLF
   - [Long biography from ACM](https://amturing.acm.org/award_winners/sutherland_3467412.cfm)
+  - [Video of Sketchpad in use](https://www.youtube.com/watch?v=T7dC98PNxyE&list=PLKTTWvMgeg0ZJTk-3DY_pwvoih9_gsAw4&index=8): this is the video that Kay's voiceovers are based on, but more complete and higher resolution.
   - [Sketchpad III](https://dspace.mit.edu/handle/1721.1/11559) a thesis adding 3D to Sketchpad, from around the same time.
     May have interesting material on someone else learning to use the system and expand its codebase. - [Video of Sketchpad III](https://www.youtube.com/watch?v=t3ZsiBMnGSg&list=PLKTTWvMgeg0ZJTk-3DY_pwvoih9_gsAw4) showing a single 3d object projected in multiple ways
   - [Photographs from Lincoln Labs archive](https://tx-2.github.io/photographs) showing TX-2 and Sketchpad in use. These are much higher-resolution images than the ones you normally see, and some are in color.

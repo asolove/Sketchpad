@@ -55,11 +55,9 @@ export class Universe implements Drawable {
   }
 
   loop() {
-    console.log(
-      collectChickens(this.currentPicture.variables).map((v) =>
-        v.satisfyConstraints()
-      )
-    );
+    this.pictures
+      .flatMap((p) => collectChickens(p.variables))
+      .map((v) => v.satisfyConstraints());
     this.constraintTimeout = setTimeout(() => this.loop(), 16);
   }
 
