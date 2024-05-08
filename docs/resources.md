@@ -20,8 +20,10 @@
   - [Virtual reality before it had that name](https://www.youtube.com/watch?v=Y2AIDHjylMI): a retrospective on The Sword of Damocles, a very early prototype of head-mounted virtual reality display.
 
 - Second-hand demos or voiceovers
+
   - [Historical retrospective with 1963 demo clips](https://www.youtube.com/watch?v=6orsmFndx_o)
     Shows interactive usage and pretty clearly demonstrates the "twinkle" display mode.
+
 - Impact of Sketchpad
 
   - Konstan, ["Drawing on Sketchpad: Reflections on Computer Science and HCI"](https://direct.mit.edu/books/edited-volume/3814/chapter-abstract/125135/Drawing-on-SketchPad-Reflections-on-Computer?redirectedFrom=fulltext)
