@@ -119,22 +119,29 @@ export class PointOnLineConstraint extends Constraint {
   }
 
   error(): number {
-    let e1 = this.end1Position;
-    let e2 = this.end2Position;
-    let p = this.pointPosition;
+    let end1 = this.end1Position;
+    let end2 = this.end2Position;
+    let point = this.pointPosition;
 
     // There are two components to the error:
-    // 1. eO: how far the point is off-line (orthogonal to the line)
-    let dist = distance(e1, p);
-    let theta = angle(e1, e2) - angle(e1, p);
-    let eO = dist * Math.sin(theta);
+    // 1. errorOrthogonal: how far the point is off-line (orthogonal to the line)
+    let dist = distance(end1, point);
+    let theta = angle(end1, end2) - angle(end1, point);
+    let errorOrthogonal = dist * Math.sin(theta);
 
-    // 2. eP: How far the point is outside of the endpoints (parallel to the line)
-    let dP = dist * Math.cos(theta);
+    // 2. errorParallel: How far the point is outside of the endpoints (parallel to the line)
+    let pointParallelDistance = dist * Math.cos(theta);
+    let end2Distance = distance(end1, end2);
+    let errorParallel = 0;
+    if (pointParallelDistance < 0) {
+      errorParallel = -pointParallelDistance;
+    }
 
-    let eP = 0;
+    if (pointParallelDistance > end2Distance) {
+      errorParallel = pointParallelDistance - end2Distance;
+    }
 
-    return Math.sqrt(Math.pow(eO, 2) + Math.pow(eP, 2));
+    return Math.sqrt(Math.pow(errorOrthogonal, 2) + Math.pow(errorParallel, 2));
   }
 
   name(): string {

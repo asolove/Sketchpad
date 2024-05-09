@@ -8,6 +8,7 @@ let u = new Universe();
 u.runConstraints = true;
 
 // line with arrowheads
+let arrowPic = u.currentPicture;
 u.addPointInLineSegment([0, 100]);
 let p1 = u.addPointInLineSegment([-20, 80]);
 u.addPointInLineSegment([0, 100]);
@@ -23,9 +24,18 @@ u.addSameXConstraint(p1, p3);
 u.addSameXConstraint(p2, p4);
 u.addSameYConstraint(p3, p4);
 
-let arrowPic = u.currentPicture;
+// Point on line
+let pointOnLinePic = u.addPicture();
+let end1 = u.addPointInLineSegment([-100, -100]);
+let end2 = u.addPointInLineSegment([100, 100]);
+let end3 = u.addPointInLineSegment([-100, 100]);
+let end4 = u.addPointInLineSegment([-20, 20]);
+let point = u.addPoint([20, 20]);
+pointOnLinePic.addPointOnLineConstraint(point, end1, end2);
+pointOnLinePic.addPointOnLineConstraint(point, end3, end4);
 
-let newPic = u.addPicture();
+let combinedPic = u.addPicture();
+u.currentPicture.addInstance(pointOnLinePic, 0, 0, 1, 0);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, 0);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 6);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 3);

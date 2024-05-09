@@ -1,4 +1,9 @@
-import { Constraint, SameXConstraint, SameYConstraint } from "./constraint";
+import {
+  Constraint,
+  PointOnLineConstraint,
+  SameXConstraint,
+  SameYConstraint,
+} from "./constraint";
 import { DisplayTransform, Drawonable } from "./display";
 import { sum } from "./lib";
 import {
@@ -142,6 +147,13 @@ export class Picture implements Drawable {
   }
   addSameYConstraint(p1: Point, p2: Point): SameYConstraint {
     return new SameYConstraint(p1, p2, this.constraints);
+  }
+  addPointOnLineConstraint(
+    p: Point,
+    end1: Point,
+    end2: Point
+  ): PointOnLineConstraint {
+    return new PointOnLineConstraint(p, end1, end2, this.constraints);
   }
 
   addPoint(position: [number, number]): Point {
