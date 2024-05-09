@@ -2,6 +2,7 @@ import {
   Constraint,
   PointOnArcConstraint,
   PointOnLineConstraint,
+  SameDistanceConstraint,
   SameXConstraint,
   SameYConstraint,
 } from "./constraint";
@@ -163,6 +164,14 @@ export class Picture implements Drawable {
     end: Point
   ): PointOnArcConstraint {
     return new PointOnArcConstraint(p, center, start, end, this.constraints);
+  }
+  addSameDistanceConstraint(
+    pa1: Point,
+    pa2: Point,
+    pb1: Point,
+    pb2: Point
+  ): SameDistanceConstraint {
+    return new SameDistanceConstraint(pa1, pa2, pb1, pb2, this.constraints);
   }
 
   addPoint(position: Position): Point {

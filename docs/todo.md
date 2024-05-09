@@ -9,6 +9,7 @@
 
 ### Thoughtful doing tasks
 
+- [ ] Serialization or DSL format for compactly describing complex images (naming?)
 - [ ] Add instance attacher constraints
 - [ ] Calculate object pointed to at each display point
   - Near intersection of lines, it points at both and will create a new point on both

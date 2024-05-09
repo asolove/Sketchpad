@@ -234,6 +234,49 @@ export class PointOnArcConstraint extends Constraint {
   }
 }
 
+export class SameDistanceConstraint extends Constraint {
+  pa1: Chicken<Point, Constraint>;
+  pa2: Chicken<Point, Constraint>;
+  pb1: Chicken<Point, Constraint>;
+  pb2: Chicken<Point, Constraint>;
+
+  constructor(
+    pa1: Point,
+    pa2: Point,
+    pb1: Point,
+    pb2: Point,
+    picture: Hen<Picture, Constraint>
+  ) {
+    super(picture);
+    this.pa1 = addChicken(pa1.constraints, this);
+    this.pa2 = addChicken(pa2.constraints, this);
+    this.pb1 = addChicken(pb1.constraints, this);
+    this.pb2 = addChicken(pb2.constraints, this);
+  }
+
+  error(): number {
+    let da = distance(
+      chickenParent(this.pa1).position,
+      chickenParent(this.pa2).position
+    );
+    let db = distance(
+      chickenParent(this.pb1).position,
+      chickenParent(this.pb2).position
+    );
+    return Math.abs(db - da);
+  }
+
+  name(): string {
+    return "P";
+  }
+  ncon(): number {
+    return 1;
+  }
+  chvar(): number {
+    return 4;
+  }
+}
+
 export class ParallelConstraint extends Constraint {
   pa1: Chicken<Point, Constraint>;
   pa2: Chicken<Point, Constraint>;

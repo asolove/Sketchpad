@@ -48,6 +48,11 @@ let start = u.addPoint([-500, 300]);
 let end = u.addPoint([-100, 300]);
 u.currentPicture.addCircle(c, start, end);
 
+let pa = u.addPointInLineSegment([-500, -500]);
+let pb = u.addPointInLineSegment([-400, -200]);
+let pc = u.addPointInLineSegment([-300, -600]);
+u.currentPicture.addSameDistanceConstraint(pa, pb, pb, pc);
+
 let df = new DisplayFile();
 
 let loop = () => {
