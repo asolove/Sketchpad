@@ -67,7 +67,7 @@ export class Universe implements Drawable {
     this.pictures
       .flatMap((p) => collectChickens(p.variables))
       .map((v) => v.satisfyConstraints());
-    this.constraintTimeout = setTimeout(() => this.loop(), 16);
+    this.constraintTimeout = setTimeout(() => this.loop(), 60);
   }
 
   addPicture(): Picture {

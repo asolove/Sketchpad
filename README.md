@@ -17,3 +17,9 @@ bun install
 ```sh
 bun build web/index.ts --outdir web/static/js/ --watch
 ```
+
+- To run tests:
+
+```sh
+bun test --watch
+```
