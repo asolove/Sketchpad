@@ -43,6 +43,11 @@ u.currentPicture.addInstance(arrowPic, 200, -200, 1, (3 * Math.PI) / 6);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, (2 * Math.PI) / 3);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, (5 * Math.PI) / 6);
 
+let c = u.addPoint([-300, 300]);
+let start = u.addPoint([-500, 300]);
+let end = u.addPoint([-100, 300]);
+u.currentPicture.addCircle(c, start, end);
+
 let df = new DisplayFile();
 
 let loop = () => {

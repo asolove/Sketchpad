@@ -5,7 +5,7 @@ import {
   SameYConstraint,
 } from "./constraint";
 import { DisplayTransform, Drawonable } from "./display";
-import { sum } from "./lib";
+import { Position, angle, distance, sum } from "./lib";
 import {
   Chicken,
   Hen,
@@ -164,6 +164,15 @@ export class Picture implements Drawable {
     return new Line(start.linesAndCircles, end.linesAndCircles, this.parts);
   }
 
+  addCircle(center: Point, start: Point, end: Point): Circle {
+    return new Circle(
+      center.linesAndCircles,
+      start.linesAndCircles,
+      end.linesAndCircles,
+      this.parts
+    );
+  }
+
   // Adds an instance of `ofPicture` to the current picture.
   addInstance(
     ofPicture: Picture,
@@ -258,7 +267,56 @@ class Instance extends Variable implements Drawable {
 }
 
 class Circle implements Drawable {
-  display(d: Drawonable) {}
+  center: Chicken<Point, Line | Circle>;
+  start: Chicken<Point, Line | Circle>;
+  end: Chicken<Point, Line | Circle>;
+
+  attacher: Chicken<Picture, Attachable> | null;
+  picture: Chicken<Picture, unknown>;
+  moving: Chicken<Universe, Movable>;
+
+  constructor(
+    center: Hen<Point, Line | Circle>,
+    start: Hen<Point, Line | Circle>,
+    end: Hen<Point, Line | Circle>,
+    picture: Hen<Picture, Drawable>
+  ) {
+    this.center = addChicken(center, this);
+    this.start = addChicken(start, this);
+    this.end = addChicken(end, this);
+    this.picture = addChicken(picture, this);
+  }
+
+  get centerPosition(): Position {
+    return chickenParent(this.center).position;
+  }
+  get startPosition(): Position {
+    return chickenParent(this.start).position;
+  }
+  get endPosition(): Position {
+    return chickenParent(this.end).position;
+  }
+
+  display(d: Drawonable, dt: DisplayTransform) {
+    let center = this.centerPosition;
+    let start = this.startPosition;
+    let end = this.endPosition;
+    let [cx, cy] = center;
+    let [x, y] = start;
+    let r = distance(center, start);
+
+    let startAngle = angle(center, start);
+    let arcRadians = angle(center, end) - startAngle;
+    if (arcRadians < 0) arcRadians += 2 * Math.PI;
+
+    // FIXME: allow drawing in other direction
+    let steps = 0;
+    while (steps++ < arcRadians * r) {
+      d.drawPoint(dt([x, y]));
+      x = x + (1 / r) * (y - cy);
+      y = y - (1 / r) * (x - cx);
+    }
+  }
 }
 
 class Line implements Drawable, Boundable, Movable {
@@ -361,11 +419,14 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform) {
-    let [x, y] = displayTransform([this.x, this.y]);
-    d.drawPoint([x, y]);
+    d.drawPoint(displayTransform([this.x, this.y]));
   }
   move(dx: number, dy: number) {}
   bounds() {
     return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
+  }
+
+  get position(): Position {
+    return [this.x, this.y];
   }
 }
