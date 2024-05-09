@@ -211,7 +211,7 @@ export class PointOnArcConstraint extends Constraint {
     let startAngle = angle(center, start);
     let endAngle = angle(center, end);
     let pointAngle = angle(center, point);
-    if (endAngle < startAngle) endAngle += 2 * Math.PI;
+    if (endAngle <= startAngle) endAngle += 2 * Math.PI;
 
     let angleError = 0;
     if (pointAngle < startAngle) {

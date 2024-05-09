@@ -26,10 +26,10 @@ u.addSameYConstraint(p3, p4);
 
 // Point on line
 let pointOnLinePic = u.addPicture();
-let end1 = u.addPointInLineSegment([-100, -100]);
-let end2 = u.addPointInLineSegment([100, 100]);
-let end3 = u.addPointInLineSegment([-100, 100]);
-let end4 = u.addPointInLineSegment([-20, 20]);
+let end1 = u.addPointInLineSegment([-100, 500]);
+let end2 = u.addPointInLineSegment([100, 600]);
+let end3 = u.addPointInLineSegment([-100, 700]);
+let end4 = u.addPointInLineSegment([-20, 620]);
 let point = u.addPoint([20, 20]);
 pointOnLinePic.addPointOnLineConstraint(point, end1, end2);
 pointOnLinePic.addPointOnLineConstraint(point, end3, end4);
@@ -43,15 +43,32 @@ u.currentPicture.addInstance(arrowPic, 200, -200, 1, (3 * Math.PI) / 6);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, (2 * Math.PI) / 3);
 u.currentPicture.addInstance(arrowPic, 200, -200, 1, (5 * Math.PI) / 6);
 
-let c = u.addPoint([-300, 300]);
-let start = u.addPoint([-500, 300]);
-let end = u.addPoint([-100, 300]);
-u.currentPicture.addCircle(c, start, end);
+let c = u.addPoint([0, 0]);
+let start = u.addPoint([200, 0]);
+u.currentPicture.addCircle(c, start, start);
 
-let pa = u.addPointInLineSegment([-500, -500]);
-let pb = u.addPointInLineSegment([-400, -200]);
-let pc = u.addPointInLineSegment([-300, -600]);
-u.currentPicture.addSameDistanceConstraint(pa, pb, pb, pc);
+let h1 = u.addPoint([200, 0]);
+let h2 = u.addPoint([80, -160]);
+u.addLine(h1, h2);
+let h3 = u.addPoint([-60, -160]);
+u.addLine(h2, h3);
+let h4 = u.addPoint([-190, 10]);
+u.addLine(h3, h4);
+let h5 = u.addPoint([-70, 140]);
+u.addLine(h4, h5);
+let h6 = u.addPoint([70, 150]);
+u.addLine(h5, h6);
+u.addLine(h6, h1);
+u.currentPicture.addPointOnArcConstraint(h1, c, start, start);
+u.currentPicture.addPointOnArcConstraint(h2, c, start, start);
+u.currentPicture.addPointOnArcConstraint(h3, c, start, start);
+u.currentPicture.addPointOnArcConstraint(h4, c, start, start);
+u.currentPicture.addPointOnArcConstraint(h5, c, start, start);
+u.currentPicture.addPointOnArcConstraint(h6, c, start, start);
+u.currentPicture.addSameDistanceConstraint(h1, h2, h2, h3);
+u.currentPicture.addSameDistanceConstraint(h2, h3, h3, h4);
+u.currentPicture.addSameDistanceConstraint(h3, h4, h5, h6);
+u.currentPicture.addSameDistanceConstraint(h4, h5, h6, h1);
 
 let df = new DisplayFile();
 
