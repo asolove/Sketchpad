@@ -174,7 +174,7 @@ export class Picture implements Drawable {
 
 abstract class Variable {
   isVariable: Chicken<Picture, Variable>;
-  constraints: Hen<Variable, Constraint>;
+  constraints: Hen<this, Constraint>;
 
   constructor(variables: Hen<Picture, Variable>) {
     this.isVariable = addChicken(variables, this);
@@ -193,7 +193,7 @@ class Instance extends Variable implements Drawable {
   cx: number;
   cy: number;
   zoom: number; // scale as multiple: 1 is original size
-  rotation: number; // rotation in radians: 0 is upright (original orientation), moves clockwise
+  rotation: number; // rotation in radians: 0 is upright (original orientation), moves counter-clockwise
 
   inPicture: Chicken<Picture, Drawable>;
   ofPicture: Chicken<Picture, Instance>;
@@ -228,6 +228,8 @@ class Instance extends Variable implements Drawable {
     ] => {
       let scaledX = x * this.zoom;
       let scaledY = y * this.zoom;
+
+      // FIXME: get the math right so I don't have to negate the rotation angle
       return displayTransform([
         scaledX * Math.cos(this.rotation) -
           scaledY * Math.sin(this.rotation) +

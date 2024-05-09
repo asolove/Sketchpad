@@ -26,10 +26,12 @@ u.addSameYConstraint(p3, p4);
 let arrowPic = u.currentPicture;
 
 let newPic = u.addPicture();
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 4);
-u.currentPicture.addInstance(arrowPic, -200, 180, 0.8, Math.PI / 2);
-u.currentPicture.addInstance(arrowPic, 600, 180, 1.3, (-3 * Math.PI) / 4);
-u.currentPicture.addInstance(arrowPic, 720, 1000, 1, (3 * Math.PI) / 4);
+u.currentPicture.addInstance(arrowPic, 200, -200, 1, 0);
+u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 6);
+u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 3);
+u.currentPicture.addInstance(arrowPic, 200, -200, 1, (3 * Math.PI) / 6);
+u.currentPicture.addInstance(arrowPic, 200, -200, 1, (2 * Math.PI) / 3);
+u.currentPicture.addInstance(arrowPic, 200, -200, 1, (5 * Math.PI) / 6);
 
 let df = new DisplayFile();
 

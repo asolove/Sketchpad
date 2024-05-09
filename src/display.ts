@@ -28,7 +28,7 @@ export class DisplayFile implements Drawonable {
     return ([x, y]: [number, number]): [number, number] => {
       return [
         Math.round((x - this.cx) * this.zoom) + this.logicalWidth / 2,
-        Math.round((y - this.cy) * this.zoom) + this.logicalHeight / 2,
+        Math.round((this.cy - y) * this.zoom) + this.logicalHeight / 2,
       ];
     };
   }
