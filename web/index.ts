@@ -19,56 +19,88 @@ let p3 = u.addPointInLineSegment([-20, -80]);
 u.addPointInLineSegment([0, -100]);
 let p4 = u.addPointInLineSegment([20, -80]);
 
-u.addSameYConstraint(p1, p2);
-u.addSameXConstraint(p1, p3);
-u.addSameXConstraint(p2, p4);
-u.addSameYConstraint(p3, p4);
+arrowPic.addSameYConstraint(p1, p2);
+arrowPic.addSameXConstraint(p1, p3);
+arrowPic.addSameXConstraint(p2, p4);
+arrowPic.addSameYConstraint(p3, p4);
 
-// Point on line
-let pointOnLinePic = u.addPicture();
-let end1 = u.addPointInLineSegment([-100, 500]);
-let end2 = u.addPointInLineSegment([100, 600]);
-let end3 = u.addPointInLineSegment([-100, 700]);
-let end4 = u.addPointInLineSegment([-20, 620]);
-let point = u.addPoint([20, 20]);
-pointOnLinePic.addPointOnLineConstraint(point, end1, end2);
-pointOnLinePic.addPointOnLineConstraint(point, end3, end4);
+// Cool figure from repeated arrowheads
+let flowerPic = u.addPicture();
+flowerPic.addInstance(arrowPic, 0, 0, 1, 0);
+flowerPic.addInstance(arrowPic, 0, 0, 1, Math.PI / 6);
+flowerPic.addInstance(arrowPic, 0, 0, 1, Math.PI / 3);
+flowerPic.addInstance(arrowPic, 0, 0, 1, (3 * Math.PI) / 6);
+flowerPic.addInstance(arrowPic, 0, 0, 1, (2 * Math.PI) / 3);
+flowerPic.addInstance(arrowPic, 0, 0, 1, (5 * Math.PI) / 6);
 
+// Rivet example
+let rivetPic = u.addPicture();
+let topLeft = rivetPic.addPoint([-90, 100]);
+let topRight = rivetPic.addPoint([100, 90]);
+let bottomLeft = rivetPic.addPoint([-100, -110]);
+let bottomRight = rivetPic.addPoint([150, -150]);
+let center = rivetPic.addPoint([0, 0]);
+let cStart = rivetPic.addPoint([250, 100]);
+let cEnd = rivetPic.addPoint([-250, 100]);
+
+rivetPic.addPointOnLineConstraint(center, topLeft, bottomRight);
+rivetPic.addPointOnLineConstraint(center, topRight, bottomLeft);
+rivetPic.addPointOnLineConstraint(topLeft, cStart, cEnd);
+rivetPic.addPointOnLineConstraint(topRight, cStart, cEnd);
+rivetPic.addPerpendicularConstraint(
+  topLeft,
+  bottomLeft,
+  bottomLeft,
+  bottomRight
+);
+rivetPic.addPerpendicularConstraint(
+  bottomLeft,
+  bottomRight,
+  bottomRight,
+  topRight
+);
+rivetPic.addParallelConstraint(bottomLeft, bottomRight, cStart, cEnd);
+rivetPic.addLine(topLeft, bottomLeft);
+rivetPic.addLine(bottomLeft, bottomRight);
+rivetPic.addLine(bottomRight, topRight);
+rivetPic.addLine(cStart, cEnd);
+rivetPic.addCircle(center, cStart, cEnd);
+
+// Regular hexagon
+let hexagonPic = u.addPicture();
+
+let c = hexagonPic.addPoint([0, 0]);
+let start = hexagonPic.addPoint([200, 0]);
+hexagonPic.addCircle(c, start, start);
+
+let h1 = hexagonPic.addPoint([200, 0]);
+let h2 = hexagonPic.addPoint([80, -160]);
+hexagonPic.addLine(h1, h2);
+let h3 = hexagonPic.addPoint([-60, -160]);
+hexagonPic.addLine(h2, h3);
+let h4 = hexagonPic.addPoint([-190, 10]);
+hexagonPic.addLine(h3, h4);
+let h5 = hexagonPic.addPoint([-70, 140]);
+hexagonPic.addLine(h4, h5);
+let h6 = hexagonPic.addPoint([70, 150]);
+hexagonPic.addLine(h5, h6);
+hexagonPic.addLine(h6, h1);
+hexagonPic.addPointOnArcConstraint(h1, c, start, start);
+hexagonPic.addPointOnArcConstraint(h2, c, start, start);
+hexagonPic.addPointOnArcConstraint(h3, c, start, start);
+hexagonPic.addPointOnArcConstraint(h4, c, start, start);
+hexagonPic.addPointOnArcConstraint(h5, c, start, start);
+hexagonPic.addPointOnArcConstraint(h6, c, start, start);
+hexagonPic.addSameDistanceConstraint(h1, h2, h2, h3);
+hexagonPic.addSameDistanceConstraint(h2, h3, h3, h4);
+hexagonPic.addSameDistanceConstraint(h3, h4, h5, h6);
+hexagonPic.addSameDistanceConstraint(h4, h5, h6, h1);
+
+// Full picture with lots of instances
 let combinedPic = u.addPicture();
-u.currentPicture.addInstance(pointOnLinePic, 0, 0, 1, 0);
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, 0);
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 6);
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, Math.PI / 3);
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, (3 * Math.PI) / 6);
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, (2 * Math.PI) / 3);
-u.currentPicture.addInstance(arrowPic, 200, -200, 1, (5 * Math.PI) / 6);
-
-let c = u.addPoint([0, 0]);
-let start = u.addPoint([200, 0]);
-u.currentPicture.addCircle(c, start, start);
-
-let h1 = u.addPoint([200, 0]);
-let h2 = u.addPoint([80, -160]);
-u.addLine(h1, h2);
-let h3 = u.addPoint([-60, -160]);
-u.addLine(h2, h3);
-let h4 = u.addPoint([-190, 10]);
-u.addLine(h3, h4);
-let h5 = u.addPoint([-70, 140]);
-u.addLine(h4, h5);
-let h6 = u.addPoint([70, 150]);
-u.addLine(h5, h6);
-u.addLine(h6, h1);
-u.currentPicture.addPointOnArcConstraint(h1, c, start, start);
-u.currentPicture.addPointOnArcConstraint(h2, c, start, start);
-u.currentPicture.addPointOnArcConstraint(h3, c, start, start);
-u.currentPicture.addPointOnArcConstraint(h4, c, start, start);
-u.currentPicture.addPointOnArcConstraint(h5, c, start, start);
-u.currentPicture.addPointOnArcConstraint(h6, c, start, start);
-u.currentPicture.addSameDistanceConstraint(h1, h2, h2, h3);
-u.currentPicture.addSameDistanceConstraint(h2, h3, h3, h4);
-u.currentPicture.addSameDistanceConstraint(h3, h4, h5, h6);
-u.currentPicture.addSameDistanceConstraint(h4, h5, h6, h1);
+combinedPic.addInstance(hexagonPic, -300, -300, 1, 0);
+combinedPic.addInstance(rivetPic, 0, 0, 1, 0);
+combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
 
 let df = new DisplayFile();
 

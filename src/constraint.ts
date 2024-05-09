@@ -277,6 +277,51 @@ export class SameDistanceConstraint extends Constraint {
   }
 }
 
+export class PerpendicularConstraint extends Constraint {
+  pa1: Chicken<Point, Constraint>;
+  pa2: Chicken<Point, Constraint>;
+  pb1: Chicken<Point, Constraint>;
+  pb2: Chicken<Point, Constraint>;
+
+  constructor(
+    pa1: Point,
+    pa2: Point,
+    pb1: Point,
+    pb2: Point,
+    picture: Hen<Picture, Constraint>
+  ) {
+    super(picture);
+    this.pa1 = addChicken(pa1.constraints, this);
+    this.pa2 = addChicken(pa2.constraints, this);
+    this.pb1 = addChicken(pb1.constraints, this);
+    this.pb2 = addChicken(pb2.constraints, this);
+  }
+
+  error(): number {
+    let pa1 = chickenParent(this.pa1).position;
+    let pa2 = chickenParent(this.pa2).position;
+    let pb1 = chickenParent(this.pb1).position;
+    let pb2 = chickenParent(this.pb2).position;
+
+    let minD = Math.min(distance(pa1, pa2), distance(pb1, pb2));
+    let angle1 = angle(pa1, pa2);
+    let angle2 = angle(pb1, pb2);
+
+    // TODO: represent angles of lines in radians, express difference in ~O(pixels)
+    return Math.abs(Math.cos(Math.abs(angle2 - angle1)) * minD);
+  }
+
+  name(): string {
+    return "+";
+  }
+  ncon(): number {
+    return 1;
+  }
+  chvar(): number {
+    return 4;
+  }
+}
+
 export class ParallelConstraint extends Constraint {
   pa1: Chicken<Point, Constraint>;
   pa2: Chicken<Point, Constraint>;
@@ -298,12 +343,21 @@ export class ParallelConstraint extends Constraint {
   }
 
   error(): number {
+    let pa1 = chickenParent(this.pa1).position;
+    let pa2 = chickenParent(this.pa2).position;
+    let pb1 = chickenParent(this.pb1).position;
+    let pb2 = chickenParent(this.pb2).position;
+
+    let minD = Math.min(distance(pa1, pa2), distance(pb1, pb2));
+    let angle1 = angle(pa1, pa2);
+    let angle2 = angle(pb1, pb2);
+
     // TODO: represent angles of lines in radians, express difference in ~O(pixels)
-    return 0;
+    return Math.abs(Math.sin(Math.abs(angle2 - angle1)) * minD);
   }
 
   name(): string {
-    return "P";
+    return "=";
   }
   ncon(): number {
     return 1;

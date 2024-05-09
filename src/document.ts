@@ -1,5 +1,7 @@
 import {
   Constraint,
+  ParallelConstraint,
+  PerpendicularConstraint,
   PointOnArcConstraint,
   PointOnLineConstraint,
   SameDistanceConstraint,
@@ -76,15 +78,9 @@ export class Universe implements Drawable {
     return p;
   }
 
-  addPoint(position: Position): Point {
-    return this.currentPicture.addPoint(position);
-  }
-
-  addLine(start: Point, end: Point): Line {
-    return this.currentPicture.addLine(start, end);
-  }
-
   addPointInLineSegment(position: Position | Point): Point {
+    let picture = this.currentPicture;
+
     // TODO: this only handles drawing new points. In the future, this interface
     // should change so if the pen is pointed at an existing point, it connects.
     let current = this.movings.next;
@@ -95,24 +91,16 @@ export class Universe implements Drawable {
       throw new Error("Cannot draw line while current moving is not a Point.");
 
     let p1: Point =
-      position instanceof Point ? position : this.addPoint(position);
+      position instanceof Point ? position : picture.addPoint(position);
     let p0 =
       current.self instanceof Point
         ? current.self
-        : this.addPoint([p1.x, p1.y]);
+        : picture.addPoint([p1.x, p1.y]);
 
-    let l = this.addLine(p0, p1);
+    let l = picture.addLine(p0, p1);
     if (isChicken(current)) removeChicken(current);
     addChicken(this.movings, p1);
     return p1;
-  }
-
-  addSameXConstraint(p1: Point, p2: Point): SameXConstraint {
-    return this.currentPicture.addSameXConstraint(p1, p2);
-  }
-
-  addSameYConstraint(p1: Point, p2: Point): SameYConstraint {
-    return this.currentPicture.addSameYConstraint(p1, p2);
   }
 
   display(d: Drawonable, dt: DisplayTransform) {
@@ -173,6 +161,22 @@ export class Picture implements Drawable {
   ): SameDistanceConstraint {
     return new SameDistanceConstraint(pa1, pa2, pb1, pb2, this.constraints);
   }
+  addPerpendicularConstraint(
+    pa1: Point,
+    pa2: Point,
+    pb1: Point,
+    pb2: Point
+  ): PerpendicularConstraint {
+    return new PerpendicularConstraint(pa1, pa2, pb1, pb2, this.constraints);
+  }
+  addParallelConstraint(
+    pa1: Point,
+    pa2: Point,
+    pb1: Point,
+    pb2: Point
+  ): ParallelConstraint {
+    return new ParallelConstraint(pa1, pa2, pb1, pb2, this.constraints);
+  }
 
   addPoint(position: Position): Point {
     return new Point(position, this.parts, this.variables);
@@ -190,6 +194,7 @@ export class Picture implements Drawable {
       this.parts
     );
     this.addPointOnArcConstraint(end, center, start, end);
+    return circle;
   }
 
   // Adds an instance of `ofPicture` to the current picture.
