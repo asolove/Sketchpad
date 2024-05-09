@@ -38,6 +38,8 @@ export class DisplayFile implements Drawonable {
   }
 
   drawPoint([x, y]: [number, number]): void {
+    if (x < 0 || x > this.logicalWidth) return;
+    if (y < 0 || y > this.logicalHeight) return;
     this.pixels.push([x, y]);
   }
 
@@ -55,7 +57,7 @@ export class DisplayFile implements Drawonable {
     for (let i = 0; i < steps; i++) {
       let xNext = x + dx;
       let yNext = y + dy;
-      this.pixels.push([Math.round(xNext), Math.round(yNext)]);
+      this.drawPoint([Math.round(xNext), Math.round(yNext)]);
       x = xNext;
       y = yNext;
     }
@@ -65,7 +67,7 @@ export class DisplayFile implements Drawonable {
 export class Display {
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
-  #pixelsPerDraw = 600;
+  #pixelsPerDraw = 1000;
   #pixelIndex = 0;
 
   constructor(df: DisplayFile, canvas: HTMLCanvasElement) {
