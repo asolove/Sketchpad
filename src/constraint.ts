@@ -155,6 +155,85 @@ export class PointOnLineConstraint extends Constraint {
   }
 }
 
+export class PointOnArcConstraint extends Constraint {
+  point: Chicken<Point, Constraint>;
+  center: Chicken<Point, Constraint>;
+  start: Chicken<Point, Constraint>;
+  end: Chicken<Point, Constraint>;
+
+  constructor(
+    point: Point,
+    center: Point,
+    start: Point,
+    end: Point,
+    picture: Hen<Picture, Constraint>
+  ) {
+    super(picture);
+    this.point = addChicken(point.constraints, this);
+    this.center = addChicken(center.constraints, this);
+    this.start = addChicken(start.constraints, this);
+    this.end = addChicken(end.constraints, this);
+  }
+
+  get pointPosition(): Position {
+    let point = chickenParent(this.point);
+    return [point.x, point.y];
+  }
+
+  get centerPosition(): Position {
+    let center = chickenParent(this.center);
+    return [center.x, center.y];
+  }
+
+  get startPosition(): Position {
+    let start = chickenParent(this.start);
+    return [start.x, start.y];
+  }
+
+  get endPosition(): Position {
+    let end = chickenParent(this.end);
+    return [end.x, end.y];
+  }
+
+  error(): number {
+    let center = this.centerPosition;
+    let start = this.startPosition;
+    let end = this.endPosition;
+    let point = this.pointPosition;
+
+    // There are two components to the error (treated like polar coordinates)
+    // 1. how far the distance is wrong from the radius of the circle
+    let dist = distance(center, point);
+    let radius = distance(center, start);
+    let radiusError = Math.abs(radius - dist);
+
+    // 2. how far the angle is away from the being on the arc between the ends
+    let startAngle = angle(center, start);
+    let endAngle = angle(center, end);
+    let pointAngle = angle(center, point);
+    if (endAngle < startAngle) endAngle += 2 * Math.PI;
+
+    let angleError = 0;
+    if (pointAngle < startAngle) {
+      angleError = radius * (startAngle - pointAngle);
+    } else if (pointAngle > endAngle) {
+      angleError = radius * (pointAngle - endAngle);
+    }
+
+    return Math.sqrt(Math.pow(radiusError, 2) + Math.pow(angleError, 2));
+  }
+
+  name(): string {
+    return "C";
+  }
+  ncon(): number {
+    return 2;
+  }
+  chvar(): number {
+    return 4;
+  }
+}
+
 export class ParallelConstraint extends Constraint {
   pa1: Chicken<Point, Constraint>;
   pa2: Chicken<Point, Constraint>;

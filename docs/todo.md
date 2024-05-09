@@ -6,7 +6,6 @@
 
 - [ ] Re-read thesis section on displaying digits: how are they stored/calculated?
 - [ ] Add pan controls
-- [ ] Add point on circle constraint
 
 ### Thoughtful doing tasks
 

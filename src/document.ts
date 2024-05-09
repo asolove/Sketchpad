@@ -1,5 +1,6 @@
 import {
   Constraint,
+  PointOnArcConstraint,
   PointOnLineConstraint,
   SameXConstraint,
   SameYConstraint,
@@ -155,6 +156,14 @@ export class Picture implements Drawable {
   ): PointOnLineConstraint {
     return new PointOnLineConstraint(p, end1, end2, this.constraints);
   }
+  addPointOnArcConstraint(
+    p: Point,
+    center: Point,
+    start: Point,
+    end: Point
+  ): PointOnArcConstraint {
+    return new PointOnArcConstraint(p, center, start, end, this.constraints);
+  }
 
   addPoint(position: Position): Point {
     return new Point(position, this.parts, this.variables);
@@ -165,12 +174,13 @@ export class Picture implements Drawable {
   }
 
   addCircle(center: Point, start: Point, end: Point): Circle {
-    return new Circle(
+    let circle = new Circle(
       center.linesAndCircles,
       start.linesAndCircles,
       end.linesAndCircles,
       this.parts
     );
+    this.addPointOnArcConstraint(end, center, start, end);
   }
 
   // Adds an instance of `ofPicture` to the current picture.
@@ -306,15 +316,20 @@ class Circle implements Drawable {
     let r = distance(center, start);
 
     let startAngle = angle(center, start);
-    let arcRadians = angle(center, end) - startAngle;
+    let endAngle = angle(center, end);
+    if (endAngle <= startAngle) {
+      endAngle += 2 * Math.PI;
+    }
+    let arcRadians = endAngle - startAngle;
     if (arcRadians < 0) arcRadians += 2 * Math.PI;
 
     // FIXME: allow drawing in other direction
+    //   (update PointOnArcConstraint to also take direction into account)
     let steps = 0;
     while (steps++ < arcRadians * r) {
       d.drawPoint(dt([x, y]));
-      x = x + (1 / r) * (y - cy);
-      y = y - (1 / r) * (x - cx);
+      x = x - (1 / r) * (y - cy);
+      y = y + (1 / r) * (x - cx);
     }
   }
 }
