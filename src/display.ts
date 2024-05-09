@@ -37,6 +37,15 @@ export class DisplayFile implements Drawonable {
     this.pixels = [];
   }
 
+  twinkle() {
+    let times = this.pixels.length;
+    for (let i = 0; i < times; i++) {
+      let j = Math.floor(Math.random() * times);
+      let k = Math.floor(Math.random() * times);
+      [this.pixels[j], this.pixels[k]] = [this.pixels[k], this.pixels[j]];
+    }
+  }
+
   drawPoint([x, y]: Position): void {
     if (x < 0 || x > this.logicalWidth) return;
     if (y < 0 || y > this.logicalHeight) return;
@@ -91,6 +100,7 @@ export class Display {
   }
 
   loop() {
+    this.#displayFile.twinkle();
     this.render();
     requestAnimationFrame(() => this.loop());
   }
