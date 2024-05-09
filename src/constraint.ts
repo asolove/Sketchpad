@@ -1,6 +1,6 @@
 import { DisplayTransform, Drawonable } from "./display";
 import { Picture, Point } from "./document";
-import { angle, distance } from "./lib";
+import { Position, angle, distance } from "./lib";
 import { Chicken, Hen, addChicken, chickenParent } from "./ring";
 
 export abstract class Constraint {
@@ -103,17 +103,17 @@ export class PointOnLineConstraint extends Constraint {
     this.end2 = addChicken(end2.constraints, this);
   }
 
-  get pointPosition(): [number, number] {
+  get pointPosition(): Position {
     let point = chickenParent(this.point);
     return [point.x, point.y];
   }
 
-  get end1Position(): [number, number] {
+  get end1Position(): Position {
     let end1 = chickenParent(this.end1);
     return [end1.x, end1.y];
   }
 
-  get end2Position(): [number, number] {
+  get end2Position(): Position {
     let end2 = chickenParent(this.end2);
     return [end2.x, end2.y];
   }

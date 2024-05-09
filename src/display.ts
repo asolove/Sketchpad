@@ -1,16 +1,16 @@
-import { clamp } from "./lib";
+import { clamp, Position } from "./lib";
 
 export interface Drawonable {
-  drawPoint(point: [number, number]): void;
-  drawLine(start: [number, number], end: [number, number]);
+  drawPoint(point: Position): void;
+  drawLine(start: Position, end: Position);
 }
 
 export interface DisplayTransform {
-  ([x, y]: [number, number]): [number, number];
+  ([x, y]: Position): Position;
 }
 
 export class DisplayFile implements Drawonable {
-  pixels: [number, number][];
+  pixels: Position[];
   cx: number;
   cy: number;
   zoom: number;
@@ -25,7 +25,7 @@ export class DisplayFile implements Drawonable {
   }
 
   displayTransform(): DisplayTransform {
-    return ([x, y]: [number, number]): [number, number] => {
+    return ([x, y]: Position): Position => {
       return [
         Math.round((x - this.cx) * this.zoom) + this.logicalWidth / 2,
         Math.round((this.cy - y) * this.zoom) + this.logicalHeight / 2,
@@ -37,13 +37,13 @@ export class DisplayFile implements Drawonable {
     this.pixels = [];
   }
 
-  drawPoint([x, y]: [number, number]): void {
+  drawPoint([x, y]: Position): void {
     if (x < 0 || x > this.logicalWidth) return;
     if (y < 0 || y > this.logicalHeight) return;
     this.pixels.push([x, y]);
   }
 
-  drawLine([x1, y1]: [number, number], [x2, y2]: [number, number]): void {
+  drawLine([x1, y1]: Position, [x2, y2]: Position): void {
     let xdiff = Math.abs(x2 - x1);
     let ydiff = Math.abs(y2 - y1);
     let steps = Math.max(xdiff, ydiff);

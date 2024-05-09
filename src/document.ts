@@ -74,7 +74,7 @@ export class Universe implements Drawable {
     return p;
   }
 
-  addPoint(position: [number, number]): Point {
+  addPoint(position: Position): Point {
     return this.currentPicture.addPoint(position);
   }
 
@@ -82,7 +82,7 @@ export class Universe implements Drawable {
     return this.currentPicture.addLine(start, end);
   }
 
-  addPointInLineSegment(position: [number, number] | Point): Point {
+  addPointInLineSegment(position: Position | Point): Point {
     // TODO: this only handles drawing new points. In the future, this interface
     // should change so if the pen is pointed at an existing point, it connects.
     let current = this.movings.next;
@@ -156,7 +156,7 @@ export class Picture implements Drawable {
     return new PointOnLineConstraint(p, end1, end2, this.constraints);
   }
 
-  addPoint(position: [number, number]): Point {
+  addPoint(position: Position): Point {
     return new Point(position, this.parts, this.variables);
   }
 
@@ -214,7 +214,7 @@ class Instance extends Variable implements Drawable {
     variables: Hen<Picture, Variable>,
     inPicture: Hen<Picture, Drawable>,
     ofPicture: Picture,
-    [cx, cy]: [number, number] = [0, 0],
+    [cx, cy]: Position = [0, 0],
     zoom: number = 0.5,
     rotation: number = 0
   ) {
@@ -234,10 +234,7 @@ class Instance extends Variable implements Drawable {
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform): void {
-    const dt: DisplayTransform = ([x, y]: [number, number]): [
-      number,
-      number
-    ] => {
+    const dt: DisplayTransform = ([x, y]: Position): Position => {
       let scaledX = x * this.zoom;
       let scaledY = y * this.zoom;
 
@@ -283,7 +280,7 @@ class Line implements Drawable, Boundable, Movable {
   }
 
   display(d: Drawonable, dt: DisplayTransform) {
-    d.drawLine(dt(this.startCoordinates), dt(this.endCoordinates));
+    d.drawLine(dt(this.startPosition), dt(this.endPosition));
   }
 
   move(dx: number, dy: number) {}
@@ -298,12 +295,12 @@ class Line implements Drawable, Boundable, Movable {
     return chickenParent(this.end);
   }
 
-  get startCoordinates(): [number, number] {
+  get startPosition(): Position {
     let p = this.startPoint;
     return [p.x, p.y];
   }
 
-  get endCoordinates(): [number, number] {
+  get endPosition(): Position {
     let p = this.endPoint;
     return [p.x, p.y];
   }
@@ -321,7 +318,7 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
   moving: Chicken<Universe, Movable>;
 
   constructor(
-    [x, y]: [number, number],
+    [x, y]: Position,
     picture: Hen<Picture, Drawable>,
     variables: Hen<Picture, Variable>
   ) {

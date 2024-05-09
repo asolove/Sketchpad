@@ -7,7 +7,6 @@
 - [ ] Add circle arcs as a topo type
 - [ ] Re-read thesis section on displaying digits: how are they stored/calculated?
 - [ ] Add pan controls
-- [ ] Add point on line constraint
 - [ ] Add point on circle constraint
 
 ### Thoughtful doing tasks
