@@ -228,7 +228,7 @@ abstract class Variable {
 
   error() {
     let cs = collectChickens(this.constraints);
-    return cs.map((c) => c.error()).reduce(sum, 0);
+    return cs.map((c) => Math.pow(c.error(), 2)).reduce(sum, 0);
   }
 
   abstract satisfyConstraints(): void;
