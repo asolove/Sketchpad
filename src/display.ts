@@ -1,8 +1,9 @@
-import { clamp, Position } from "./lib";
+import { clamp, distance, Position } from "./lib";
+import { Drawable, Point } from "./document";
 
 export interface Drawonable {
-  drawPoint(point: Position): void;
-  drawLine(start: Position, end: Position);
+  drawPoint(point: Position, item: Drawable): void;
+  drawLine(start: Position, end: Position, item: Drawable);
 }
 
 export interface DisplayTransform {
@@ -17,11 +18,16 @@ export class DisplayFile implements Drawonable {
   logicalWidth = 1024;
   logicalHeight = 1024;
 
+  mousePosition: Position;
+  // TODO: generalize to multiple and other types
+  nearMouse: Point;
+
   constructor() {
     this.cx = 0;
     this.cy = 0;
     this.zoom = 0.5;
     this.pixels = [];
+    this.mousePosition = [0, 0];
   }
 
   displayTransform(): DisplayTransform {
@@ -46,13 +52,18 @@ export class DisplayFile implements Drawonable {
     }
   }
 
-  drawPoint([x, y]: Position): void {
+  drawPoint([x, y]: Position, item: Drawable): void {
     if (x < 0 || x > this.logicalWidth) return;
     if (y < 0 || y > this.logicalHeight) return;
+
+    if (distance([x, y], this.mousePosition) < 4 && item instanceof Point) {
+      this.nearMouse = item;
+    }
+
     this.pixels.push([x, y]);
   }
 
-  drawLine([x1, y1]: Position, [x2, y2]: Position): void {
+  drawLine([x1, y1]: Position, [x2, y2]: Position, item: Drawable): void {
     let xdiff = Math.abs(x2 - x1);
     let ydiff = Math.abs(y2 - y1);
     let steps = Math.max(xdiff, ydiff);
@@ -66,12 +77,14 @@ export class DisplayFile implements Drawonable {
     for (let i = 0; i < steps; i++) {
       let xNext = x + dx;
       let yNext = y + dy;
-      this.drawPoint([Math.round(xNext), Math.round(yNext)]);
+      this.drawPoint([Math.round(xNext), Math.round(yNext)], item);
       x = xNext;
       y = yNext;
     }
   }
 }
+
+export class Controller {}
 
 export class Display {
   #displayFile: DisplayFile;
@@ -96,6 +109,26 @@ export class Display {
       zoom += e.deltaY * -0.01;
       zoom = clamp(0.1, zoom, 10);
       this.#displayFile.zoom = zoom;
+    });
+
+    this.#canvas.addEventListener("mousemove", (e) => {
+      let mx = e.offsetX / xScale;
+      let my = e.offsetY / yScale;
+
+      this.#displayFile.mousePosition = [mx, my];
+    });
+
+    // FIXME: rearrange control in some reasonable way so Display doesn't send actions
+    // FIXME: explicit control state to determine allowed actions
+    this.#canvas.addEventListener("mousedown", (e) => {
+      if (this.#displayFile.nearMouse) {
+        // Dragging items
+        console.log("Dragging", this.#displayFile.nearMouse);
+      }
+    });
+
+    this.#canvas.addEventListener("mouseup", (e) => {
+      console.log("Stopped dragging");
     });
   }
 

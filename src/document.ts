@@ -22,7 +22,7 @@ import {
   removeChicken,
 } from "./ring";
 
-interface Drawable {
+export interface Drawable {
   display(d: Drawonable, displayTransform: DisplayTransform): void;
 }
 
@@ -341,7 +341,7 @@ class Circle implements Drawable {
     //   (update PointOnArcConstraint to also take direction into account)
     let steps = 0;
     while (steps++ < arcRadians * r) {
-      d.drawPoint(dt([x, y]));
+      d.drawPoint(dt([x, y]), this);
       x = x - (1 / r) * (y - cy);
       y = y + (1 / r) * (x - cx);
     }
@@ -367,7 +367,7 @@ class Line implements Drawable, Boundable, Movable {
   }
 
   display(d: Drawonable, dt: DisplayTransform) {
-    d.drawLine(dt(this.startPosition), dt(this.endPosition));
+    d.drawLine(dt(this.startPosition), dt(this.endPosition), this);
   }
 
   move(dx: number, dy: number) {}
@@ -447,8 +447,8 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
     }
   }
 
-  display(d: Drawonable, displayTransform: DisplayTransform) {
-    d.drawPoint(displayTransform([this.x, this.y]));
+  display(d: Drawonable, dt: DisplayTransform) {
+    d.drawPoint(dt([this.x, this.y]), this);
   }
   move(dx: number, dy: number) {}
   bounds() {
