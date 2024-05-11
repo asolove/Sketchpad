@@ -60,14 +60,14 @@ export class Universe implements Drawable {
     if (this.constraintTimeout)
       this.constraintTimeout = clearTimeout(this.constraintTimeout);
     this.#runConstraints = value;
-    if (value) this.loop();
+    if (this.#runConstraints) this.loop();
   }
 
   loop() {
     this.pictures
       .flatMap((p) => collectChickens(p.variables))
       .map((v) => v.satisfyConstraints());
-    this.constraintTimeout = setTimeout(() => this.loop(), 60);
+    this.constraintTimeout = setTimeout(() => this.loop(), 16);
   }
 
   addPicture(): Picture {

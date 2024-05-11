@@ -38,7 +38,7 @@ let rivetPic = u.addPicture();
 let topLeft = rivetPic.addPoint([-90, 100]);
 let topRight = rivetPic.addPoint([100, 90]);
 let bottomLeft = rivetPic.addPoint([-100, -110]);
-let bottomRight = rivetPic.addPoint([150, -150]);
+let bottomRight = rivetPic.addPoint([200, -150]);
 let center = rivetPic.addPoint([0, 0]);
 let cStart = rivetPic.addPoint([250, 100]);
 let cEnd = rivetPic.addPoint([-250, 100]);
@@ -98,11 +98,12 @@ hexagonPic.addSameDistanceConstraint(h4, h5, h6, h1);
 
 // Full picture with lots of instances
 let combinedPic = u.addPicture();
-combinedPic.addInstance(hexagonPic, -300, -300, 1, 0);
-combinedPic.addInstance(rivetPic, 0, 0, 1, 0);
+combinedPic.addInstance(rivetPic, -400, -400, 1, 0);
+combinedPic.addInstance(hexagonPic, 0, 0, 1, 0);
 combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
 
 let df = new DisplayFile();
+df.zoom = 0.75;
 
 let loop = () => {
   df.clear();
