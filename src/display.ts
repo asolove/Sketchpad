@@ -89,7 +89,7 @@ export class Controller {}
 export class Display {
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
-  #pixelsPerDraw = 1000;
+  #pixelsPerDraw = 2000;
   #pixelIndex = 0;
 
   constructor(df: DisplayFile, canvas: HTMLCanvasElement) {
@@ -102,6 +102,8 @@ export class Display {
     canvas.getContext("2d")?.scale(xScale, yScale);
 
     this.loop();
+
+    this.#canvas.style.cursor = "none";
 
     this.#canvas.addEventListener("wheel", (e) => {
       e.preventDefault();
@@ -143,7 +145,7 @@ export class Display {
 
     if (!ctx) throw new Error("canot get canvas context");
 
-    ctx.fillStyle = "rgb(30 30 30 / 20%)";
+    ctx.fillStyle = "rgb(30 30 30 / 40%)";
     ctx.fillRect(
       0,
       0,
@@ -161,6 +163,23 @@ export class Display {
       ctx.arc(pixels[i][0], pixels[i][1], 1, 0, 2 * Math.PI);
       ctx.fill();
     }
+
+    // Display cursor
+    let CURSOR_SIZE = 30;
+    let CURSOR_STROKE = 2;
+    let [mx, my] = this.#displayFile.mousePosition;
+    ctx.fillRect(
+      mx - CURSOR_SIZE / 2,
+      my - CURSOR_STROKE / 2,
+      CURSOR_SIZE,
+      CURSOR_STROKE
+    );
+    ctx.fillRect(
+      mx - CURSOR_STROKE / 2,
+      my - CURSOR_SIZE / 2,
+      CURSOR_STROKE,
+      CURSOR_SIZE
+    );
     this.#pixelIndex = i;
   }
 }
