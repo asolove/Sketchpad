@@ -102,6 +102,12 @@ combinedPic.addInstance(rivetPic, -400, -400, 1, 0);
 combinedPic.addInstance(hexagonPic, 0, 0, 1, 0);
 combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
 
+{
+  let p1 = combinedPic.addPoint([-400, 600]);
+  let p2 = combinedPic.addPoint([-400, -600]);
+  combinedPic.addLine(p1, p2);
+}
+
 let df = new DisplayFile();
 df.zoom = 0.75;
 
@@ -112,4 +118,4 @@ let loop = () => {
 };
 loop();
 
-let d = new Display(df, canvas);
+let d = new Display(df, canvas, u);

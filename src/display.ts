@@ -1,5 +1,5 @@
 import { clamp, distance, Position } from "./lib";
-import { Drawable, Point } from "./document";
+import { Drawable, Point, Universe } from "./document";
 
 export interface Drawonable {
   drawPoint(point: Position, item: Drawable): void;
@@ -84,17 +84,20 @@ export class DisplayFile implements Drawonable {
   }
 }
 
+// FIXME: refactor control state and issuing commands back to the Universe into a Controller.
 export class Controller {}
 
 export class Display {
+  #universe: Universe; // FIXME: remove this reference
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
   #pixelsPerDraw = 2000;
   #pixelIndex = 0;
 
-  constructor(df: DisplayFile, canvas: HTMLCanvasElement) {
+  constructor(df: DisplayFile, canvas: HTMLCanvasElement, universe: Universe) {
     this.#displayFile = df;
     this.#canvas = canvas;
+    this.#universe = universe;
 
     // TODO: react to dom changes?
     let xScale = canvas.width / this.#displayFile.logicalWidth;
@@ -113,11 +116,23 @@ export class Display {
       this.#displayFile.zoom = zoom;
     });
 
+    let prevMX = 0;
+    let prevMY = 0;
     this.#canvas.addEventListener("mousemove", (e) => {
+      // Translate from DOM coordinates to DisplayFile coordinates.
       let mx = e.offsetX / xScale;
       let my = e.offsetY / yScale;
 
       this.#displayFile.mousePosition = [mx, my];
+
+      // Translate from DisplayFile coordinate offsets to Universe coordinate offsets
+      this.#universe.moveMovings([
+        (mx - prevMX) / this.#displayFile.zoom,
+        -(my - prevMY) / this.#displayFile.zoom,
+      ]);
+
+      prevMX = mx;
+      prevMY = my;
     });
 
     // FIXME: rearrange control in some reasonable way so Display doesn't send actions
@@ -125,12 +140,15 @@ export class Display {
     this.#canvas.addEventListener("mousedown", (e) => {
       if (this.#displayFile.nearMouse) {
         // Dragging items
-        console.log("Dragging", this.#displayFile.nearMouse);
+        this.#universe.addMovings([this.#displayFile.nearMouse]);
+        this.#universe.runConstraints = false;
       }
     });
 
     this.#canvas.addEventListener("mouseup", (e) => {
       console.log("Stopped dragging");
+      this.#universe.clearMovings();
+      this.#universe.runConstraints = true;
     });
   }
 

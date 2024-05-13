@@ -38,7 +38,7 @@ interface Boundable {
 }
 
 interface Movable {
-  move(dx: number, dy: number);
+  move(dx: number, dy: number, moved: Set<Movable>);
 }
 
 export class Universe implements Drawable {
@@ -67,7 +67,7 @@ export class Universe implements Drawable {
     this.pictures
       .flatMap((p) => collectChickens(p.variables))
       .map((v) => v.satisfyConstraints());
-    this.constraintTimeout = setTimeout(() => this.loop(), 16);
+    this.constraintTimeout = setTimeout(() => this.loop(), 1);
   }
 
   addPicture(): Picture {
@@ -76,6 +76,21 @@ export class Universe implements Drawable {
     this.currentPicture = p;
     clearHen(this.movings);
     return p;
+  }
+
+  addMovings(items: Array<Movable>) {
+    items.forEach((item) => addChicken(this.movings, item));
+  }
+
+  clearMovings() {
+    clearHen(this.movings);
+  }
+
+  moveMovings([dx, dy]: [number, number]) {
+    let moveds = new Set<Movable>();
+    collectChickens(this.movings).forEach((moving) =>
+      moving.move(dx, dy, moveds)
+    );
   }
 
   addPointInLineSegment(position: Position | Point): Point {
@@ -370,7 +385,7 @@ class Line implements Drawable, Boundable, Movable {
     d.drawLine(dt(this.startPosition), dt(this.endPosition), this);
   }
 
-  move(dx: number, dy: number) {}
+  move(dx: number, dy: number, moved: Set<Movable>) {}
   bounds() {
     return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
   }
@@ -450,7 +465,12 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
   display(d: Drawonable, dt: DisplayTransform) {
     d.drawPoint(dt([this.x, this.y]), this);
   }
-  move(dx: number, dy: number) {}
+  move(dx: number, dy: number, moveds: Set<Movable>) {
+    if (moveds.has(this)) return;
+    this.x += dx;
+    this.y += dy;
+    moveds.add(this);
+  }
   bounds() {
     return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
   }
