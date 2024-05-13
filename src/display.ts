@@ -88,12 +88,64 @@ export class DisplayFile implements Drawonable {
 // FIXME: refactor control state and issuing commands back to the Universe into a Controller.
 export class Controller {}
 
+export abstract class Mode {
+  universe: Universe;
+  displayFile: DisplayFile;
+
+  constructor(universe: Universe, displayFile: DisplayFile) {
+    this.universe = universe;
+    this.displayFile = displayFile;
+  }
+  cursorMoved(x: number, y: number) {}
+  buttonDown() {}
+  buttonUp() {}
+}
+export class MoveMode extends Mode {
+  state: "dragging" | "panning" | "waiting" = "waiting";
+
+  buttonDown() {
+    if (this.state != "waiting") {
+      console.error(`Received buttonDown in unexpected state: ${this.state}`);
+      return;
+    }
+
+    if (this.displayFile.nearMouse) {
+      this.state = "dragging";
+      this.universe.addMovings([this.displayFile.nearMouse]);
+      this.universe.runConstraints = false;
+    } else {
+      this.state = "panning";
+    }
+  }
+
+  cursorMoved(dx: number, dy: number) {
+    switch (this.state) {
+      case "dragging":
+        // Translate from DisplayFile coordinate offsets to Universe coordinate offsets
+        this.universe.moveMovings([dx, dy]);
+        return;
+      case "panning":
+        // FIXME: make this a single message.
+        this.displayFile.cx -= dx;
+        this.displayFile.cy -= dy;
+        return;
+    }
+  }
+
+  buttonUp() {
+    this.universe.clearMovings();
+    this.universe.runConstraints = true;
+    this.state = "waiting";
+  }
+}
+
 export class Display {
   #universe: Universe; // FIXME: remove this reference
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
   #pixelsPerDraw = 2000;
   #pixelIndex = 0;
+  #mode: Mode;
 
   constructor(df: DisplayFile, canvas: HTMLCanvasElement, universe: Universe) {
     this.#displayFile = df;
@@ -104,6 +156,8 @@ export class Display {
     let xScale = canvas.width / this.#displayFile.logicalWidth;
     let yScale = canvas.height / this.#displayFile.logicalHeight;
     canvas.getContext("2d")?.scale(xScale, yScale);
+
+    this.#mode = new MoveMode(universe, df);
 
     this.loop();
 
@@ -126,30 +180,21 @@ export class Display {
 
       this.#displayFile.mousePosition = [mx, my];
 
-      // Translate from DisplayFile coordinate offsets to Universe coordinate offsets
-      this.#universe.moveMovings([
-        (mx - prevMX) / this.#displayFile.zoom,
-        -(my - prevMY) / this.#displayFile.zoom,
-      ]);
+      let dx = (mx - prevMX) / this.#displayFile.zoom;
+      let dy = -(my - prevMY) / this.#displayFile.zoom;
+
+      this.#mode.cursorMoved(dx, dy);
 
       prevMX = mx;
       prevMY = my;
     });
 
-    // FIXME: rearrange control in some reasonable way so Display doesn't send actions
-    // FIXME: explicit control state to determine allowed actions
     this.#canvas.addEventListener("mousedown", (e) => {
-      if (this.#displayFile.nearMouse) {
-        // Dragging items
-        this.#universe.addMovings([this.#displayFile.nearMouse]);
-        this.#universe.runConstraints = false;
-      }
+      this.#mode.buttonDown();
     });
 
     this.#canvas.addEventListener("mouseup", (e) => {
-      console.log("Stopped dragging");
-      this.#universe.clearMovings();
-      this.#universe.runConstraints = true;
+      this.#mode.buttonUp();
     });
   }
 
