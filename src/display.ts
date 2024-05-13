@@ -20,7 +20,7 @@ export class DisplayFile implements Drawonable {
 
   mousePosition: Position;
   // TODO: generalize to multiple and other types
-  nearMouse: Point;
+  nearMouse: Point | undefined;
 
   constructor() {
     this.cx = 0;
@@ -41,6 +41,7 @@ export class DisplayFile implements Drawonable {
 
   clear() {
     this.pixels = [];
+    this.nearMouse = undefined;
   }
 
   twinkle() {
@@ -56,7 +57,7 @@ export class DisplayFile implements Drawonable {
     if (x < 0 || x > this.logicalWidth) return;
     if (y < 0 || y > this.logicalHeight) return;
 
-    if (distance([x, y], this.mousePosition) < 4 && item instanceof Point) {
+    if (distance([x, y], this.mousePosition) < 8 && item instanceof Point) {
       this.nearMouse = item;
     }
 

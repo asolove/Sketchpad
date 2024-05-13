@@ -282,11 +282,12 @@ class Instance extends Variable implements Drawable {
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform): void {
+    // To display an instance, we need to display the underlying picture, but, also:
+    // 1. translate coordinates between the picture's system and the transformed appearance of the instance in this picture
     const dt: DisplayTransform = ([x, y]: Position): Position => {
       let scaledX = x * this.zoom;
       let scaledY = y * this.zoom;
 
-      // FIXME: get the math right so I don't have to negate the rotation angle
       return displayTransform([
         scaledX * Math.cos(this.rotation) -
           scaledY * Math.sin(this.rotation) +
@@ -297,7 +298,18 @@ class Instance extends Variable implements Drawable {
           this.cy,
       ]);
     };
-    chickenParent(this.ofPicture).display(d, dt);
+    // 2. Attribute these points to the instance, rather than the underlying original picture points
+    let instance = this;
+    let drawonableWithoutAttribution = {
+      drawPoint(point: Position, item: Drawable): void {
+        return d.drawPoint(point, instance);
+      },
+      drawLine(start: Position, end: Position, item: Drawable) {
+        return d.drawLine(start, end, instance);
+      },
+    };
+
+    chickenParent(this.ofPicture).display(drawonableWithoutAttribution, dt);
   }
 
   satisfyConstraints() {
