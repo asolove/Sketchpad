@@ -1,10 +1,10 @@
-import { clamp, distance, Position } from "./lib";
-import { Drawable, Point, Universe, Circle } from "./document";
+import { clamp, distance, type Position } from "./lib";
+import { type Drawable, Point, Universe, Circle } from "./document";
 import { chickenParent, isEmptyChicken } from "./ring";
 
 export interface Drawonable {
   drawPoint(point: Position, item: Drawable): void;
-  drawLine(start: Position, end: Position, item: Drawable);
+  drawLine(start: Position, end: Position, item: Drawable): void;
 }
 
 export interface DisplayTransform {
@@ -21,7 +21,7 @@ export class DisplayFile implements Drawonable {
 
   mousePosition: Position;
   // TODO: generalize to multiple and other types
-  nearMouse: Point | undefined;
+  pointNearestCursor: Point | undefined;
 
   constructor() {
     this.cx = 0;
@@ -52,7 +52,7 @@ export class DisplayFile implements Drawonable {
 
   clear() {
     this.pixels = [];
-    this.nearMouse = undefined;
+    this.pointNearestCursor = undefined;
   }
 
   twinkle() {
@@ -68,15 +68,22 @@ export class DisplayFile implements Drawonable {
     if (x < 0 || x > this.logicalWidth) return;
     if (y < 0 || y > this.logicalHeight) return;
 
-    if (
-      distance([x, y], this.mousePosition) < 8 &&
-      item instanceof Point &&
-      isEmptyChicken(item.moving)
-    ) {
-      this.nearMouse = item;
-    }
-
     this.pixels.push([x, y]);
+
+    // Record if this is also the closest point to the cursor
+    if (!(item instanceof Point)) return;
+    if (!isEmptyChicken(item.moving)) return;
+
+    let d = distance([x, y], this.mousePosition);
+    if (d > 6) return;
+
+    // TODO: should memoize this
+    let dCurrent = this.pointNearestCursor
+      ? distance(this.pointNearestCursor.position, this.mousePosition)
+      : Infinity;
+    if (d > dCurrent) return;
+
+    this.pointNearestCursor = item;
   }
 
   drawLine([x1, y1]: Position, [x2, y2]: Position, item: Drawable): void {
@@ -122,15 +129,15 @@ export class LineMode extends Mode {
   movingPoint: Point | undefined;
 
   buttonDown(position: Position) {
-    if (this.displayFile.nearMouse && this.movingPoint) {
-      this.displayFile.nearMouse.merge(this.movingPoint);
+    if (this.displayFile.pointNearestCursor && this.movingPoint) {
+      this.displayFile.pointNearestCursor.merge(this.movingPoint);
       this.universe.clearMovings();
       this.movingPoint = undefined;
     } else {
       let toPoint = this.universe.currentPicture.addPoint(position);
       let fromPoint =
         this.movingPoint ||
-        this.displayFile.nearMouse ||
+        this.displayFile.pointNearestCursor ||
         this.universe.currentPicture.addPoint(position);
       this.universe.currentPicture.addLine(fromPoint, toPoint);
 
@@ -157,7 +164,7 @@ export class CircleMode extends Mode {
   buttonUp(position: Position) {
     if (!this.circle) {
       let center =
-        this.displayFile.nearMouse ||
+        this.displayFile.pointNearestCursor ||
         this.universe.currentPicture.addPoint(position);
       let start = this.universe.currentPicture.addPoint(position);
       let end = this.universe.currentPicture.addPoint(position);
@@ -166,14 +173,18 @@ export class CircleMode extends Mode {
       this.next = "start";
       this.universe.runConstraints = false;
     } else if (this.next === "start") {
-      if (this.displayFile.nearMouse)
-        this.displayFile.nearMouse.merge(chickenParent(this.circle.start));
+      if (this.displayFile.pointNearestCursor)
+        this.displayFile.pointNearestCursor.merge(
+          chickenParent(this.circle.start)
+        );
       this.universe.clearMovings();
       this.universe.addMovings([chickenParent(this.circle.end)]);
       this.next = "end";
     } else {
-      if (this.displayFile.nearMouse)
-        this.displayFile.nearMouse.merge(chickenParent(this.circle.end));
+      if (this.displayFile.pointNearestCursor)
+        this.displayFile.pointNearestCursor.merge(
+          chickenParent(this.circle.end)
+        );
       this.universe.clearMovings();
       this.circle = undefined;
 
@@ -195,9 +206,9 @@ export class MoveMode extends Mode {
       return;
     }
 
-    if (this.displayFile.nearMouse) {
+    if (this.displayFile.pointNearestCursor) {
       this.state = "dragging";
-      this.universe.addMovings([this.displayFile.nearMouse]);
+      this.universe.addMovings([this.displayFile.pointNearestCursor]);
       this.universe.runConstraints = false;
     } else {
       this.state = "panning";

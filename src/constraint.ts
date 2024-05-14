@@ -1,21 +1,35 @@
-import { DisplayTransform, Drawonable } from "./display";
-import { Picture, Point } from "./document";
-import { Position, angle, distance } from "./lib";
-import { Chicken, Hen, addChicken, chickenParent } from "./ring";
+import type { DisplayTransform, Drawonable } from "./display";
+import type { Picture, Point, Removable } from "./document";
+import { type Position, angle, distance } from "./lib";
+import {
+  type Chicken,
+  type Hen,
+  addChicken,
+  chickenParent,
+  createEmptyChicken,
+  emptyChicken,
+  removeChicken,
+} from "./ring";
 
-export abstract class Constraint {
+export abstract class Constraint implements Removable {
   picture: Chicken<Picture, Constraint>;
 
   constructor(picture: Hen<Picture, Constraint>) {
     this.picture = addChicken(picture, this);
   }
 
-  display(d: Drawonable, displayTransform: DisplayTransform): void {}
+  display(_d: Drawonable, _displayTransform: DisplayTransform): void {
+    // TODO: enable optional display of constraints
+  }
 
   abstract error(): number;
   abstract name(): string;
   abstract ncon(): number; // number of degrees of freedom removed
   abstract chvar(): number; // changeable variables
+
+  remove() {
+    removeChicken(this.picture);
+  }
 }
 
 export class SameXConstraint extends Constraint {
@@ -27,6 +41,13 @@ export class SameXConstraint extends Constraint {
     super(picture);
     this.p1 = addChicken(p1.constraints, this);
     this.p2 = addChicken(p2.constraints, this);
+    this.picture = createEmptyChicken(this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.p1);
+    removeChicken(this.p2);
   }
 
   get x1() {
@@ -61,6 +82,13 @@ export class SameYConstraint extends Constraint {
     super(picture);
     this.p1 = addChicken(p1.constraints, this);
     this.p2 = addChicken(p2.constraints, this);
+    this.picture = createEmptyChicken(this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.p1);
+    removeChicken(this.p2);
   }
 
   get y1() {
@@ -101,6 +129,13 @@ export class PointOnLineConstraint extends Constraint {
     this.point = addChicken(point.constraints, this);
     this.end1 = addChicken(end1.constraints, this);
     this.end2 = addChicken(end2.constraints, this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.point);
+    removeChicken(this.end1);
+    removeChicken(this.end2);
   }
 
   get pointPosition(): Position {
@@ -173,6 +208,14 @@ export class PointOnArcConstraint extends Constraint {
     this.center = addChicken(center.constraints, this);
     this.start = addChicken(start.constraints, this);
     this.end = addChicken(end.constraints, this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.point);
+    removeChicken(this.center);
+    removeChicken(this.start);
+    removeChicken(this.end);
   }
 
   get pointPosition(): Position {
@@ -254,6 +297,14 @@ export class SameDistanceConstraint extends Constraint {
     this.pb2 = addChicken(pb2.constraints, this);
   }
 
+  remove() {
+    super.remove();
+    removeChicken(this.pa1);
+    removeChicken(this.pa2);
+    removeChicken(this.pb1);
+    removeChicken(this.pb2);
+  }
+
   error(): number {
     let da = distance(
       chickenParent(this.pa1).position,
@@ -295,6 +346,14 @@ export class PerpendicularConstraint extends Constraint {
     this.pa2 = addChicken(pa2.constraints, this);
     this.pb1 = addChicken(pb1.constraints, this);
     this.pb2 = addChicken(pb2.constraints, this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.pa1);
+    removeChicken(this.pa2);
+    removeChicken(this.pb1);
+    removeChicken(this.pb2);
   }
 
   error(): number {
@@ -340,6 +399,14 @@ export class ParallelConstraint extends Constraint {
     this.pa2 = addChicken(pa2.constraints, this);
     this.pb1 = addChicken(pb1.constraints, this);
     this.pb2 = addChicken(pb2.constraints, this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.pa1);
+    removeChicken(this.pa2);
+    removeChicken(this.pb1);
+    removeChicken(this.pb2);
   }
 
   error(): number {

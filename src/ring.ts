@@ -118,6 +118,8 @@ export function addChicken<A, B>(hen: Hen<A, B>, child: B): Chicken<A, B> {
 // this chicken and making this chicken no longer accessible.
 // So all it needs to do is clean up the other nodes in the ring.
 export function removeChicken<A, B>(chicken: Chicken<A, B>) {
+  if (isEmptyChicken(chicken)) return;
+
   [chicken.next.prev, chicken.prev.next] = [chicken.prev, chicken.next];
   emptyChicken(chicken);
 }

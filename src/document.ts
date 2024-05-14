@@ -8,18 +8,17 @@ import {
   SameXConstraint,
   SameYConstraint,
 } from "./constraint";
-import { DisplayTransform, Drawonable } from "./display";
-import { Position, angle, distance, sum } from "./lib";
+import { type DisplayTransform, type Drawonable } from "./display";
+import { type Position, angle, distance, sum } from "./lib";
 import {
-  Chicken,
-  Hen,
+  type Chicken,
+  type Hen,
   addChicken,
   chickenParent,
   clearHen,
   collectChickens,
   createEmptyChicken,
   createHen,
-  emptyChicken,
   isChicken,
   isEmptyChicken,
   mergeHens,
@@ -42,7 +41,7 @@ interface Boundable {
 }
 
 interface Movable {
-  move(dx: number, dy: number, moved: Set<Movable>);
+  move(dx: number, dy: number, moved: Set<Movable>): void;
   isMoving(): boolean;
   startMoving(movings: Hen<Universe, Movable>): void;
   endMoving(): void;
@@ -52,13 +51,17 @@ interface Mergeable<A> {
   merge(other: A): A;
 }
 
+export interface Removable {
+  remove(): void;
+}
+
 export class Universe implements Drawable {
   currentPicture: Picture;
   pictures: Picture[];
   movings: Hen<Universe, Movable>;
 
   #runConstraints: boolean;
-  constraintTimeout: Timer | void;
+  constraintTimeout: Timer | undefined;
 
   constructor() {
     this.currentPicture = new Picture();
@@ -68,8 +71,10 @@ export class Universe implements Drawable {
   }
 
   set runConstraints(value: boolean) {
-    if (this.constraintTimeout)
-      this.constraintTimeout = clearTimeout(this.constraintTimeout);
+    if (this.constraintTimeout) {
+      clearTimeout(this.constraintTimeout);
+      this.constraintTimeout = undefined;
+    }
     this.#runConstraints = value;
     if (this.#runConstraints) this.loop();
   }
@@ -243,7 +248,7 @@ export class Picture implements Drawable {
   }
 }
 
-abstract class Variable {
+abstract class Variable implements Removable {
   isVariable: Chicken<Picture, Variable>;
   constraints: Hen<this, Constraint>;
 
@@ -258,6 +263,11 @@ abstract class Variable {
   }
 
   abstract satisfyConstraints(): void;
+
+  remove() {
+    removeChicken(this.isVariable);
+    collectChickens(this.constraints).forEach((c) => c.remove());
+  }
 }
 
 class Instance extends Variable implements Drawable {
@@ -328,7 +338,7 @@ class Instance extends Variable implements Drawable {
   }
 }
 
-export class Circle implements Drawable, Movable {
+export class Circle implements Drawable, Movable, Removable {
   center: Chicken<Point, Line | Circle>;
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
@@ -350,6 +360,15 @@ export class Circle implements Drawable, Movable {
 
     this.attacher = createEmptyChicken(this);
     this.moving = createEmptyChicken(this);
+  }
+
+  remove() {
+    removeChicken(this.center);
+    removeChicken(this.start);
+    removeChicken(this.end);
+    removeChicken(this.picture);
+    removeChicken(this.attacher);
+    removeChicken(this.moving);
   }
 
   isMoving(): boolean {
@@ -401,7 +420,7 @@ export class Circle implements Drawable, Movable {
   move(dx: number, dy: number, moved: Set<Movable>) {}
 }
 
-class Line implements Drawable, Boundable, Movable {
+class Line implements Drawable, Boundable, Movable, Removable {
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
 
@@ -420,6 +439,14 @@ class Line implements Drawable, Boundable, Movable {
 
     this.attacher = createEmptyChicken(this);
     this.moving = createEmptyChicken(this);
+  }
+
+  remove() {
+    removeChicken(this.start);
+    removeChicken(this.end);
+    removeChicken(this.picture);
+    removeChicken(this.attacher);
+    removeChicken(this.moving);
   }
 
   isMoving(): boolean {
@@ -487,6 +514,12 @@ export class Point
 
     this.moving = createEmptyChicken(this);
     this.attacher = createEmptyChicken(this);
+  }
+
+  remove() {
+    super.remove();
+    removeChicken(this.picture);
+    collectChickens(this.linesAndCircles).forEach((s) => s.remove());
   }
 
   merge(other: Point): Point {
