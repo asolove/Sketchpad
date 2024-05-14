@@ -1,5 +1,5 @@
 import { clamp, distance, type Position } from "./lib";
-import { type Drawable, Point, Universe, Circle } from "./document";
+import { type Drawable, Point, Universe, Circle, Line } from "./document";
 import { chickenParent, isEmptyChicken } from "./ring";
 
 export interface Drawonable {
@@ -22,6 +22,7 @@ export class DisplayFile implements Drawonable {
   mousePosition: Position;
   // TODO: generalize to multiple and other types
   pointNearestCursor: Point | undefined;
+  shapesNearCursor: Array<Circle | Line>;
 
   constructor() {
     this.cx = 0;
@@ -29,6 +30,9 @@ export class DisplayFile implements Drawonable {
     this.zoom = 0.5;
     this.pixels = [];
     this.mousePosition = [0, 0];
+
+    this.pointNearestCursor = undefined;
+    this.shapesNearCursor = [];
   }
 
   displayTransform(): DisplayTransform {
@@ -53,6 +57,7 @@ export class DisplayFile implements Drawonable {
   clear() {
     this.pixels = [];
     this.pointNearestCursor = undefined;
+    this.shapesNearCursor = [];
   }
 
   twinkle() {
@@ -71,19 +76,26 @@ export class DisplayFile implements Drawonable {
     this.pixels.push([x, y]);
 
     // Record if this is also the closest point to the cursor
-    if (!(item instanceof Point)) return;
-    if (!isEmptyChicken(item.moving)) return;
+    if (item instanceof Point) {
+      if (!isEmptyChicken(item.moving)) return;
 
-    let d = distance([x, y], this.mousePosition);
-    if (d > 6) return;
+      let d = distance([x, y], this.mousePosition);
+      if (d > 6) return;
 
-    // TODO: should memoize this
-    let dCurrent = this.pointNearestCursor
-      ? distance(this.pointNearestCursor.position, this.mousePosition)
-      : Infinity;
-    if (d > dCurrent) return;
+      // TODO: should memoize this
+      let dCurrent = this.pointNearestCursor
+        ? distance(this.pointNearestCursor.position, this.mousePosition)
+        : Infinity;
+      if (d > dCurrent) return;
 
-    this.pointNearestCursor = item;
+      this.pointNearestCursor = item;
+    } else if (item instanceof Circle || item instanceof Line) {
+      if (!isEmptyChicken(item.moving)) return;
+
+      let d = distance([x, y], this.mousePosition);
+      if (d > 4) return;
+      this.shapesNearCursor.push(item);
+    }
   }
 
   drawLine([x1, y1]: Position, [x2, y2]: Position, item: Drawable): void {
@@ -140,6 +152,25 @@ export class LineMode extends Mode {
         this.displayFile.pointNearestCursor ||
         this.universe.currentPicture.addPoint(position);
       this.universe.currentPicture.addLine(fromPoint, toPoint);
+      if (!this.displayFile.pointNearestCursor) {
+        this.displayFile.shapesNearCursor.forEach((shape) => {
+          // FIXME: move to polymorphic method on Shape; or part of merge?
+          if (shape instanceof Circle) {
+            this.universe.currentPicture.addPointOnArcConstraint(
+              fromPoint,
+              chickenParent(shape.center),
+              chickenParent(shape.start),
+              chickenParent(shape.end)
+            );
+          } else if (shape instanceof Line) {
+            this.universe.currentPicture.addPointOnLineConstraint(
+              fromPoint,
+              chickenParent(shape.start),
+              chickenParent(shape.end)
+            );
+          }
+        });
+      }
 
       this.universe.clearMovings();
       this.universe.addMovings([toPoint]);
@@ -194,6 +225,11 @@ export class CircleMode extends Mode {
 
   cursorMoved(dx: number, dy: number) {
     this.universe.moveMovings([dx, dy]);
+  }
+
+  cleanup() {
+    // FIXME: remove partially-done circles
+    this.universe.clearMovings();
   }
 }
 

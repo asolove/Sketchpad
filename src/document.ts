@@ -420,7 +420,7 @@ export class Circle implements Drawable, Movable, Removable {
   move(dx: number, dy: number, moved: Set<Movable>) {}
 }
 
-class Line implements Drawable, Boundable, Movable, Removable {
+export class Line implements Drawable, Boundable, Movable, Removable {
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
 
