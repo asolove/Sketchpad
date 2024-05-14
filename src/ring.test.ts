@@ -1,9 +1,11 @@
 import { expect, test, describe } from "bun:test";
 import {
   addChicken,
+  collectChickens,
   createEmptyChicken,
   createHen,
   isEmptyChicken,
+  mergeHens,
   removeChicken,
 } from "./ring";
 
@@ -64,18 +66,22 @@ describe("Ring", () => {
     expect(hen.prev).toBe(hen);
   });
 
-  test("can't use removed child", () => {
-    let hen = createHen(0);
-    let chick = addChicken(hen, 1);
-    removeChicken(chick);
-
-    expect(() => chick.next).toThrow();
-    expect(() => chick.prev).toThrow();
-    expect(() => chick.self).toThrow();
-  });
-
   test("empty chicken", () => {
     let empty = createEmptyChicken(2);
     expect(isEmptyChicken(empty)).toBeTrue();
+  });
+
+  test("mergeHens", () => {
+    let hen1 = createHen("a");
+    addChicken(hen1, 1);
+    addChicken(hen1, 2);
+
+    let hen2 = createHen("b");
+    addChicken(hen2, 3);
+    addChicken(hen2, 4);
+
+    mergeHens(hen1, hen2);
+
+    expect(collectChickens(hen1)).toEqual([1, 2, 3, 4]);
   });
 });

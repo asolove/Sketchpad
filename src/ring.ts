@@ -46,6 +46,19 @@ export function collectChickens<A, B>(hen: Hen<A, B>): Array<B> {
   return r;
 }
 
+export function mergeHens<A, B>(hen: Hen<A, B>, other: Hen<A, B>) {
+  if (other.next === other) return;
+
+  let oldLast = hen.prev;
+  oldLast.next = other.next;
+  oldLast.next.prev = oldLast;
+  other.prev.next = hen;
+  hen.prev = other.prev;
+
+  other.next = hen;
+  other.prev = hen;
+}
+
 export type Chicken<Parent, Child> = {
   type: "chicken";
   self: Child;
@@ -106,30 +119,5 @@ export function addChicken<A, B>(hen: Hen<A, B>, child: B): Chicken<A, B> {
 // So all it needs to do is clean up the other nodes in the ring.
 export function removeChicken<A, B>(chicken: Chicken<A, B>) {
   [chicken.next.prev, chicken.prev.next] = [chicken.prev, chicken.next];
-
-  // For debuggability, make sure we error loudly if we later use a chicken
-  // that's been removed from use.
-  Object.defineProperties(chicken, {
-    self: {
-      enumerable: true,
-      configurable: false,
-      get: () => {
-        throw new Error("Accessing `self` for chicken that has been removed.");
-      },
-    },
-    next: {
-      enumerable: true,
-      configurable: false,
-      get: () => {
-        throw new Error("Accessing `next` for chicken that has been removed.");
-      },
-    },
-    prev: {
-      enumerable: true,
-      configurable: false,
-      get: () => {
-        throw new Error("Accessing `prev` for chicken that has been removed.");
-      },
-    },
-  });
+  emptyChicken(chicken);
 }

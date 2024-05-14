@@ -122,21 +122,21 @@ export class LineMode extends Mode {
   movingPoint: Point | undefined;
 
   buttonDown(position: Position) {
-    // FIXME: need to merge this.movingPoint with the nearMouse point to avoid extra line.
-    let toPoint =
-      this.displayFile.nearMouse &&
-      this.displayFile.nearMouse !== this.movingPoint
-        ? this.displayFile.nearMouse
-        : this.universe.currentPicture.addPoint(position);
-    let fromPoint =
-      this.movingPoint || this.universe.currentPicture.addPoint(position);
-    this.universe.currentPicture.addLine(fromPoint, toPoint);
-    this.universe.clearMovings();
-    if (toPoint !== this.displayFile.nearMouse) {
+    if (this.displayFile.nearMouse && this.movingPoint) {
+      this.displayFile.nearMouse.merge(this.movingPoint);
+      this.universe.clearMovings();
+      this.movingPoint = undefined;
+    } else {
+      let toPoint = this.universe.currentPicture.addPoint(position);
+      let fromPoint =
+        this.movingPoint ||
+        this.displayFile.nearMouse ||
+        this.universe.currentPicture.addPoint(position);
+      this.universe.currentPicture.addLine(fromPoint, toPoint);
+
+      this.universe.clearMovings();
       this.universe.addMovings([toPoint]);
       this.movingPoint = toPoint;
-    } else {
-      this.movingPoint = undefined;
     }
   }
 
@@ -145,6 +145,7 @@ export class LineMode extends Mode {
   }
 
   cleanup() {
+    // TODO: remove moving point
     this.universe.clearMovings();
   }
 }
@@ -182,6 +183,7 @@ export class MoveMode extends Mode {
   }
 
   buttonUp() {
+    // FIXME: run merge if there is an appropriate thing nearby
     this.universe.clearMovings();
     this.universe.runConstraints = true;
     this.state = "waiting";

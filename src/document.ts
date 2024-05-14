@@ -22,6 +22,7 @@ import {
   emptyChicken,
   isChicken,
   isEmptyChicken,
+  mergeHens,
   removeChicken,
 } from "./ring";
 
@@ -45,6 +46,10 @@ interface Movable {
   isMoving(): boolean;
   startMoving(movings: Hen<Universe, Movable>): void;
   endMoving(): void;
+}
+
+interface Mergeable<A> {
+  merge(other: A): A;
 }
 
 export class Universe implements Drawable {
@@ -328,7 +333,7 @@ class Circle implements Drawable, Movable {
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
 
-  attacher: Chicken<Picture, Attachable> | null;
+  attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
@@ -400,7 +405,7 @@ class Line implements Drawable, Boundable, Movable {
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
 
-  attacher: Chicken<Picture, Attachable> | null;
+  attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
@@ -453,11 +458,14 @@ class Line implements Drawable, Boundable, Movable {
     return [p.x, p.y];
   }
 }
-export class Point extends Variable implements Drawable, Boundable, Movable {
+export class Point
+  extends Variable
+  implements Drawable, Boundable, Movable, Mergeable<Point>
+{
   x: number;
   y: number;
 
-  attacher: Chicken<Picture, Attachable> | null;
+  attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
 
   linesAndCircles: Hen<Point, Line | Circle>;
@@ -479,6 +487,33 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
 
     this.moving = createEmptyChicken(this);
     this.attacher = createEmptyChicken(this);
+  }
+
+  merge(other: Point): Point {
+    // Copy attributes
+    this.x = other.x;
+    this.y = other.y;
+
+    mergeHens(this.instancePointConstraints, other.instancePointConstraints);
+    mergeHens(this.linesAndCircles, other.linesAndCircles);
+
+    // TODO: generalize merge strategy for chickens
+    if (isEmptyChicken(this.moving)) {
+      other.moving.self = this;
+    } else {
+      removeChicken(other.moving);
+    }
+
+    if (isEmptyChicken(this.attacher)) {
+      other.attacher.self = this;
+    } else {
+      removeChicken(other.attacher);
+    }
+
+    removeChicken(other.picture);
+
+    // Clean up old point
+    return this;
   }
 
   isMoving(): boolean {
