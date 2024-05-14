@@ -26,7 +26,12 @@ export function isHen<A, B>(
 }
 
 export function clearHen<A, B>(hen: Hen<A, B>) {
-  // FIXME: clear out chickens
+  let current = hen.next;
+  while (current.type === "chicken") {
+    let next = current.next;
+    emptyChicken(current);
+    current = next;
+  }
   hen.next = hen;
   hen.prev = hen;
 }
@@ -52,6 +57,27 @@ export function isChicken<A, B>(
   item: Chicken<A, B> | Hen<A, B>
 ): item is Chicken<A, B> {
   return item && item.type === "chicken";
+}
+
+export function createEmptyChicken<A, B>(self: B): Chicken<A, B> {
+  // See comment under `createHen` for this strategy.
+  let partialChicken: Omit<Chicken<A, B>, "next" | "prev"> = {
+    type: "chicken",
+    self,
+  };
+  let fakeCompleteChicken: Chicken<A, B> = partialChicken as Chicken<A, B>;
+  fakeCompleteChicken.next = fakeCompleteChicken;
+  fakeCompleteChicken.prev = fakeCompleteChicken;
+  return fakeCompleteChicken;
+}
+
+export function emptyChicken<A, B>(chicken: Chicken<A, B>) {
+  chicken.next = chicken;
+  chicken.prev = chicken;
+}
+
+export function isEmptyChicken<A, B>(chicken: Chicken<A, B>): boolean {
+  return chicken.next == chicken;
 }
 
 export function chickenParent<A, B>(chicken: Chicken<A, B>): A {

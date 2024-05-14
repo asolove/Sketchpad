@@ -1,5 +1,6 @@
 import { clamp, distance, Position } from "./lib";
 import { Drawable, Point, Universe } from "./document";
+import { isEmptyChicken } from "./ring";
 
 export interface Drawonable {
   drawPoint(point: Position, item: Drawable): void;
@@ -39,6 +40,16 @@ export class DisplayFile implements Drawonable {
     };
   }
 
+  // Translates display coordinates back into the Universe document coordinate system
+  inverseDisplayTransform(): DisplayTransform {
+    return ([x, y]: Position): Position => {
+      return [
+        (x - this.logicalWidth / 2) / this.zoom + this.cx,
+        -((y - this.logicalHeight / 2) / this.zoom + this.cx),
+      ];
+    };
+  }
+
   clear() {
     this.pixels = [];
     this.nearMouse = undefined;
@@ -57,7 +68,11 @@ export class DisplayFile implements Drawonable {
     if (x < 0 || x > this.logicalWidth) return;
     if (y < 0 || y > this.logicalHeight) return;
 
-    if (distance([x, y], this.mousePosition) < 8 && item instanceof Point) {
+    if (
+      distance([x, y], this.mousePosition) < 8 &&
+      item instanceof Point &&
+      isEmptyChicken(item.moving)
+    ) {
       this.nearMouse = item;
     }
 
@@ -96,14 +111,48 @@ export abstract class Mode {
     this.universe = universe;
     this.displayFile = displayFile;
   }
-  cursorMoved(x: number, y: number) {}
-  buttonDown() {}
-  buttonUp() {}
+  cursorMoved(dx: number, dy: number) {}
+  buttonDown(position: Position) {}
+  buttonUp(position: Position) {}
+
+  cleanup() {}
 }
+
+export class LineMode extends Mode {
+  movingPoint: Point | undefined;
+
+  buttonDown(position: Position) {
+    // FIXME: need to merge this.movingPoint with the nearMouse point to avoid extra line.
+    let toPoint =
+      this.displayFile.nearMouse &&
+      this.displayFile.nearMouse !== this.movingPoint
+        ? this.displayFile.nearMouse
+        : this.universe.currentPicture.addPoint(position);
+    let fromPoint =
+      this.movingPoint || this.universe.currentPicture.addPoint(position);
+    this.universe.currentPicture.addLine(fromPoint, toPoint);
+    this.universe.clearMovings();
+    if (toPoint !== this.displayFile.nearMouse) {
+      this.universe.addMovings([toPoint]);
+      this.movingPoint = toPoint;
+    } else {
+      this.movingPoint = undefined;
+    }
+  }
+
+  cursorMoved(dx: number, dy: number) {
+    this.universe.moveMovings([dx, dy]);
+  }
+
+  cleanup() {
+    this.universe.clearMovings();
+  }
+}
+
 export class MoveMode extends Mode {
   state: "dragging" | "panning" | "waiting" = "waiting";
 
-  buttonDown() {
+  buttonDown(_position: Position) {
     if (this.state != "waiting") {
       console.error(`Received buttonDown in unexpected state: ${this.state}`);
       return;
@@ -112,7 +161,7 @@ export class MoveMode extends Mode {
     if (this.displayFile.nearMouse) {
       this.state = "dragging";
       this.universe.addMovings([this.displayFile.nearMouse]);
-      this.universe.runConstraints = false;
+      // this.universe.runConstraints = false;
     } else {
       this.state = "panning";
     }
@@ -136,6 +185,11 @@ export class MoveMode extends Mode {
     this.universe.clearMovings();
     this.universe.runConstraints = true;
     this.state = "waiting";
+  }
+
+  cleanup() {
+    this.universe.clearMovings();
+    this.universe.runConstraints = true;
   }
 }
 
@@ -171,8 +225,13 @@ export class Display {
       this.#displayFile.zoom = zoom;
     });
 
+    // FIXME: clean up using multiple coordinate frames for mouse events,
+
     let prevMX = 0;
     let prevMY = 0;
+    let docPosition = (canvasPosition: Position): Position =>
+      this.#displayFile.inverseDisplayTransform()(canvasPosition);
+
     this.#canvas.addEventListener("mousemove", (e) => {
       // Translate from DOM coordinates to DisplayFile coordinates.
       let mx = e.offsetX / xScale;
@@ -190,11 +249,33 @@ export class Display {
     });
 
     this.#canvas.addEventListener("mousedown", (e) => {
-      this.#mode.buttonDown();
+      this.#mode.buttonDown(
+        this.#displayFile.inverseDisplayTransform()([
+          e.offsetX / xScale,
+          e.offsetY / yScale,
+        ])
+      );
     });
 
     this.#canvas.addEventListener("mouseup", (e) => {
-      this.#mode.buttonUp();
+      this.#mode.buttonUp(
+        this.#displayFile.inverseDisplayTransform()([
+          e.offsetX / xScale,
+          e.offsetY / yScale,
+        ])
+      );
+    });
+
+    // FIXME: listening at document level is a problem.
+    this.#canvas.ownerDocument.addEventListener("keyup", (e: KeyboardEvent) => {
+      // FIXME: cleanup state? prevent reset?
+      let key = e.key;
+      let modeClass =
+        key === "l" ? LineMode : key === "m" ? MoveMode : undefined;
+      if (modeClass && !(this.#mode instanceof modeClass)) {
+        this.#mode.cleanup();
+        this.#mode = new modeClass(this.#universe, this.#displayFile);
+      }
     });
   }
 

@@ -17,8 +17,11 @@ import {
   chickenParent,
   clearHen,
   collectChickens,
+  createEmptyChicken,
   createHen,
+  emptyChicken,
   isChicken,
+  isEmptyChicken,
   removeChicken,
 } from "./ring";
 
@@ -39,6 +42,9 @@ interface Boundable {
 
 interface Movable {
   move(dx: number, dy: number, moved: Set<Movable>);
+  isMoving(): boolean;
+  startMoving(movings: Hen<Universe, Movable>): void;
+  endMoving(): void;
 }
 
 export class Universe implements Drawable {
@@ -79,7 +85,7 @@ export class Universe implements Drawable {
   }
 
   addMovings(items: Array<Movable>) {
-    items.forEach((item) => addChicken(this.movings, item));
+    items.forEach((item) => item.startMoving(this.movings));
   }
 
   clearMovings() {
@@ -317,7 +323,7 @@ class Instance extends Variable implements Drawable {
   }
 }
 
-class Circle implements Drawable {
+class Circle implements Drawable, Movable {
   center: Chicken<Point, Line | Circle>;
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;
@@ -336,6 +342,19 @@ class Circle implements Drawable {
     this.start = addChicken(start, this);
     this.end = addChicken(end, this);
     this.picture = addChicken(picture, this);
+
+    this.attacher = createEmptyChicken(this);
+    this.moving = createEmptyChicken(this);
+  }
+
+  isMoving(): boolean {
+    return !isEmptyChicken(this.moving);
+  }
+  startMoving(movings: Hen<Universe, Movable>): void {
+    this.moving = addChicken(movings, this);
+  }
+  endMoving(): void {
+    removeChicken(this.moving);
   }
 
   get centerPosition(): Position {
@@ -373,6 +392,8 @@ class Circle implements Drawable {
       y = y + (1 / r) * (x - cx);
     }
   }
+
+  move(dx: number, dy: number, moved: Set<Movable>) {}
 }
 
 class Line implements Drawable, Boundable, Movable {
@@ -391,6 +412,19 @@ class Line implements Drawable, Boundable, Movable {
     this.start = addChicken(start, this);
     this.end = addChicken(end, this);
     this.picture = addChicken(picture, this);
+
+    this.attacher = createEmptyChicken(this);
+    this.moving = createEmptyChicken(this);
+  }
+
+  isMoving(): boolean {
+    return !isEmptyChicken(this.moving);
+  }
+  startMoving(movings: Hen<Universe, Movable>): void {
+    this.moving = addChicken(movings, this);
+  }
+  endMoving(): void {
+    removeChicken(this.moving);
   }
 
   display(d: Drawonable, dt: DisplayTransform) {
@@ -442,6 +476,19 @@ export class Point extends Variable implements Drawable, Boundable, Movable {
     this.picture = addChicken(picture, this);
     this.instancePointConstraints = createHen(this);
     this.linesAndCircles = createHen(this);
+
+    this.moving = createEmptyChicken(this);
+    this.attacher = createEmptyChicken(this);
+  }
+
+  isMoving(): boolean {
+    return !isEmptyChicken(this.moving);
+  }
+  startMoving(movings: Hen<Universe, Movable>): void {
+    this.moving = addChicken(movings, this);
+  }
+  endMoving(): void {
+    removeChicken(this.moving);
   }
 
   // Constraints

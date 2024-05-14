@@ -1,5 +1,11 @@
 import { expect, test, describe } from "bun:test";
-import { addChicken, createHen, removeChicken } from "./ring";
+import {
+  addChicken,
+  createEmptyChicken,
+  createHen,
+  isEmptyChicken,
+  removeChicken,
+} from "./ring";
 
 describe("Ring", () => {
   test("createHen and addChicken", () => {
@@ -66,5 +72,10 @@ describe("Ring", () => {
     expect(() => chick.next).toThrow();
     expect(() => chick.prev).toThrow();
     expect(() => chick.self).toThrow();
+  });
+
+  test("empty chicken", () => {
+    let empty = createEmptyChicken(2);
+    expect(isEmptyChicken(empty)).toBeTrue();
   });
 });
