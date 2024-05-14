@@ -5,18 +5,21 @@
 ### Straightforward tasks
 
 - [ ] Re-read thesis section on displaying digits: how are they stored/calculated?
-- [ ] Add pan controls
 
 ### Thoughtful doing tasks
 
 - [ ] Serialization or DSL format for compactly describing complex images (naming?)
 - [ ] Add instance attacher constraints
 - [ ] Calculate object pointed to at each display point
-  - Near intersection of lines, it points at both and will create a new point on both
+  - [x] Point: handled
+  - [ ] Near intersection of lines, it points at both and will create a new point on both
 - [ ] Design control states/modes
-  - [ ] Build the pen tool for adding points/lines and the circle tool for arcs
+
   - [ ] Tool for adding instances (how do we identify pictures)
-  - [ ] Build the move tool (moving items don't get added to the objects pointed to list)
+
+- [ ] UI bugs
+  - Circles resize themselves to 0 when endpoint isn't perfectly on the radius.
+  - Need a way to "end" a line and just kill the currently-moving point/line.
 
 ### Hammock tasks
 

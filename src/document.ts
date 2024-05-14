@@ -328,7 +328,7 @@ class Instance extends Variable implements Drawable {
   }
 }
 
-class Circle implements Drawable, Movable {
+export class Circle implements Drawable, Movable {
   center: Chicken<Point, Line | Circle>;
   start: Chicken<Point, Line | Circle>;
   end: Chicken<Point, Line | Circle>;

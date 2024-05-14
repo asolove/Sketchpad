@@ -1,6 +1,6 @@
 import { clamp, distance, Position } from "./lib";
-import { Drawable, Point, Universe } from "./document";
-import { isEmptyChicken } from "./ring";
+import { Drawable, Point, Universe, Circle } from "./document";
+import { chickenParent, isEmptyChicken } from "./ring";
 
 export interface Drawonable {
   drawPoint(point: Position, item: Drawable): void;
@@ -150,6 +150,36 @@ export class LineMode extends Mode {
   }
 }
 
+export class CircleMode extends Mode {
+  circle: Circle | undefined;
+  next: "start" | "end" | undefined;
+
+  buttonUp(position: Position) {
+    if (!this.circle) {
+      let center = this.universe.currentPicture.addPoint(position);
+      let start = this.universe.currentPicture.addPoint(position);
+      let end = this.universe.currentPicture.addPoint(position);
+      this.circle = this.universe.currentPicture.addCircle(center, start, end);
+      this.universe.addMovings([start, end]);
+      this.next = "start";
+      this.universe.runConstraints = false;
+    } else if (this.next === "start") {
+      this.universe.clearMovings();
+      this.universe.addMovings([chickenParent(this.circle.end)]);
+      this.next = "end";
+    } else {
+      this.universe.clearMovings();
+      this.circle = undefined;
+
+      this.universe.runConstraints = true;
+    }
+  }
+
+  cursorMoved(dx: number, dy: number) {
+    this.universe.moveMovings([dx, dy]);
+  }
+}
+
 export class MoveMode extends Mode {
   state: "dragging" | "panning" | "waiting" = "waiting";
 
@@ -162,7 +192,7 @@ export class MoveMode extends Mode {
     if (this.displayFile.nearMouse) {
       this.state = "dragging";
       this.universe.addMovings([this.displayFile.nearMouse]);
-      // this.universe.runConstraints = false;
+      this.universe.runConstraints = false;
     } else {
       this.state = "panning";
     }
@@ -273,7 +303,13 @@ export class Display {
       // FIXME: cleanup state? prevent reset?
       let key = e.key;
       let modeClass =
-        key === "l" ? LineMode : key === "m" ? MoveMode : undefined;
+        key === "l"
+          ? LineMode
+          : key === "m"
+          ? MoveMode
+          : key === "c"
+          ? CircleMode
+          : undefined;
       if (modeClass && !(this.#mode instanceof modeClass)) {
         this.#mode.cleanup();
         this.#mode = new modeClass(this.#universe, this.#displayFile);
