@@ -156,7 +156,9 @@ export class CircleMode extends Mode {
 
   buttonUp(position: Position) {
     if (!this.circle) {
-      let center = this.universe.currentPicture.addPoint(position);
+      let center =
+        this.displayFile.nearMouse ||
+        this.universe.currentPicture.addPoint(position);
       let start = this.universe.currentPicture.addPoint(position);
       let end = this.universe.currentPicture.addPoint(position);
       this.circle = this.universe.currentPicture.addCircle(center, start, end);
@@ -164,10 +166,14 @@ export class CircleMode extends Mode {
       this.next = "start";
       this.universe.runConstraints = false;
     } else if (this.next === "start") {
+      if (this.displayFile.nearMouse)
+        this.displayFile.nearMouse.merge(chickenParent(this.circle.start));
       this.universe.clearMovings();
       this.universe.addMovings([chickenParent(this.circle.end)]);
       this.next = "end";
     } else {
+      if (this.displayFile.nearMouse)
+        this.displayFile.nearMouse.merge(chickenParent(this.circle.end));
       this.universe.clearMovings();
       this.circle = undefined;
 
