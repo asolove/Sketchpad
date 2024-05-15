@@ -22,7 +22,7 @@ export class DisplayFile implements Drawonable {
   mousePosition: Position;
   // TODO: generalize to multiple and other types
   pointNearestCursor: Point | undefined;
-  shapesNearCursor: Array<Circle | Line>;
+  shapesNearCursor: Set<Circle | Line>;
 
   constructor() {
     this.cx = 0;
@@ -32,7 +32,7 @@ export class DisplayFile implements Drawonable {
     this.mousePosition = [0, 0];
 
     this.pointNearestCursor = undefined;
-    this.shapesNearCursor = [];
+    this.shapesNearCursor = new Set();
   }
 
   displayTransform(): DisplayTransform {
@@ -57,7 +57,7 @@ export class DisplayFile implements Drawonable {
   clear() {
     this.pixels = [];
     this.pointNearestCursor = undefined;
-    this.shapesNearCursor = [];
+    this.shapesNearCursor.clear();
   }
 
   twinkle() {
@@ -94,7 +94,7 @@ export class DisplayFile implements Drawonable {
 
       let d = distance([x, y], this.mousePosition);
       if (d > 4) return;
-      this.shapesNearCursor.push(item);
+      this.shapesNearCursor.add(item);
     }
   }
 
