@@ -225,6 +225,7 @@ export class ArcMode extends Mode {
   cleanup() {
     // FIXME: remove partially-done arcs
     this.universe.clearMovings();
+    this.universe.runConstraints = true;
   }
 }
 
@@ -270,6 +271,39 @@ export class MoveMode extends Mode {
   cleanup() {
     this.universe.clearMovings();
     this.universe.runConstraints = true;
+  }
+}
+
+export class ConstraintMode extends Mode {}
+
+type PerpendicularConstraintModeState =
+  | { state: "start" }
+  | { state: "first"; previousLine: Line };
+export class PerpendicularConstraintMode extends Mode {
+  state: PerpendicularConstraintModeState = { state: "start" };
+
+  buttonDown(_position: Position) {
+    function isLine(shape: unknown): shape is Line {
+      return shape instanceof Line;
+    }
+    let currentLine = [...this.displayFile.shapesNearCursor].find(isLine);
+
+    if (this.state.state === "start") {
+      if (currentLine)
+        this.state = { state: "first", previousLine: currentLine };
+    } else {
+      if (currentLine) {
+        let firstLine = this.state.previousLine;
+        console.log("Adding perpendicular constraint");
+        this.universe.currentPicture.addPerpendicularConstraint(
+          firstLine.startPoint,
+          firstLine.endPoint,
+          currentLine.startPoint,
+          currentLine.endPoint
+        );
+        this.state.previousLine = currentLine;
+      }
+    }
   }
 }
 
@@ -355,8 +389,10 @@ export class Display {
           ? LineMode
           : key === "m"
           ? MoveMode
-          : key === "c"
+          : key === "a"
           ? ArcMode
+          : key === "c"
+          ? PerpendicularConstraintMode
           : undefined;
       if (modeClass && !(this.#mode instanceof modeClass)) {
         this.#mode.cleanup();
