@@ -422,13 +422,15 @@ export class Display {
 
     ctx.fillStyle = "rgb(210 240 255 / 50%)";
     const pixels = this.#displayFile.pixels;
-    if (pixels.length === 0) return;
-    let i = this.#pixelIndex;
-    for (let j = 0; j < this.#pixelsPerDraw; j++) {
-      i = (i + 1) % pixels.length;
-      ctx.beginPath();
-      ctx.arc(pixels[i][0], pixels[i][1], 1, 0, 2 * Math.PI);
-      ctx.fill();
+    if (pixels.length > 0) {
+      let i = this.#pixelIndex;
+      for (let j = 0; j < this.#pixelsPerDraw; j++) {
+        i = (i + 1) % pixels.length;
+        ctx.beginPath();
+        ctx.arc(pixels[i][0], pixels[i][1], 1, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      this.#pixelIndex = i;
     }
 
     // Display cursor
@@ -447,6 +449,5 @@ export class Display {
       CURSOR_STROKE,
       CURSOR_SIZE
     );
-    this.#pixelIndex = i;
   }
 }
