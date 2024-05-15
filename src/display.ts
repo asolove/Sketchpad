@@ -147,6 +147,7 @@ export class LineMode extends Mode {
       this.movingPoint = undefined;
     } else {
       let toPoint = this.universe.currentPicture.addPoint(position);
+      // FIXME: refactor a helper to get the current point
       let fromPoint =
         this.movingPoint ||
         this.displayFile.pointNearestCursor ||
@@ -178,11 +179,22 @@ export class CircleMode extends Mode {
   circle: Circle | undefined;
   next: "start" | "end" | undefined;
 
+  makeCurrentPoint(position: Position): Point {
+    let nearPoint = this.displayFile.pointNearestCursor;
+    if (nearPoint) return nearPoint;
+
+    console.log("CircleMode making new point");
+    let newPoint = this.universe.currentPicture.addPoint(position);
+    this.displayFile.shapesNearCursor.forEach((shape) => {
+      console.log("Constraining to lie on", shape);
+      shape.constrainPoint(newPoint);
+    });
+    return newPoint;
+  }
+
   buttonUp(position: Position) {
     if (!this.circle) {
-      let center =
-        this.displayFile.pointNearestCursor ||
-        this.universe.currentPicture.addPoint(position);
+      let center = this.makeCurrentPoint(position);
       let start = this.universe.currentPicture.addPoint(position);
       let end = this.universe.currentPicture.addPoint(position);
       this.circle = this.universe.currentPicture.addCircle(center, start, end);
@@ -190,18 +202,15 @@ export class CircleMode extends Mode {
       this.next = "start";
       this.universe.runConstraints = false;
     } else if (this.next === "start") {
-      if (this.displayFile.pointNearestCursor)
-        this.displayFile.pointNearestCursor.merge(
-          chickenParent(this.circle.start)
-        );
+      let currentPoint = this.makeCurrentPoint(position);
+      currentPoint.merge(chickenParent(this.circle.start));
+
       this.universe.clearMovings();
       this.universe.addMovings([chickenParent(this.circle.end)]);
       this.next = "end";
     } else {
-      if (this.displayFile.pointNearestCursor)
-        this.displayFile.pointNearestCursor.merge(
-          chickenParent(this.circle.end)
-        );
+      let currentPoint = this.makeCurrentPoint(position);
+      currentPoint.merge(chickenParent(this.circle.end));
       this.universe.clearMovings();
       this.circle = undefined;
 
