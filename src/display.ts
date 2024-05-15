@@ -154,21 +154,7 @@ export class LineMode extends Mode {
       this.universe.currentPicture.addLine(fromPoint, toPoint);
       if (!this.displayFile.pointNearestCursor) {
         this.displayFile.shapesNearCursor.forEach((shape) => {
-          // FIXME: move to polymorphic method on Shape; or part of merge?
-          if (shape instanceof Circle) {
-            this.universe.currentPicture.addPointOnArcConstraint(
-              fromPoint,
-              chickenParent(shape.center),
-              chickenParent(shape.start),
-              chickenParent(shape.end)
-            );
-          } else if (shape instanceof Line) {
-            this.universe.currentPicture.addPointOnLineConstraint(
-              fromPoint,
-              chickenParent(shape.start),
-              chickenParent(shape.end)
-            );
-          }
+          shape.constrainPoint(fromPoint);
         });
       }
 

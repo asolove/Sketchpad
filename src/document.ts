@@ -418,6 +418,15 @@ export class Circle implements Drawable, Movable, Removable {
   }
 
   move(dx: number, dy: number, moved: Set<Movable>) {}
+
+  constrainPoint(point: Point) {
+    chickenParent(this.picture).addPointOnArcConstraint(
+      point,
+      chickenParent(this.center),
+      chickenParent(this.start),
+      chickenParent(this.end)
+    );
+  }
 }
 
 export class Line implements Drawable, Boundable, Movable, Removable {
@@ -483,6 +492,14 @@ export class Line implements Drawable, Boundable, Movable, Removable {
   get endPosition(): Position {
     let p = this.endPoint;
     return [p.x, p.y];
+  }
+
+  constrainPoint(point: Point) {
+    chickenParent(this.picture).addPointOnLineConstraint(
+      point,
+      this.startPoint,
+      this.endPoint
+    );
   }
 }
 export class Point
