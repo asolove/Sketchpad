@@ -561,6 +561,7 @@ export class Point
 
   // Constraints
   satisfyConstraints() {
+    let minDifference = 0.5;
     let e0 = this.error();
     this.x += 1;
     let exp = this.error();
@@ -568,10 +569,10 @@ export class Point
     let exn = this.error();
     this.x += 1;
 
-    if (exp < exn && exp < e0) {
+    if (exp < exn && e0 - exp > minDifference) {
       this.x += 1;
       e0 = exp;
-    } else if (exn < e0) {
+    } else if (e0 - exn > minDifference) {
       this.x -= 1;
       e0 = exn;
     }
@@ -582,9 +583,9 @@ export class Point
     let eyn = this.error();
     this.y += 1;
 
-    if (eyp < eyn && eyp < e0) {
+    if (eyp < eyn && e0 - eyp > minDifference) {
       this.y += 1;
-    } else if (eyn < e0) {
+    } else if (e0 - eyn > minDifference) {
       this.y -= 1;
     }
   }
