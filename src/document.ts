@@ -139,7 +139,7 @@ export class Universe implements Drawable {
   }
 }
 
-type Attachable = Point | Line | Circle;
+type Attachable = Point | Line | Arc;
 
 export class Picture implements Drawable {
   parts: Hen<Picture, Drawable>;
@@ -214,18 +214,18 @@ export class Picture implements Drawable {
   }
 
   addLine(start: Point, end: Point): Line {
-    return new Line(start.linesAndCircles, end.linesAndCircles, this.parts);
+    return new Line(start.linesAndArcs, end.linesAndArcs, this.parts);
   }
 
-  addCircle(center: Point, start: Point, end: Point): Circle {
-    let circle = new Circle(
-      center.linesAndCircles,
-      start.linesAndCircles,
-      end.linesAndCircles,
+  addArc(center: Point, start: Point, end: Point): Arc {
+    let arc = new Arc(
+      center.linesAndArcs,
+      start.linesAndArcs,
+      end.linesAndArcs,
       this.parts
     );
     this.addPointOnArcConstraint(end, center, start, end);
-    return circle;
+    return arc;
   }
 
   // Adds an instance of `ofPicture` to the current picture.
@@ -338,19 +338,19 @@ class Instance extends Variable implements Drawable {
   }
 }
 
-export class Circle implements Drawable, Movable, Removable {
-  center: Chicken<Point, Line | Circle>;
-  start: Chicken<Point, Line | Circle>;
-  end: Chicken<Point, Line | Circle>;
+export class Arc implements Drawable, Movable, Removable {
+  center: Chicken<Point, Line | Arc>;
+  start: Chicken<Point, Line | Arc>;
+  end: Chicken<Point, Line | Arc>;
 
   attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
   constructor(
-    center: Hen<Point, Line | Circle>,
-    start: Hen<Point, Line | Circle>,
-    end: Hen<Point, Line | Circle>,
+    center: Hen<Point, Line | Arc>,
+    start: Hen<Point, Line | Arc>,
+    end: Hen<Point, Line | Arc>,
     picture: Hen<Picture, Drawable>
   ) {
     this.center = addChicken(center, this);
@@ -430,16 +430,16 @@ export class Circle implements Drawable, Movable, Removable {
 }
 
 export class Line implements Drawable, Boundable, Movable, Removable {
-  start: Chicken<Point, Line | Circle>;
-  end: Chicken<Point, Line | Circle>;
+  start: Chicken<Point, Line | Arc>;
+  end: Chicken<Point, Line | Arc>;
 
   attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
   constructor(
-    start: Hen<Point, Line | Circle>,
-    end: Hen<Point, Line | Circle>,
+    start: Hen<Point, Line | Arc>,
+    end: Hen<Point, Line | Arc>,
     picture: Hen<Picture, Drawable>
   ) {
     this.start = addChicken(start, this);
@@ -512,7 +512,7 @@ export class Point
   attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
 
-  linesAndCircles: Hen<Point, Line | Circle>;
+  linesAndArcs: Hen<Point, Line | Arc>;
 
   instancePointConstraints: Hen<Point, Constraint>;
   moving: Chicken<Universe, Movable>;
@@ -527,7 +527,7 @@ export class Point
     this.y = y;
     this.picture = addChicken(picture, this);
     this.instancePointConstraints = createHen(this);
-    this.linesAndCircles = createHen(this);
+    this.linesAndArcs = createHen(this);
 
     this.moving = createEmptyChicken(this);
     this.attacher = createEmptyChicken(this);
@@ -536,7 +536,7 @@ export class Point
   remove() {
     super.remove();
     removeChicken(this.picture);
-    collectChickens(this.linesAndCircles).forEach((s) => s.remove());
+    collectChickens(this.linesAndArcs).forEach((s) => s.remove());
   }
 
   merge(other: Point): Point {
@@ -545,7 +545,7 @@ export class Point
     this.y = other.y;
 
     mergeHens(this.instancePointConstraints, other.instancePointConstraints);
-    mergeHens(this.linesAndCircles, other.linesAndCircles);
+    mergeHens(this.linesAndArcs, other.linesAndArcs);
 
     // TODO: generalize merge strategy for chickens
     if (isEmptyChicken(this.moving)) {

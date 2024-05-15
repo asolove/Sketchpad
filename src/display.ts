@@ -1,5 +1,5 @@
 import { clamp, distance, type Position } from "./lib";
-import { type Drawable, Point, Universe, Circle, Line } from "./document";
+import { type Drawable, Point, Universe, Arc, Line } from "./document";
 import { chickenParent, isEmptyChicken } from "./ring";
 
 export interface Drawonable {
@@ -22,7 +22,7 @@ export class DisplayFile implements Drawonable {
   mousePosition: Position;
   // TODO: generalize to multiple and other types
   pointNearestCursor: Point | undefined;
-  shapesNearCursor: Set<Circle | Line>;
+  shapesNearCursor: Set<Arc | Line>;
 
   constructor() {
     this.cx = 0;
@@ -89,7 +89,7 @@ export class DisplayFile implements Drawonable {
       if (d > dCurrent) return;
 
       this.pointNearestCursor = item;
-    } else if (item instanceof Circle || item instanceof Line) {
+    } else if (item instanceof Arc || item instanceof Line) {
       if (!isEmptyChicken(item.moving)) return;
 
       let d = distance([x, y], this.mousePosition);
@@ -175,15 +175,15 @@ export class LineMode extends Mode {
   }
 }
 
-export class CircleMode extends Mode {
-  circle: Circle | undefined;
+export class ArcMode extends Mode {
+  arc: Arc | undefined;
   next: "start" | "end" | undefined;
 
   makeCurrentPoint(position: Position): Point {
     let nearPoint = this.displayFile.pointNearestCursor;
     if (nearPoint) return nearPoint;
 
-    console.log("CircleMode making new point");
+    console.log("ArcMode making new point");
     let newPoint = this.universe.currentPicture.addPoint(position);
     this.displayFile.shapesNearCursor.forEach((shape) => {
       console.log("Constraining to lie on", shape);
@@ -193,26 +193,26 @@ export class CircleMode extends Mode {
   }
 
   buttonUp(position: Position) {
-    if (!this.circle) {
+    if (!this.arc) {
       let center = this.makeCurrentPoint(position);
       let start = this.universe.currentPicture.addPoint(position);
       let end = this.universe.currentPicture.addPoint(position);
-      this.circle = this.universe.currentPicture.addCircle(center, start, end);
+      this.arc = this.universe.currentPicture.addArc(center, start, end);
       this.universe.addMovings([start, end]);
       this.next = "start";
       this.universe.runConstraints = false;
     } else if (this.next === "start") {
       let currentPoint = this.makeCurrentPoint(position);
-      currentPoint.merge(chickenParent(this.circle.start));
+      currentPoint.merge(chickenParent(this.arc.start));
 
       this.universe.clearMovings();
-      this.universe.addMovings([chickenParent(this.circle.end)]);
+      this.universe.addMovings([chickenParent(this.arc.end)]);
       this.next = "end";
     } else {
       let currentPoint = this.makeCurrentPoint(position);
-      currentPoint.merge(chickenParent(this.circle.end));
+      currentPoint.merge(chickenParent(this.arc.end));
       this.universe.clearMovings();
-      this.circle = undefined;
+      this.arc = undefined;
 
       this.universe.runConstraints = true;
     }
@@ -223,7 +223,7 @@ export class CircleMode extends Mode {
   }
 
   cleanup() {
-    // FIXME: remove partially-done circles
+    // FIXME: remove partially-done arcs
     this.universe.clearMovings();
   }
 }
@@ -356,7 +356,7 @@ export class Display {
           : key === "m"
           ? MoveMode
           : key === "c"
-          ? CircleMode
+          ? ArcMode
           : undefined;
       if (modeClass && !(this.#mode instanceof modeClass)) {
         this.#mode.cleanup();

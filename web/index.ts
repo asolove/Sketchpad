@@ -64,14 +64,14 @@ rivetPic.addLine(topLeft, bottomLeft);
 rivetPic.addLine(bottomLeft, bottomRight);
 rivetPic.addLine(bottomRight, topRight);
 rivetPic.addLine(cStart, cEnd);
-rivetPic.addCircle(center, cStart, cEnd);
+rivetPic.addArc(center, cStart, cEnd);
 
 // Regular hexagon
 let hexagonPic = u.addPicture();
 
 let c = hexagonPic.addPoint([0, 0]);
 let start = hexagonPic.addPoint([200, 0]);
-hexagonPic.addCircle(c, start, start);
+hexagonPic.addArc(c, start, start);
 
 let h1 = hexagonPic.addPoint([200, 0]);
 let h2 = hexagonPic.addPoint([80, -160]);

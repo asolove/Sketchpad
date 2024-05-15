@@ -11,14 +11,12 @@
 - [ ] Serialization or DSL format for compactly describing complex images (naming?)
 - [ ] Add instance attacher constraints
 - [ ] Calculate object pointed to at each display point
-  - [x] Point: handled
+
   - [ ] Near intersection of lines, it points at both and will create a new point on both
-- [ ] Design control states/modes
 
   - [ ] Tool for adding instances (how do we identify pictures)
 
 - [ ] UI bugs
-  - Circles resize themselves to 0 when endpoint isn't perfectly on the radius.
   - Need a way to "end" a line and just kill the currently-moving point/line.
 
 ### Hammock tasks
