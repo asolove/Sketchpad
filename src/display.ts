@@ -49,7 +49,7 @@ export class DisplayFile implements Drawonable {
     return ([x, y]: Position): Position => {
       return [
         (x - this.logicalWidth / 2) / this.zoom + this.cx,
-        -((y - this.logicalHeight / 2) / this.zoom + this.cx),
+        -(y - this.logicalHeight / 2) / this.zoom + this.cy,
       ];
     };
   }
