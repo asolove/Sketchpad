@@ -609,10 +609,6 @@ export class Point
 
   display(d: Drawonable, dt: DisplayTransform) {
     d.drawPoint(dt([this.x, this.y]), this);
-    d.drawPoint(dt([this.x + 1, this.y + 1]), this);
-    d.drawPoint(dt([this.x - 1, this.y + 1]), this);
-    d.drawPoint(dt([this.x + 1, this.y - 1]), this);
-    d.drawPoint(dt([this.x - 1, this.y - 1]), this);
   }
   move(dx: number, dy: number, moveds: Set<Movable>) {
     if (moveds.has(this)) return;
