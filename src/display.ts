@@ -175,6 +175,17 @@ export class LineMode extends Mode {
   }
 }
 
+export class PauseMode extends Mode {
+  constructor(universe: Universe, displayFile: DisplayFile) {
+    super(universe, displayFile);
+    this.universe.runConstraints = false;
+  }
+
+  cleanup() {
+    this.universe.runConstraints = true;
+  }
+}
+
 export class ArcMode extends Mode {
   arc: Arc | undefined;
   next: "start" | "end" | undefined;
@@ -393,6 +404,8 @@ export class Display {
           ? ArcMode
           : key === "c"
           ? PerpendicularConstraintMode
+          : key === "p"
+          ? PauseMode
           : undefined;
       if (modeClass && !(this.#mode instanceof modeClass)) {
         this.#mode.cleanup();
