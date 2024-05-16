@@ -187,6 +187,47 @@ export class PointOnLineConstraint extends Constraint {
   }
   chvar(): number {
     return 2;
+    ``;
+  }
+}
+
+export class EqualLengthConstraint extends Constraint {
+  middle: Chicken<Point, Constraint>;
+  p1: Chicken<Point, Constraint>;
+  p2: Chicken<Point, Constraint>;
+
+  constructor(
+    middle: Point,
+    p1: Point,
+    p2: Point,
+    picture: Hen<Picture, Constraint>
+  ) {
+    super(picture);
+    this.middle = addChicken(middle.constraints, this);
+    this.p1 = addChicken(p1.constraints, this);
+    this.p2 = addChicken(p2.constraints, this);
+  }
+
+  error(): number {
+    let d1 = distance(
+      chickenParent(this.middle).position,
+      chickenParent(this.p1).position
+    );
+    let d2 = distance(
+      chickenParent(this.middle).position,
+      chickenParent(this.p1).position
+    );
+    return Math.abs(d2 - d1);
+  }
+
+  name(): string {
+    return "E";
+  }
+  ncon(): number {
+    return 2;
+  }
+  chvar(): number {
+    return 3;
   }
 }
 
