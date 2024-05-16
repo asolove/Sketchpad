@@ -108,6 +108,20 @@ combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
   combinedPic.addLine(p1, p2);
 }
 
+let arcConstraintPic = u.addPicture();
+{
+  let p1 = arcConstraintPic.addPoint([100, 0]);
+  let p2 = arcConstraintPic.addPoint([-100, 0]);
+  let p3 = arcConstraintPic.addPoint([50, -50]);
+  let l1 = arcConstraintPic.addLine(p1, p2);
+  let l2 = arcConstraintPic.addLine(p1, p3);
+  let l3 = arcConstraintPic.addLine(p3, p2);
+
+  let arc = arcConstraintPic.addArc(p3, p1, p2);
+}
+
+// let freshPic = u.addPicture();
+
 let df = new DisplayFile();
 df.zoom = 0.75;
 

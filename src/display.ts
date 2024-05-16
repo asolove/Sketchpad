@@ -194,10 +194,8 @@ export class ArcMode extends Mode {
     let nearPoint = this.displayFile.pointNearestCursor;
     if (nearPoint) return nearPoint;
 
-    console.log("ArcMode making new point");
     let newPoint = this.universe.currentPicture.addPoint(position);
     this.displayFile.shapesNearCursor.forEach((shape) => {
-      console.log("Constraining to lie on", shape);
       shape.constrainPoint(newPoint);
     });
     return newPoint;
@@ -305,7 +303,6 @@ export class PerpendicularConstraintMode extends Mode {
     } else {
       if (currentLine) {
         let firstLine = this.state.previousLine;
-        console.log("Adding perpendicular constraint");
         this.universe.currentPicture.addPerpendicularConstraint(
           firstLine.startPoint,
           firstLine.endPoint,
