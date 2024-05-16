@@ -1,6 +1,6 @@
 import { clamp, distance, type Position } from "./lib";
 import { type Drawable, Point, Universe, Arc, Line } from "./document";
-import { chickenParent, isEmptyChicken } from "./ring";
+import { chickenParent, collectChickens, isEmptyChicken } from "./ring";
 
 export interface Drawonable {
   drawPoint(point: Position, item: Drawable): void;
@@ -179,6 +179,12 @@ export class PauseMode extends Mode {
   constructor(universe: Universe, displayFile: DisplayFile) {
     super(universe, displayFile);
     this.universe.runConstraints = false;
+
+    const { constraints, parts } = this.universe.currentPicture;
+    console.log({
+      constraints: collectChickens(constraints),
+      parts: collectChickens(parts),
+    });
   }
 
   cleanup() {

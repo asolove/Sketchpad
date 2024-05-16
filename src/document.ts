@@ -544,6 +544,7 @@ export class Point
     this.x = other.x;
     this.y = other.y;
 
+    mergeHens(this.constraints, other.constraints);
     mergeHens(this.instancePointConstraints, other.instancePointConstraints);
     mergeHens(this.linesAndArcs, other.linesAndArcs);
 

@@ -117,7 +117,7 @@ let arcConstraintPic = u.addPicture();
   let l2 = arcConstraintPic.addLine(p1, p3);
   let l3 = arcConstraintPic.addLine(p3, p2);
 
-  let arc = arcConstraintPic.addArc(p3, p1, p2);
+  // let arc = arcConstraintPic.addArc(p3, p1, p2);
 }
 
 // let freshPic = u.addPicture();
