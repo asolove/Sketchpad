@@ -248,7 +248,7 @@ export class Picture implements Drawable {
   }
 }
 
-abstract class Variable implements Removable {
+abstract class Variable implements Removable, Mergeable<Variable> {
   isVariable: Chicken<Picture, Variable>;
   constraints: Hen<this, Constraint>;
 
@@ -263,6 +263,12 @@ abstract class Variable implements Removable {
   }
 
   abstract satisfyConstraints(): void;
+
+  merge(other: Variable): Variable {
+    removeChicken(other.isVariable);
+    mergeHens(this.constraints, other.constraints);
+    return this;
+  }
 
   remove() {
     removeChicken(this.isVariable);
@@ -544,7 +550,6 @@ export class Point
     this.x = other.x;
     this.y = other.y;
 
-    mergeHens(this.constraints, other.constraints);
     mergeHens(this.instancePointConstraints, other.instancePointConstraints);
     mergeHens(this.linesAndArcs, other.linesAndArcs);
 
@@ -560,6 +565,8 @@ export class Point
     } else {
       removeChicken(other.attacher);
     }
+
+    super.merge(other);
 
     removeChicken(other.picture);
 
