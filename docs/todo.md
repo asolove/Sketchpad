@@ -2,27 +2,23 @@
 
 ## Sketchpad itself
 
-### Straightforward tasks
-
-- [ ] Re-read thesis section on displaying digits: how are they stored/calculated?
-
 ### Thoughtful doing tasks
 
-- [ ] Serialization or DSL format for compactly describing complex images (naming?)
 - [ ] Add instance attacher constraints
-- [ ] Calculate object pointed to at each display point
-
-  - [ ] Near intersection of lines, it points at both and will create a new point on both
-
-  - [ ] Tool for adding instances (how do we identify pictures)
+- [ ] Implement Mergeable for other types
+- [ ] Tool for adding instances and copies (how do we name and pick the pictures?)
+- [ ] Constraint tool works on other constraint types (how?)
+- [ ] Implement Drawable for Constraints (optionally)
 
 - [ ] UI bugs
   - Need a way to "end" a line and just kill the currently-moving point/line.
+  - Same for part-constructed circles.
 
 ### Hammock tasks
 
 - [ ] Re-read to understand the maze-solving technique for constraint performance
 - [ ] Re-read to understand how the bridge simulation worked with definition copying
+- [ ] Serialization or DSL format for compactly describing complex images (naming?)
 
 ## Essays
 
