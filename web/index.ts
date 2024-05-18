@@ -96,18 +96,7 @@ hexagonPic.addSameDistanceConstraint(h2, h3, h3, h4);
 hexagonPic.addSameDistanceConstraint(h3, h4, h5, h6);
 hexagonPic.addSameDistanceConstraint(h4, h5, h6, h1);
 
-// Full picture with lots of instances
-let combinedPic = u.addPicture();
-combinedPic.addInstance(rivetPic, -400, -400, 1, 0);
-combinedPic.addInstance(hexagonPic, 0, 0, 1, 0);
-combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
-
-{
-  let p1 = combinedPic.addPoint([-400, 600]);
-  let p2 = combinedPic.addPoint([-400, -600]);
-  combinedPic.addLine(p1, p2);
-}
-
+// Constraining arc to lie on circle
 let arcConstraintPic = u.addPicture();
 {
   let p1 = arcConstraintPic.addPoint([100, 0]);
@@ -117,8 +106,15 @@ let arcConstraintPic = u.addPicture();
   let l2 = arcConstraintPic.addLine(p1, p3);
   let l3 = arcConstraintPic.addLine(p3, p2);
 
-  // let arc = arcConstraintPic.addArc(p3, p1, p2);
+  let arc = arcConstraintPic.addArc(p3, p1, p2);
 }
+
+// Full picture with lots of instances
+let combinedPic = u.addPicture();
+combinedPic.addInstance(rivetPic, -400, -400, 1, 0);
+combinedPic.addInstance(hexagonPic, 0, 0, 1, 0);
+combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
+combinedPic.addInstance(arcConstraintPic, -500, 300, 1, 0);
 
 // let freshPic = u.addPicture();
 
