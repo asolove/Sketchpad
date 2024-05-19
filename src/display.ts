@@ -321,6 +321,16 @@ export class PerpendicularConstraintMode extends Mode {
   }
 }
 
+export class DeleteMode extends Mode {
+  buttonUp(_position: Position) {
+    if (this.displayFile.pointNearestCursor) {
+      this.displayFile.pointNearestCursor.remove();
+    } else {
+      this.displayFile.shapesNearCursor.values().next().value?.remove();
+    }
+  }
+}
+
 export class Display {
   #universe: Universe; // FIXME: remove this reference
   #displayFile: DisplayFile;
@@ -409,6 +419,8 @@ export class Display {
           ? PerpendicularConstraintMode
           : key === "p"
           ? PauseMode
+          : key === "d"
+          ? DeleteMode
           : undefined;
       if (modeClass && !(this.#mode instanceof modeClass)) {
         this.#mode.cleanup();
