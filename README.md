@@ -12,14 +12,12 @@ An in-progress re-implementation of Ivan Sutherland's Sketchpad.
 bun install
 ```
 
-- Run the build server during development:
+- During development, you might want to run types, tests, and the build:
 
 ```sh
-bun build web/index.ts --outdir web/static/js/ --watch
-```
-
-- To run tests:
-
-```sh
+bun type --watch
 bun test --watch
+bun bundle --watch
 ```
+
+- Then open web/static/index.html in your browser
