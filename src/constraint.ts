@@ -305,9 +305,9 @@ export class PointOnArcConstraint extends Constraint {
 
     let angleError = Math.PI * 2;
     for (let [start, end] of allowedRanges) {
-      let rangeStartError = pointAngle > start ? 0 : start - pointAngle;
-      let rangeEndError = pointAngle < end ? 0 : pointAngle - end;
-      let rangeError = Math.min(rangeStartError, rangeEndError);
+      let startRadianError = pointAngle > start ? 0 : start - pointAngle;
+      let endRadiabnError = pointAngle < end ? 0 : pointAngle - end;
+      let rangeError = radius * Math.min(startRadianError, endRadiabnError);
       angleError = Math.min(angleError, rangeError);
     }
     if (angleError >= Math.PI * 2) debugger;
