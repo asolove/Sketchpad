@@ -5,6 +5,7 @@ import { chickenParent, collectChickens, isEmptyChicken } from "./ring";
 export interface Drawonable {
   drawPoint(point: Position, item: Drawable): void;
   drawLine(start: Position, end: Position, item: Drawable): void;
+  drawText(text: string, position: Position): void;
 }
 
 export interface DisplayTransform {
@@ -116,6 +117,10 @@ export class DisplayFile implements Drawonable {
       x = xNext;
       y = yNext;
     }
+  }
+
+  drawText(text: string, position: Position): void {
+    // TODO: make this in terms of points so it twinkles?
   }
 }
 

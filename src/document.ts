@@ -214,16 +214,11 @@ export class Picture implements Drawable {
   }
 
   addLine(start: Point, end: Point): Line {
-    return new Line(start.linesAndArcs, end.linesAndArcs, this.parts);
+    return new Line(start.shapes, end.shapes, this.parts);
   }
 
   addArc(center: Point, start: Point, end: Point): Arc {
-    let arc = new Arc(
-      center.linesAndArcs,
-      start.linesAndArcs,
-      end.linesAndArcs,
-      this.parts
-    );
+    let arc = new Arc(center.shapes, start.shapes, end.shapes, this.parts);
     this.addPointOnArcConstraint(end, center, start, end);
     return arc;
   }
@@ -276,6 +271,61 @@ abstract class Variable implements Removable, Mergeable<Variable> {
   }
 }
 
+type DependsOnScalar = Digits;
+
+class Scalar extends Variable {
+  value: number;
+
+  dependents: Hen<Scalar, DependsOnScalar>;
+
+  inPicture: Chicken<Picture, Drawable>;
+
+  constructor(
+    variables: Hen<Picture, Variable>,
+    inPicture: Hen<Picture, Drawable>,
+    value: number
+  ) {
+    super(variables);
+    this.value = value;
+    this.dependents = createHen(this);
+    this.inPicture = addChicken(inPicture, this);
+  }
+
+  display(d: Drawonable, displayTransform: DisplayTransform): void {
+    // TODO: allow optional display of scalars: where?
+  }
+
+  satisfyConstraints(): void {
+    // FIXME: is Scalar ever in multi-way constraints?
+  }
+}
+
+class Digits implements Removable, Drawable {
+  center: Chicken<Point, Shape>;
+  // TODO: add size/rotation
+
+  scalar: Chicken<Scalar, DependsOnScalar>;
+
+  inPicture: Chicken<Picture, Drawable>;
+
+  constructor(
+    center: Hen<Point, Shape>,
+    scalar: Hen<Scalar, DependsOnScalar>,
+    inPicture: Hen<Picture, Drawable>
+  ) {
+    this.center = addChicken(center, this);
+    this.scalar = addChicken(scalar, this);
+    this.inPicture = addChicken(inPicture, this);
+  }
+
+  remove(): void {}
+
+  display(d: Drawonable, displayTransform: DisplayTransform): void {
+    let center = displayTransform(chickenParent(this.center).position);
+    d.drawText;
+  }
+}
+
 class Instance extends Variable implements Drawable {
   cx: number;
   cy: number;
@@ -301,11 +351,6 @@ class Instance extends Variable implements Drawable {
 
     this.inPicture = addChicken(inPicture, this);
     this.ofPicture = addChicken(ofPicture.instances, this);
-  }
-
-  error() {
-    let cs = collectChickens(this.constraints);
-    return cs.map((c) => c.error()).reduce(sum, 0);
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform): void {
@@ -334,6 +379,9 @@ class Instance extends Variable implements Drawable {
       drawLine(start: Position, end: Position, item: Drawable) {
         return d.drawLine(start, end, instance);
       },
+      drawText(text: string, position: Position) {
+        return d.drawText(text, position);
+      },
     };
 
     chickenParent(this.ofPicture).display(drawonableWithoutAttribution, dt);
@@ -345,18 +393,18 @@ class Instance extends Variable implements Drawable {
 }
 
 export class Arc implements Drawable, Movable, Removable {
-  center: Chicken<Point, Line | Arc>;
-  start: Chicken<Point, Line | Arc>;
-  end: Chicken<Point, Line | Arc>;
+  center: Chicken<Point, Shape>;
+  start: Chicken<Point, Shape>;
+  end: Chicken<Point, Shape>;
 
   attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
   constructor(
-    center: Hen<Point, Line | Arc>,
-    start: Hen<Point, Line | Arc>,
-    end: Hen<Point, Line | Arc>,
+    center: Hen<Point, Shape>,
+    start: Hen<Point, Shape>,
+    end: Hen<Point, Shape>,
     picture: Hen<Picture, Drawable>
   ) {
     this.center = addChicken(center, this);
@@ -436,16 +484,16 @@ export class Arc implements Drawable, Movable, Removable {
 }
 
 export class Line implements Drawable, Boundable, Movable, Removable {
-  start: Chicken<Point, Line | Arc>;
-  end: Chicken<Point, Line | Arc>;
+  start: Chicken<Point, Shape>;
+  end: Chicken<Point, Shape>;
 
   attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
   moving: Chicken<Universe, Movable>;
 
   constructor(
-    start: Hen<Point, Line | Arc>,
-    end: Hen<Point, Line | Arc>,
+    start: Hen<Point, Shape>,
+    end: Hen<Point, Shape>,
     picture: Hen<Picture, Drawable>
   ) {
     this.start = addChicken(start, this);
@@ -508,6 +556,9 @@ export class Line implements Drawable, Boundable, Movable, Removable {
     );
   }
 }
+
+type Shape = Line | Arc | Digits;
+
 export class Point
   extends Variable
   implements Drawable, Boundable, Movable, Mergeable<Point>
@@ -518,7 +569,7 @@ export class Point
   attacher: Chicken<Picture, Attachable>;
   picture: Chicken<Picture, unknown>;
 
-  linesAndArcs: Hen<Point, Line | Arc>;
+  shapes: Hen<Point, Shape>;
 
   instancePointConstraints: Hen<Point, Constraint>;
   moving: Chicken<Universe, Movable>;
@@ -533,7 +584,7 @@ export class Point
     this.y = y;
     this.picture = addChicken(picture, this);
     this.instancePointConstraints = createHen(this);
-    this.linesAndArcs = createHen(this);
+    this.shapes = createHen(this);
 
     this.moving = createEmptyChicken(this);
     this.attacher = createEmptyChicken(this);
@@ -542,7 +593,7 @@ export class Point
   remove() {
     super.remove();
     removeChicken(this.picture);
-    collectChickens(this.linesAndArcs).forEach((s) => s.remove());
+    collectChickens(this.shapes).forEach((s) => s.remove());
   }
 
   merge(other: Point): Point {
@@ -551,7 +602,7 @@ export class Point
     this.y = other.y;
 
     mergeHens(this.instancePointConstraints, other.instancePointConstraints);
-    mergeHens(this.linesAndArcs, other.linesAndArcs);
+    mergeHens(this.shapes, other.shapes);
 
     // TODO: generalize merge strategy for chickens
     if (isEmptyChicken(this.moving)) {
