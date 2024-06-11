@@ -40,6 +40,10 @@ interface Boundable {
   bounds(): Bounds;
 }
 
+export interface Copyable {
+  copy(picture: Picture, copies: Map<unknown, unknown>): this;
+}
+
 interface Movable {
   move(dx: number, dy: number, moved: Set<Movable>): void;
   isMoving(): boolean;
@@ -47,8 +51,8 @@ interface Movable {
   endMoving(): void;
 }
 
-interface Mergeable<A> {
-  merge(other: A): A;
+interface Mergeable {
+  merge(other: this): this;
 }
 
 export interface Removable {
@@ -142,7 +146,7 @@ export class Universe implements Drawable {
 type Attachable = Point | Line | Arc;
 
 export class Picture implements Drawable {
-  parts: Hen<Picture, Drawable>;
+  parts: Hen<Picture, Drawable & Copyable>;
   variables: Hen<Picture, Variable>;
   constraints: Hen<Picture, Constraint>;
   attachers: Hen<Picture, Attachable>;
@@ -241,9 +245,20 @@ export class Picture implements Drawable {
       rotation
     );
   }
+
+  addCopy(ofPicture: Picture, cx = 0, cy = 0, zoom = 1, rotation = 0) {
+    // Track which object are already copied
+    let copies: Map<object, object> = new Map();
+
+    collectChickens(ofPicture.parts).forEach((i) => i.copy(this, copies));
+    collectChickens(ofPicture.variables).forEach((i) => i.copy(this, copies));
+    collectChickens(ofPicture.constraints).forEach((i) => i.copy(this, copies));
+
+    console.log(copies.values());
+  }
 }
 
-abstract class Variable implements Removable, Mergeable<Variable> {
+abstract class Variable implements Removable, Mergeable, Copyable {
   isVariable: Chicken<Picture, Variable>;
   constraints: Hen<this, Constraint>;
 
@@ -259,7 +274,7 @@ abstract class Variable implements Removable, Mergeable<Variable> {
 
   abstract satisfyConstraints(): void;
 
-  merge(other: Variable): Variable {
+  merge(other: this): this {
     removeChicken(other.isVariable);
     mergeHens(this.constraints, other.constraints);
     return this;
@@ -269,6 +284,8 @@ abstract class Variable implements Removable, Mergeable<Variable> {
     removeChicken(this.isVariable);
     collectChickens(this.constraints).forEach((c) => c.remove());
   }
+
+  abstract copy(picture: Picture, copies: Map<unknown, unknown>): this;
 }
 
 type DependsOnScalar = Digits;
@@ -282,7 +299,7 @@ class Scalar extends Variable {
 
   constructor(
     variables: Hen<Picture, Variable>,
-    inPicture: Hen<Picture, Drawable>,
+    inPicture: Hen<Picture, Drawable & Copyable>,
     value: number
   ) {
     super(variables);
@@ -298,9 +315,14 @@ class Scalar extends Variable {
   satisfyConstraints(): void {
     // FIXME: is Scalar ever in multi-way constraints?
   }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    // FIXME
+    return this;
+  }
 }
 
-class Digits implements Removable, Drawable {
+class Digits implements Removable, Drawable, Copyable {
   center: Chicken<Point, Shape>;
   // TODO: add size/rotation
 
@@ -311,7 +333,7 @@ class Digits implements Removable, Drawable {
   constructor(
     center: Hen<Point, Shape>,
     scalar: Hen<Scalar, DependsOnScalar>,
-    inPicture: Hen<Picture, Drawable>
+    inPicture: Hen<Picture, Drawable & Copyable>
   ) {
     this.center = addChicken(center, this);
     this.scalar = addChicken(scalar, this);
@@ -320,13 +342,18 @@ class Digits implements Removable, Drawable {
 
   remove(): void {}
 
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    // FIXME
+    throw new Error("can't copy digits yet");
+  }
+
   display(d: Drawonable, displayTransform: DisplayTransform): void {
     let center = displayTransform(chickenParent(this.center).position);
     d.drawText;
   }
 }
 
-class Instance extends Variable implements Drawable {
+class Instance extends Variable implements Drawable, Copyable {
   cx: number;
   cy: number;
   zoom: number; // scale as multiple: 1 is original size
@@ -337,7 +364,7 @@ class Instance extends Variable implements Drawable {
 
   constructor(
     variables: Hen<Picture, Variable>,
-    inPicture: Hen<Picture, Drawable>,
+    inPicture: Hen<Picture, Drawable & Copyable>,
     ofPicture: Picture,
     [cx, cy]: Position = [0, 0],
     zoom: number = 0.5,
@@ -351,6 +378,21 @@ class Instance extends Variable implements Drawable {
 
     this.inPicture = addChicken(inPicture, this);
     this.ofPicture = addChicken(ofPicture.instances, this);
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let copy = new Instance(
+      picture.variables,
+      picture.parts,
+      chickenParent(this.ofPicture),
+      [this.cx, this.cy],
+      this.zoom,
+      this.rotation
+    );
+    copies.set(this, copy);
+    return copy as this;
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform): void {
@@ -392,7 +434,7 @@ class Instance extends Variable implements Drawable {
   }
 }
 
-export class Arc implements Drawable, Movable, Removable {
+export class Arc implements Drawable, Movable, Removable, Copyable {
   center: Chicken<Point, Shape>;
   start: Chicken<Point, Shape>;
   end: Chicken<Point, Shape>;
@@ -405,7 +447,7 @@ export class Arc implements Drawable, Movable, Removable {
     center: Hen<Point, Shape>,
     start: Hen<Point, Shape>,
     end: Hen<Point, Shape>,
-    picture: Hen<Picture, Drawable>
+    picture: Hen<Picture, Drawable & Copyable>
   ) {
     this.center = addChicken(center, this);
     this.start = addChicken(start, this);
@@ -414,6 +456,19 @@ export class Arc implements Drawable, Movable, Removable {
 
     this.attacher = createEmptyChicken(this);
     this.moving = createEmptyChicken(this);
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return this;
+
+    let center = chickenParent(this.center).copy(picture, copies);
+    let start = chickenParent(this.start).copy(picture, copies);
+    let end = chickenParent(this.end).copy(picture, copies);
+
+    let copy = new Arc(center.shapes, start.shapes, end.shapes, picture.parts);
+    copies.set(this, copy);
+
+    return copy as this;
   }
 
   remove() {
@@ -483,7 +538,7 @@ export class Arc implements Drawable, Movable, Removable {
   }
 }
 
-export class Line implements Drawable, Boundable, Movable, Removable {
+export class Line implements Drawable, Boundable, Movable, Removable, Copyable {
   start: Chicken<Point, Shape>;
   end: Chicken<Point, Shape>;
 
@@ -494,7 +549,7 @@ export class Line implements Drawable, Boundable, Movable, Removable {
   constructor(
     start: Hen<Point, Shape>,
     end: Hen<Point, Shape>,
-    picture: Hen<Picture, Drawable>
+    picture: Hen<Picture, Drawable & Copyable>
   ) {
     this.start = addChicken(start, this);
     this.end = addChicken(end, this);
@@ -502,6 +557,18 @@ export class Line implements Drawable, Boundable, Movable, Removable {
 
     this.attacher = createEmptyChicken(this);
     this.moving = createEmptyChicken(this);
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let startCopy = chickenParent(this.start).copy(picture, copies);
+    let endCopy = chickenParent(this.end).copy(picture, copies);
+
+    let copy = new Line(startCopy.shapes, endCopy.shapes, picture.parts);
+    copies.set(this, copy);
+
+    return copy as this;
   }
 
   remove() {
@@ -561,7 +628,7 @@ type Shape = Line | Arc | Digits;
 
 export class Point
   extends Variable
-  implements Drawable, Boundable, Movable, Mergeable<Point>
+  implements Drawable, Boundable, Movable, Mergeable, Copyable
 {
   x: number;
   y: number;
@@ -576,7 +643,7 @@ export class Point
 
   constructor(
     [x, y]: Position,
-    picture: Hen<Picture, Drawable>,
+    picture: Hen<Picture, Drawable & Copyable>,
     variables: Hen<Picture, Variable>
   ) {
     super(variables);
@@ -596,7 +663,18 @@ export class Point
     collectChickens(this.shapes).forEach((s) => s.remove());
   }
 
-  merge(other: Point): Point {
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+    let copy: Point = new Point(
+      this.position,
+      picture.parts,
+      picture.variables
+    );
+    copies.set(this, copy);
+    return copy as this;
+  }
+
+  merge(other: this): this {
     // Copy attributes
     this.x = other.x;
     this.y = other.y;

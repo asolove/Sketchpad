@@ -1,5 +1,5 @@
 import type { DisplayTransform, Drawonable } from "./display";
-import type { Picture, Point, Removable } from "./document";
+import type { Copyable, Picture, Point, Removable } from "./document";
 import { type Position, angle, distance } from "./lib";
 import {
   type Chicken,
@@ -11,7 +11,7 @@ import {
   removeChicken,
 } from "./ring";
 
-export abstract class Constraint implements Removable {
+export abstract class Constraint implements Removable, Copyable {
   picture: Chicken<Picture, Constraint>;
 
   constructor(picture: Hen<Picture, Constraint>) {
@@ -30,6 +30,8 @@ export abstract class Constraint implements Removable {
   remove() {
     removeChicken(this.picture);
   }
+
+  abstract copy(picture: Picture, copies: Map<unknown, unknown>): this;
 }
 
 export class SameXConstraint extends Constraint {
@@ -42,6 +44,17 @@ export class SameXConstraint extends Constraint {
     this.p1 = addChicken(p1.constraints, this);
     this.p2 = addChicken(p2.constraints, this);
     this.picture = createEmptyChicken(this);
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let p1 = chickenParent(this.p1).copy(picture, copies);
+    let p2 = chickenParent(this.p2).copy(picture, copies);
+
+    let copy = new SameXConstraint(p1, p2, picture.constraints);
+    copies.set(this, copy);
+    return copy as this;
   }
 
   remove() {
@@ -111,6 +124,17 @@ export class SameYConstraint extends Constraint {
   }
   chvar(): number {
     return 2;
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let p1 = chickenParent(this.p1).copy(picture, copies);
+    let p2 = chickenParent(this.p2).copy(picture, copies);
+
+    let copy = new SameYConstraint(p1, p2, picture.constraints);
+    copies.set(this, copy);
+    return copy as this;
   }
 }
 
@@ -187,7 +211,23 @@ export class PointOnLineConstraint extends Constraint {
   }
   chvar(): number {
     return 2;
-    ``;
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let point = chickenParent(this.point).copy(picture, copies);
+    let end1 = chickenParent(this.end1).copy(picture, copies);
+    let end2 = chickenParent(this.end2).copy(picture, copies);
+
+    let copy = new PointOnLineConstraint(
+      point,
+      end1,
+      end2,
+      picture.constraints
+    );
+    copies.set(this, copy);
+    return copy as this;
   }
 }
 
@@ -228,6 +268,18 @@ export class EqualLengthConstraint extends Constraint {
   }
   chvar(): number {
     return 3;
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let middle = chickenParent(this.middle).copy(picture, copies);
+    let p1 = chickenParent(this.p1).copy(picture, copies);
+    let p2 = chickenParent(this.p2).copy(picture, copies);
+
+    let copy = new EqualLengthConstraint(middle, p1, p2, picture.constraints);
+    copies.set(this, copy);
+    return copy as this;
   }
 }
 
@@ -325,6 +377,25 @@ export class PointOnArcConstraint extends Constraint {
   chvar(): number {
     return 4;
   }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let point = chickenParent(this.point).copy(picture, copies);
+    let center = chickenParent(this.center).copy(picture, copies);
+    let start = chickenParent(this.start).copy(picture, copies);
+    let end = chickenParent(this.end).copy(picture, copies);
+
+    let copy = new PointOnArcConstraint(
+      point,
+      center,
+      start,
+      end,
+      picture.constraints
+    );
+    copies.set(this, copy);
+    return copy as this;
+  }
 }
 
 export class SameDistanceConstraint extends Constraint {
@@ -375,6 +446,25 @@ export class SameDistanceConstraint extends Constraint {
   }
   chvar(): number {
     return 4;
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let pa1 = chickenParent(this.pa1).copy(picture, copies);
+    let pa2 = chickenParent(this.pa2).copy(picture, copies);
+    let pb1 = chickenParent(this.pb1).copy(picture, copies);
+    let pb2 = chickenParent(this.pb2).copy(picture, copies);
+
+    let copy = new SameDistanceConstraint(
+      pa1,
+      pa2,
+      pb1,
+      pb2,
+      picture.constraints
+    );
+    copies.set(this, copy);
+    return copy as this;
   }
 }
 
@@ -429,6 +519,25 @@ export class PerpendicularConstraint extends Constraint {
   chvar(): number {
     return 4;
   }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let pa1 = chickenParent(this.pa1).copy(picture, copies);
+    let pa2 = chickenParent(this.pa2).copy(picture, copies);
+    let pb1 = chickenParent(this.pb1).copy(picture, copies);
+    let pb2 = chickenParent(this.pb2).copy(picture, copies);
+
+    let copy = new PerpendicularConstraint(
+      pa1,
+      pa2,
+      pb1,
+      pb2,
+      picture.constraints
+    );
+    copies.set(this, copy);
+    return copy as this;
+  }
 }
 
 export class ParallelConstraint extends Constraint {
@@ -481,5 +590,18 @@ export class ParallelConstraint extends Constraint {
   }
   chvar(): number {
     return 4;
+  }
+
+  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+    if (copies.has(this)) return copies.get(this) as this;
+
+    let pa1 = chickenParent(this.pa1).copy(picture, copies);
+    let pa2 = chickenParent(this.pa2).copy(picture, copies);
+    let pb1 = chickenParent(this.pb1).copy(picture, copies);
+    let pb2 = chickenParent(this.pb2).copy(picture, copies);
+
+    let copy = new ParallelConstraint(pa1, pa2, pb1, pb2, picture.constraints);
+    copies.set(this, copy);
+    return copy as this;
   }
 }

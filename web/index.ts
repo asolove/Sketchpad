@@ -116,7 +116,10 @@ combinedPic.addInstance(hexagonPic, 0, 0, 1, 0);
 combinedPic.addInstance(flowerPic, 400, 400, 2, 0);
 combinedPic.addInstance(arcConstraintPic, -500, 300, 1, 0);
 
-// let freshPic = u.addPicture();
+let freshPic = u.addPicture();
+u.addPointInLineSegment([400, 100]);
+u.addPointInLineSegment([500, 100]);
+freshPic.addCopy(hexagonPic, 0, 0, 1, 0);
 
 let df = new DisplayFile();
 df.zoom = 0.75;
