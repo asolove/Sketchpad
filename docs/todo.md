@@ -4,20 +4,19 @@
 
 ### Thoughtful doing tasks
 
-- [ ] Add instance attacher constraints
+- [ ] Implement copy picture (without merge/UI mode)
 - [ ] Implement Mergeable for other types
-- [ ] Tool for adding instances and copies (how do we name and pick the pictures?)
-- [ ] Constraint tool works on other constraint types (how?)
-- [ ] Implement Drawable for Constraints (optionally)
-
+- [ ] Add instance attacher constraints
+- [ ] Tool UI
+  - Toolbar to show current tool, and select options (which picture to copy: names? previews?)
 - [ ] UI bugs
   - Need a way to "end" a line and just kill the currently-moving point/line.
   - Same for part-constructed circles.
+- [ ] Constraint tool works on other constraint types (how?)
+- [ ] Implement Drawable for Constraints (optionally)
 
 ### Hammock tasks
 
-- [ ] Re-read to understand the maze-solving technique for constraint performance
-- [ ] Re-read to understand how the bridge simulation worked with definition copying
 - [ ] Serialization or DSL format for compactly describing complex images (naming?)
 
 ## Essays
@@ -26,6 +25,6 @@
 
 ## Launch prep
 
-- Find ~5 reviewers
-- Site design (typography-centric)
+- [x] Find ~5 reviewers
+- [x] Site design (typography-centric)
 - Launch comms plan
