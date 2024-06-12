@@ -253,7 +253,10 @@ export class Picture implements Drawable {
   addCopy(ofPicture: Picture, cx = 0, cy = 0, zoom = 1, rotation = 0) {
     // Track which object are already copied
     let copies: Map<object, object> = new Map();
-    let t: (p: Position) => Position = ([x, y]) => [x + cx, y + cy];
+    let t: (p: Position) => Position = ([x, y]) => [
+      x * zoom * Math.cos(rotation) - y * zoom * Math.sin(rotation) + cx,
+      x * zoom * Math.sin(rotation) + y * zoom * Math.cos(rotation) + cy,
+    ];
 
     collectChickens(ofPicture.parts).map((i) => i.copy(this, copies, t));
     collectChickens(ofPicture.variables).map((i) => i.copy(this, copies, t));
