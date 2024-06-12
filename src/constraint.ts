@@ -31,7 +31,11 @@ export abstract class Constraint implements Removable, Copyable {
     removeChicken(this.picture);
   }
 
-  abstract copy(picture: Picture, copies: Map<unknown, unknown>): this;
+  abstract copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this;
 }
 
 export class SameXConstraint extends Constraint {
@@ -46,11 +50,15 @@ export class SameXConstraint extends Constraint {
     this.picture = createEmptyChicken(this);
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let p1 = chickenParent(this.p1).copy(picture, copies);
-    let p2 = chickenParent(this.p2).copy(picture, copies);
+    let p1 = chickenParent(this.p1).copy(picture, copies, transform);
+    let p2 = chickenParent(this.p2).copy(picture, copies, transform);
 
     let copy = new SameXConstraint(p1, p2, picture.constraints);
     copies.set(this, copy);
@@ -126,11 +134,15 @@ export class SameYConstraint extends Constraint {
     return 2;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let p1 = chickenParent(this.p1).copy(picture, copies);
-    let p2 = chickenParent(this.p2).copy(picture, copies);
+    let p1 = chickenParent(this.p1).copy(picture, copies, transform);
+    let p2 = chickenParent(this.p2).copy(picture, copies, transform);
 
     let copy = new SameYConstraint(p1, p2, picture.constraints);
     copies.set(this, copy);
@@ -213,12 +225,16 @@ export class PointOnLineConstraint extends Constraint {
     return 2;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let point = chickenParent(this.point).copy(picture, copies);
-    let end1 = chickenParent(this.end1).copy(picture, copies);
-    let end2 = chickenParent(this.end2).copy(picture, copies);
+    let point = chickenParent(this.point).copy(picture, copies, transform);
+    let end1 = chickenParent(this.end1).copy(picture, copies, transform);
+    let end2 = chickenParent(this.end2).copy(picture, copies, transform);
 
     let copy = new PointOnLineConstraint(
       point,
@@ -270,12 +286,16 @@ export class EqualLengthConstraint extends Constraint {
     return 3;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let middle = chickenParent(this.middle).copy(picture, copies);
-    let p1 = chickenParent(this.p1).copy(picture, copies);
-    let p2 = chickenParent(this.p2).copy(picture, copies);
+    let middle = chickenParent(this.middle).copy(picture, copies, transform);
+    let p1 = chickenParent(this.p1).copy(picture, copies, transform);
+    let p2 = chickenParent(this.p2).copy(picture, copies, transform);
 
     let copy = new EqualLengthConstraint(middle, p1, p2, picture.constraints);
     copies.set(this, copy);
@@ -378,13 +398,17 @@ export class PointOnArcConstraint extends Constraint {
     return 4;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let point = chickenParent(this.point).copy(picture, copies);
-    let center = chickenParent(this.center).copy(picture, copies);
-    let start = chickenParent(this.start).copy(picture, copies);
-    let end = chickenParent(this.end).copy(picture, copies);
+    let point = chickenParent(this.point).copy(picture, copies, transform);
+    let center = chickenParent(this.center).copy(picture, copies, transform);
+    let start = chickenParent(this.start).copy(picture, copies, transform);
+    let end = chickenParent(this.end).copy(picture, copies, transform);
 
     let copy = new PointOnArcConstraint(
       point,
@@ -448,13 +472,17 @@ export class SameDistanceConstraint extends Constraint {
     return 4;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let pa1 = chickenParent(this.pa1).copy(picture, copies);
-    let pa2 = chickenParent(this.pa2).copy(picture, copies);
-    let pb1 = chickenParent(this.pb1).copy(picture, copies);
-    let pb2 = chickenParent(this.pb2).copy(picture, copies);
+    let pa1 = chickenParent(this.pa1).copy(picture, copies, transform);
+    let pa2 = chickenParent(this.pa2).copy(picture, copies, transform);
+    let pb1 = chickenParent(this.pb1).copy(picture, copies, transform);
+    let pb2 = chickenParent(this.pb2).copy(picture, copies, transform);
 
     let copy = new SameDistanceConstraint(
       pa1,
@@ -520,13 +548,17 @@ export class PerpendicularConstraint extends Constraint {
     return 4;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let pa1 = chickenParent(this.pa1).copy(picture, copies);
-    let pa2 = chickenParent(this.pa2).copy(picture, copies);
-    let pb1 = chickenParent(this.pb1).copy(picture, copies);
-    let pb2 = chickenParent(this.pb2).copy(picture, copies);
+    let pa1 = chickenParent(this.pa1).copy(picture, copies, transform);
+    let pa2 = chickenParent(this.pa2).copy(picture, copies, transform);
+    let pb1 = chickenParent(this.pb1).copy(picture, copies, transform);
+    let pb2 = chickenParent(this.pb2).copy(picture, copies, transform);
 
     let copy = new PerpendicularConstraint(
       pa1,
@@ -592,13 +624,17 @@ export class ParallelConstraint extends Constraint {
     return 4;
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let pa1 = chickenParent(this.pa1).copy(picture, copies);
-    let pa2 = chickenParent(this.pa2).copy(picture, copies);
-    let pb1 = chickenParent(this.pb1).copy(picture, copies);
-    let pb2 = chickenParent(this.pb2).copy(picture, copies);
+    let pa1 = chickenParent(this.pa1).copy(picture, copies, transform);
+    let pa2 = chickenParent(this.pa2).copy(picture, copies, transform);
+    let pb1 = chickenParent(this.pb1).copy(picture, copies, transform);
+    let pb2 = chickenParent(this.pb2).copy(picture, copies, transform);
 
     let copy = new ParallelConstraint(pa1, pa2, pb1, pb2, picture.constraints);
     copies.set(this, copy);

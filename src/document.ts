@@ -41,7 +41,11 @@ interface Boundable {
 }
 
 export interface Copyable {
-  copy(picture: Picture, copies: Map<unknown, unknown>): this;
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this;
 }
 
 interface Movable {
@@ -249,10 +253,11 @@ export class Picture implements Drawable {
   addCopy(ofPicture: Picture, cx = 0, cy = 0, zoom = 1, rotation = 0) {
     // Track which object are already copied
     let copies: Map<object, object> = new Map();
+    let t: (p: Position) => Position = ([x, y]) => [x + cx, y + cy];
 
-    collectChickens(ofPicture.parts).forEach((i) => i.copy(this, copies));
-    collectChickens(ofPicture.variables).forEach((i) => i.copy(this, copies));
-    collectChickens(ofPicture.constraints).forEach((i) => i.copy(this, copies));
+    collectChickens(ofPicture.parts).map((i) => i.copy(this, copies, t));
+    collectChickens(ofPicture.variables).map((i) => i.copy(this, copies, t));
+    collectChickens(ofPicture.constraints).map((i) => i.copy(this, copies, t));
 
     console.log(copies.values());
   }
@@ -285,7 +290,11 @@ abstract class Variable implements Removable, Mergeable, Copyable {
     collectChickens(this.constraints).forEach((c) => c.remove());
   }
 
-  abstract copy(picture: Picture, copies: Map<unknown, unknown>): this;
+  abstract copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this;
 }
 
 type DependsOnScalar = Digits;
@@ -316,7 +325,11 @@ class Scalar extends Variable {
     // FIXME: is Scalar ever in multi-way constraints?
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     // FIXME
     return this;
   }
@@ -342,7 +355,11 @@ class Digits implements Removable, Drawable, Copyable {
 
   remove(): void {}
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     // FIXME
     throw new Error("can't copy digits yet");
   }
@@ -380,14 +397,18 @@ class Instance extends Variable implements Drawable, Copyable {
     this.ofPicture = addChicken(ofPicture.instances, this);
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
     let copy = new Instance(
       picture.variables,
       picture.parts,
       chickenParent(this.ofPicture),
-      [this.cx, this.cy],
+      transform([this.cx, this.cy]),
       this.zoom,
       this.rotation
     );
@@ -458,12 +479,16 @@ export class Arc implements Drawable, Movable, Removable, Copyable {
     this.moving = createEmptyChicken(this);
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return this;
 
-    let center = chickenParent(this.center).copy(picture, copies);
-    let start = chickenParent(this.start).copy(picture, copies);
-    let end = chickenParent(this.end).copy(picture, copies);
+    let center = chickenParent(this.center).copy(picture, copies, transform);
+    let start = chickenParent(this.start).copy(picture, copies, transform);
+    let end = chickenParent(this.end).copy(picture, copies, transform);
 
     let copy = new Arc(center.shapes, start.shapes, end.shapes, picture.parts);
     copies.set(this, copy);
@@ -559,11 +584,15 @@ export class Line implements Drawable, Boundable, Movable, Removable, Copyable {
     this.moving = createEmptyChicken(this);
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
 
-    let startCopy = chickenParent(this.start).copy(picture, copies);
-    let endCopy = chickenParent(this.end).copy(picture, copies);
+    let startCopy = chickenParent(this.start).copy(picture, copies, transform);
+    let endCopy = chickenParent(this.end).copy(picture, copies, transform);
 
     let copy = new Line(startCopy.shapes, endCopy.shapes, picture.parts);
     copies.set(this, copy);
@@ -663,10 +692,14 @@ export class Point
     collectChickens(this.shapes).forEach((s) => s.remove());
   }
 
-  copy(picture: Picture, copies: Map<unknown, unknown>): this {
+  copy(
+    picture: Picture,
+    copies: Map<unknown, unknown>,
+    transform: (p: Position) => Position
+  ): this {
     if (copies.has(this)) return copies.get(this) as this;
     let copy: Point = new Point(
-      this.position,
+      transform(this.position),
       picture.parts,
       picture.variables
     );
