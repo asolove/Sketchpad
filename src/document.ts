@@ -554,7 +554,11 @@ export class Arc implements Drawable, Movable, Removable, Copyable {
     }
   }
 
-  move(dx: number, dy: number, moved: Set<Movable>) {}
+  move(dx: number, dy: number, moved: Set<Movable>) {
+    chickenParent(this.center).move(dx, dy, moved);
+    chickenParent(this.start).move(dx, dy, moved);
+    chickenParent(this.end).move(dx, dy, moved);
+  }
 
   constrainPoint(point: Point) {
     chickenParent(this.picture).addPointOnArcConstraint(
@@ -625,7 +629,11 @@ export class Line implements Drawable, Boundable, Movable, Removable, Copyable {
     d.drawLine(dt(this.startPosition), dt(this.endPosition), this);
   }
 
-  move(dx: number, dy: number, moved: Set<Movable>) {}
+  move(dx: number, dy: number, moved: Set<Movable>) {
+    this.startPoint.move(dx, dy, moved);
+    this.endPoint.move(dx, dy, moved);
+  }
+
   bounds() {
     return { xMin: 0, xMax: 0, yMin: 0, yMax: 0 };
   }
