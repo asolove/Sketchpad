@@ -262,7 +262,7 @@ export class MoveMode extends Mode {
       this.state = "dragging";
       this.universe.addMovings([this.displayFile.pointNearestCursor]);
       this.universe.runConstraints = false;
-    } else if (this.displayFile.shapesNearCursor) {
+    } else if (this.displayFile.shapesNearCursor.size > 0) {
       this.state = "dragging";
       this.universe.addMovings([...this.displayFile.shapesNearCursor]);
       this.universe.runConstraints = false;
