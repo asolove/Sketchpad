@@ -1,5 +1,12 @@
 import { clamp, distance, type Position } from "./lib";
-import { type Drawable, Point, Universe, Arc, Line } from "./document";
+import {
+  type Drawable,
+  Point,
+  Universe,
+  Arc,
+  Line,
+  Instance,
+} from "./document";
 import { chickenParent, collectChickens, isEmptyChicken } from "./ring";
 
 export interface Drawonable {
@@ -23,7 +30,7 @@ export class DisplayFile implements Drawonable {
   mousePosition: Position;
   // TODO: generalize to multiple and other types
   pointNearestCursor: Point | undefined;
-  shapesNearCursor: Set<Arc | Line>;
+  shapesNearCursor: Set<Arc | Line | Instance>;
 
   constructor() {
     this.cx = 0;
@@ -90,8 +97,12 @@ export class DisplayFile implements Drawonable {
       if (d > dCurrent) return;
 
       this.pointNearestCursor = item;
-    } else if (item instanceof Arc || item instanceof Line) {
-      if (!isEmptyChicken(item.moving)) return;
+    } else if (
+      item instanceof Arc ||
+      item instanceof Line ||
+      item instanceof Instance
+    ) {
+      if (item.isMoving()) return;
 
       let d = distance([x, y], this.mousePosition);
       if (d > 4) return;
@@ -160,7 +171,9 @@ export class LineMode extends Mode {
       this.universe.currentPicture.addLine(fromPoint, toPoint);
       if (!this.displayFile.pointNearestCursor) {
         this.displayFile.shapesNearCursor.forEach((shape) => {
-          shape.constrainPoint(fromPoint);
+          if (shape instanceof Arc || shape instanceof Line) {
+            shape.constrainPoint(fromPoint);
+          }
         });
       }
 
@@ -207,7 +220,9 @@ export class ArcMode extends Mode {
 
     let newPoint = this.universe.currentPicture.addPoint(position);
     this.displayFile.shapesNearCursor.forEach((shape) => {
-      shape.constrainPoint(newPoint);
+      if (shape instanceof Arc || shape instanceof Line) {
+        shape.constrainPoint(newPoint);
+      }
     });
     return newPoint;
   }

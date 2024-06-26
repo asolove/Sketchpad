@@ -63,6 +63,7 @@ rivetPic.addParallelConstraint(bottomLeft, bottomRight, cStart, cEnd);
 rivetPic.addLine(topLeft, bottomLeft);
 rivetPic.addLine(bottomLeft, bottomRight);
 rivetPic.addLine(bottomRight, topRight);
+rivetPic.addLine(bottomLeft, topRight);
 rivetPic.addLine(cStart, cEnd);
 rivetPic.addArc(center, cStart, cEnd);
 
@@ -113,7 +114,7 @@ let arcConstraintPic = u.addPicture();
 let combinedPic = u.addPicture();
 combinedPic.addCopy(rivetPic, -400, -400, 1.3, Math.PI / 2);
 combinedPic.addCopy(hexagonPic, 0, 0, 1, 0);
-combinedPic.addCopy(flowerPic, 400, 400, 0.8, 0);
+combinedPic.addInstance(flowerPic, 400, 400, 0.8, 0);
 combinedPic.addCopy(arcConstraintPic, -500, 300, 1, 0);
 
 // let freshPic = u.addPicture();

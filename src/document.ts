@@ -373,7 +373,7 @@ class Digits implements Removable, Drawable, Copyable {
   }
 }
 
-class Instance extends Variable implements Drawable, Copyable {
+export class Instance extends Variable implements Drawable, Copyable, Movable {
   cx: number;
   cy: number;
   zoom: number; // scale as multiple: 1 is original size
@@ -381,6 +381,7 @@ class Instance extends Variable implements Drawable, Copyable {
 
   inPicture: Chicken<Picture, Drawable>;
   ofPicture: Chicken<Picture, Instance>;
+  moving: Chicken<Universe, Movable>;
 
   constructor(
     variables: Hen<Picture, Variable>,
@@ -398,6 +399,7 @@ class Instance extends Variable implements Drawable, Copyable {
 
     this.inPicture = addChicken(inPicture, this);
     this.ofPicture = addChicken(ofPicture.instances, this);
+    this.moving = createEmptyChicken(this);
   }
 
   copy(
@@ -417,6 +419,29 @@ class Instance extends Variable implements Drawable, Copyable {
     );
     copies.set(this, copy);
     return copy as this;
+  }
+
+  remove() {
+    removeChicken(this.inPicture);
+    removeChicken(this.ofPicture);
+    removeChicken(this.moving);
+  }
+
+  move(dx: number, dy: number, moveds: Set<Movable>) {
+    if (moveds.has(this)) return;
+    this.cx += dx;
+    this.cy += dy;
+    moveds.add(this);
+  }
+
+  isMoving(): boolean {
+    return !isEmptyChicken(this.moving);
+  }
+  startMoving(movings: Hen<Universe, Movable>): void {
+    this.moving = addChicken(movings, this);
+  }
+  endMoving(): void {
+    removeChicken(this.moving);
   }
 
   display(d: Drawonable, displayTransform: DisplayTransform): void {
