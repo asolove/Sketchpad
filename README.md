@@ -20,4 +20,4 @@ bun test --watch
 bun bundle --watch
 ```
 
-- Then open web/static/index.html in your browser
+- Then open web/index.html in your browser
