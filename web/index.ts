@@ -1,3 +1,4 @@
+import { Controller } from "../src/controller";
 import { Display, DisplayFile } from "../src/display";
 import { Universe } from "../src/document";
 
@@ -130,3 +131,10 @@ let loop = () => {
 loop();
 
 let d = new Display(df, canvas, u);
+
+let cEl = document.getElementById("controller");
+if (cEl) {
+  let c = new Controller(cEl, u);
+} else {
+  console.error("No controller element");
+}
