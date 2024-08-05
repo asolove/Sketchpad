@@ -134,7 +134,7 @@ let d = new Display(df, canvas, u);
 
 let cEl = document.getElementById("controller");
 if (cEl) {
-  let c = new Controller(cEl, u);
+  let c = new Controller(cEl, canvas, u, df);
 } else {
   console.error("No controller element");
 }

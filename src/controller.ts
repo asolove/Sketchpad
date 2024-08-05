@@ -1,21 +1,34 @@
-import type { Position } from "./lib";
+import { clamp, type Position } from "./lib";
 import { Arc, Line, type Point, type Universe } from "./document";
 import type { DisplayFile } from "./display";
 import { chickenParent, collectChickens } from "./ring";
 
 export class Controller {
   universe: Universe;
+  displayFile: DisplayFile;
   pictureCount: number;
+
+  canvas: HTMLCanvasElement;
+  mode: Mode;
 
   container: Element;
   select: HTMLSelectElement;
 
-  constructor(container: Element, universe: Universe) {
+  constructor(
+    container: Element,
+    canvas: HTMLCanvasElement,
+    universe: Universe,
+    displayFile: DisplayFile
+  ) {
     this.universe = universe;
     this.pictureCount = 0;
     this.container = container;
+    this.canvas = canvas;
     this.select = document.createElement("select");
     this.container.appendChild(this.select);
+    this.displayFile = displayFile;
+
+    // Initialize controller items
     this.select.addEventListener("change", (e) => {
       let target: HTMLSelectElement = e.currentTarget as any;
       let newIndex = parseInt(target.value || "", 10);
@@ -23,6 +36,92 @@ export class Controller {
         this.universe.currentPicture = this.universe.pictures[newIndex];
       } else if (target.value === "New") {
         this.universe.addPicture();
+      }
+    });
+
+    // Initialize display-related controller events
+
+    // TODO: react to dom changes?
+    // FIXME: get displayFile size?
+    let xScale = canvas.width / this.displayFile.logicalWidth;
+    let yScale = canvas.height / this.displayFile.logicalHeight;
+    canvas.getContext("2d")?.scale(xScale, yScale);
+
+    this.mode = new MoveMode(universe, this.displayFile);
+
+    this.canvas.style.cursor = "none";
+
+    this.canvas.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      // FIXME: get displayFile zoom?
+      let zoom = this.displayFile.zoom;
+      zoom += e.deltaY * -0.01;
+      zoom = clamp(0.1, zoom, 10);
+      this.displayFile.zoom = zoom;
+    });
+
+    // FIXME: clean up using multiple coordinate frames for mouse events,
+
+    let prevMX = 0;
+    let prevMY = 0;
+    let docPosition = (canvasPosition: Position): Position =>
+      this.displayFile.inverseDisplayTransform()(canvasPosition);
+
+    this.canvas.addEventListener("mousemove", (e) => {
+      // Translate from DOM coordinates to DisplayFile coordinates.
+      let mx = e.offsetX / xScale;
+      let my = e.offsetY / yScale;
+
+      this.displayFile.mousePosition = [mx, my];
+
+      let dx = (mx - prevMX) / this.displayFile.zoom;
+      let dy = -(my - prevMY) / this.displayFile.zoom;
+
+      this.mode.cursorMoved(dx, dy);
+
+      prevMX = mx;
+      prevMY = my;
+    });
+
+    this.canvas.addEventListener("mousedown", (e) => {
+      this.mode.buttonDown(
+        this.displayFile.inverseDisplayTransform()([
+          e.offsetX / xScale,
+          e.offsetY / yScale,
+        ])
+      );
+    });
+
+    this.canvas.addEventListener("mouseup", (e) => {
+      this.mode.buttonUp(
+        this.displayFile.inverseDisplayTransform()([
+          e.offsetX / xScale,
+          e.offsetY / yScale,
+        ])
+      );
+    });
+
+    // FIXME: listening at document level is a problem.
+    this.canvas.ownerDocument.addEventListener("keyup", (e: KeyboardEvent) => {
+      // FIXME: cleanup state? prevent reset?
+      let key = e.key;
+      let modeClass =
+        key === "l"
+          ? LineMode
+          : key === "m"
+          ? MoveMode
+          : key === "a"
+          ? ArcMode
+          : key === "c"
+          ? PerpendicularConstraintMode
+          : key === "p"
+          ? PauseMode
+          : key === "d"
+          ? DeleteMode
+          : undefined;
+      if (modeClass && !(this.mode instanceof modeClass)) {
+        this.mode.cleanup();
+        this.mode = new modeClass(this.universe, this.displayFile);
       }
     });
 
