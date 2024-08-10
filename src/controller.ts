@@ -138,7 +138,7 @@ export class Controller {
     this.loop();
   }
 
-  changeMode<M extends ModeConstructor>(newModeClass: M) {
+  changeMode<M extends ConcreteMode>(newModeClass: M) {
     this.mode.cleanup();
     this.mode = new newModeClass(this.universe, this.displayFile);
   }
@@ -186,7 +186,7 @@ export abstract class Mode {
   cleanup() {}
 }
 
-type ModeConstructor = new (u: Universe, df: DisplayFile) => Mode;
+type ConcreteMode = (new (u: Universe, df: DisplayFile) => Mode) & typeof Mode;
 
 export class LineMode extends Mode {
   movingPoint: Point | undefined;
@@ -386,7 +386,7 @@ export class DeleteMode extends Mode {
   }
 }
 
-let modeClassNames: { [name: string]: typeof Mode & ModeConstructor } = {
+let modeClassNames: { [name: string]: ConcreteMode } = {
   move: MoveMode,
   line: LineMode,
   arc: ArcMode,
@@ -394,8 +394,6 @@ let modeClassNames: { [name: string]: typeof Mode & ModeConstructor } = {
   pause: PauseMode,
 };
 
-function modeClassByName(
-  name: string
-): (typeof Mode & ModeConstructor) | undefined {
+function modeClassByName(name: string): ConcreteMode | undefined {
   return modeClassNames[name];
 }
