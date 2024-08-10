@@ -261,8 +261,6 @@ export class Picture implements Drawable {
     collectChickens(ofPicture.parts).map((i) => i.copy(this, copies, t));
     collectChickens(ofPicture.variables).map((i) => i.copy(this, copies, t));
     collectChickens(ofPicture.constraints).map((i) => i.copy(this, copies, t));
-
-    console.log(copies.values());
   }
 }
 

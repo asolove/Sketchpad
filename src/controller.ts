@@ -13,6 +13,7 @@ export class Controller {
 
   container: Element;
   select: HTMLSelectElement;
+  modeInputs: Array<HTMLInputElement>;
 
   constructor(
     container: Element,
@@ -24,11 +25,13 @@ export class Controller {
     this.pictureCount = 0;
     this.container = container;
     this.canvas = canvas;
-    this.select = document.createElement("select");
-    this.container.appendChild(this.select);
+    this.select = this.container.querySelector("#current-picture")!;
+    this.modeInputs = Array.from(
+      this.container.querySelectorAll("input[type=radio][name=mode]")
+    );
     this.displayFile = displayFile;
 
-    // Initialize controller items
+    // Initialize controller events
     this.select.addEventListener("change", (e) => {
       let target: HTMLSelectElement = e.currentTarget as any;
       let newIndex = parseInt(target.value || "", 10);
@@ -37,6 +40,13 @@ export class Controller {
       } else if (target.value === "New") {
         this.universe.addPicture();
       }
+    });
+
+    this.modeInputs.forEach((input) => {
+      input.addEventListener("change", (e: any) => {
+        let newMode = modeClassByName(e.target.value);
+        if (newMode) this.changeMode(newMode);
+      });
     });
 
     // Initialize display-related controller events
@@ -128,12 +138,25 @@ export class Controller {
     this.loop();
   }
 
+  changeMode<M extends ModeConstructor>(newModeClass: M) {
+    this.mode.cleanup();
+    this.mode = new newModeClass(this.universe, this.displayFile);
+  }
+
   loop() {
     this.render();
     requestAnimationFrame(() => this.loop());
   }
 
   render() {
+    // Mode radio buttons
+    this.modeInputs.forEach((input) => {
+      let modeClass = modeClassByName(input.value);
+      if (!modeClass) return;
+      if (this.mode instanceof modeClass) input.checked = true;
+    });
+
+    // Current picture dropdown
     let pictureCount = this.universe.pictures.length;
     if (pictureCount === this.pictureCount) return;
     this.pictureCount = pictureCount;
@@ -162,6 +185,8 @@ export abstract class Mode {
 
   cleanup() {}
 }
+
+type ModeConstructor = new (u: Universe, df: DisplayFile) => Mode;
 
 export class LineMode extends Mode {
   movingPoint: Point | undefined;
@@ -209,10 +234,6 @@ export class PauseMode extends Mode {
     this.universe.runConstraints = false;
 
     const { constraints, parts } = this.universe.currentPicture;
-    console.log({
-      constraints: collectChickens(constraints),
-      parts: collectChickens(parts),
-    });
   }
 
   cleanup() {
@@ -363,4 +384,18 @@ export class DeleteMode extends Mode {
       this.displayFile.shapesNearCursor.values().next().value?.remove();
     }
   }
+}
+
+let modeClassNames: { [name: string]: typeof Mode & ModeConstructor } = {
+  move: MoveMode,
+  line: LineMode,
+  arc: ArcMode,
+  delete: DeleteMode,
+  pause: PauseMode,
+};
+
+function modeClassByName(
+  name: string
+): (typeof Mode & ModeConstructor) | undefined {
+  return modeClassNames[name];
 }

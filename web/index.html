@@ -15,6 +15,8 @@
         align-items: center;
         justify-content: center;
         background: #999;
+
+        font-family: system-ui, "Helvetica Neue";
       }
       menu {
         display: flex;
@@ -31,10 +33,7 @@
         white-space: pre;
       }
       .panel {
-        margin-left: 20px;
         padding: 20px;
-        border-left: 4px solid black;
-        border-right: 5px solid black;
       }
       canvas {
         border-radius: 2px;
@@ -42,7 +41,7 @@
       .display-module {
         position: relative;
         background: black;
-        padding: 103px;
+        padding: 43px;
         border: 3px outset #999;
       }
       .screw {
@@ -91,24 +90,6 @@
         font-family: monospace;
         color: rgb(0 0 0 / 0.8);
       }
-      input[type="radio"]:checked {
-        background: radial-gradient(
-          rgb(255 255 255 / 1),
-          rgb(240 240 240 / 0.1)
-        );
-      }
-
-      input[type="radio"] {
-        height: 6px;
-        width: 6px;
-        margin: 0px;
-        padding: 1px;
-        border: none;
-        background: #333;
-        appearance: none;
-        border-radius: 3px;
-      }
-
       .indicators {
         display: inline-grid;
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
@@ -119,27 +100,35 @@
 
       #controller {
         position: absolute;
-        left: 800px;
+        left: 650px;
         width: 300px;
         top: 0;
         padding-top: 50px;
       }
+
+      #controller select {
+        display: block;
+      }
+      #controller label {
+        display: block;
+      }
     </style>
   </head>
   <body>
-    <div id="controller"></div>
+    <div id="controller">
+      <label for="current-picture"
+        >Current picture
+        <select id="current-picture"></select
+      ></label>
+      <br />
+
+      <label>Mode</label>
+      <label><input type="radio" name="mode" value="move" /> Move</label>
+      <label><input type="radio" name="mode" value="line" /> Line</label>
+      <label><input type="radio" name="mode" value="arc" /> Arc</label>
+      <label><input type="radio" name="mode" value="delete" /> Delete</label>
+    </div>
     <div class="panel">
-      <nav class="buttons">
-        <button>9</button>
-        <button>8</button>
-        <button>7</button>
-        <button>6</button>
-        <button>5</button>
-        <button>4</button>
-        <button>3</button>
-        <button>2</button>
-        <button>1</button>
-      </nav>
       <div class="display-module">
         <span class="screw top left"></span>
         <span class="screw top center"></span>
@@ -151,62 +140,6 @@
         <span class="screw bottom right"></span
         ><canvas height="512" width="512" id="sketchpad-canvas"></canvas>
       </div>
-
-      <footer>
-        <div class="indicators">
-          <input type="radio" checked />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" checked />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" checked />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" checked />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" checked />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-        </div>
-
-        <div class="indicators">
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-          <input type="radio" />
-        </div>
-      </footer>
     </div>
 
     <script src="static/js/index.js"></script>
