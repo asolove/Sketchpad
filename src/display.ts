@@ -41,12 +41,15 @@ export class DisplayFile implements Drawonable {
   pointNearestCursor: Point | undefined;
   shapesNearCursor: Set<Arc | Line | Instance>;
 
+  shouldTwinkle: boolean;
+
   constructor() {
     this.cx = 0;
     this.cy = 0;
     this.zoom = 0.5;
     this.pixels = [];
     this.mousePosition = [0, 0];
+    this.shouldTwinkle = true;
 
     this.pointNearestCursor = undefined;
     this.shapesNearCursor = new Set();
@@ -75,6 +78,11 @@ export class DisplayFile implements Drawonable {
     this.pixels = [];
     this.pointNearestCursor = undefined;
     this.shapesNearCursor.clear();
+  }
+
+  prepare() {
+    // anything the file should do each render
+    if (this.shouldTwinkle) this.twinkle();
   }
 
   twinkle() {
@@ -148,7 +156,7 @@ export class Display {
   #universe: Universe; // FIXME: remove this reference
   #displayFile: DisplayFile;
   #canvas: HTMLCanvasElement;
-  #pixelsPerDraw = 2000;
+  #pixelsPerDraw = 1000;
   #pixelIndex = 0;
 
   constructor(df: DisplayFile, canvas: HTMLCanvasElement, universe: Universe) {
@@ -160,7 +168,7 @@ export class Display {
   }
 
   loop() {
-    this.#displayFile.twinkle();
+    this.#displayFile.prepare();
     this.render();
     requestAnimationFrame(() => this.loop());
   }

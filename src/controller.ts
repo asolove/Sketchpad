@@ -14,6 +14,7 @@ export class Controller {
   container: Element;
   select: HTMLSelectElement;
   modeInputs: Array<HTMLInputElement>;
+  twinkleInput: HTMLInputElement;
 
   constructor(
     container: Element,
@@ -29,6 +30,10 @@ export class Controller {
     this.modeInputs = Array.from(
       this.container.querySelectorAll("input[type=radio][name=mode]")
     );
+    this.twinkleInput = this.container.querySelector(
+      "input[name=twinkle]"
+    ) as HTMLInputElement;
+
     this.displayFile = displayFile;
 
     // Initialize controller events
@@ -47,6 +52,10 @@ export class Controller {
         let newMode = modeClassByName(e.target.value);
         if (newMode) this.changeMode(newMode);
       });
+    });
+
+    this.twinkleInput.addEventListener("change", (e) => {
+      this.displayFile.shouldTwinkle = (e.target as HTMLInputElement).checked;
     });
 
     // Initialize display-related controller events
